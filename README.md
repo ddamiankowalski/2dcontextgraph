@@ -1,15 +1,9 @@
-# 🚀 Welcome to your new awesome project!
+# Canvas 2d context graph experiment
 
-This project has been created using **webpack-cli**, you can now run
+This project is an experiment trying to make a smooth scrollable 2d context candle graph
 
-```
-npm run build
-```
-
-or
+To run the project type
 
 ```
-yarn build
+npm run serve
 ```
-
-to bundle your application
