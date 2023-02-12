@@ -11,7 +11,7 @@ export class ChartRenderer implements Renderer {
         this.graphWidth = canvas.width;
         this.graphHeight = canvas.height;
         this.scrollSpeed = 2;
-        this.graphZoom = 60;
+        this.graphZoom = 130;
 
         this.canvas.style.backgroundColor = "#252525";
         this.addCanvasListeners();
@@ -31,7 +31,7 @@ export class ChartRenderer implements Renderer {
     private horizontalMargin: number = 70;
     private verticalMargin: number = 70;
 
-    private xGridThreshold: number = 48;
+    private xGridThreshold: number = 130;
 
     private currentTimeSpan: number = 3600000; // the timespan that means what is the current time difference between two vertical lines
 
@@ -58,14 +58,34 @@ export class ChartRenderer implements Renderer {
 
     private drawVerticalLines(): void {
         let currentColumn = 0;
-        // todo, this is where we need to shuffle things around a bit
-        for(let drawingXPosition = this.graphWidth; drawingXPosition + this.viewOffset > 0; drawingXPosition = drawingXPosition - this.graphZoom) {
-            if(drawingXPosition + this.viewOffset - this.horizontalMargin > 0) {
-                this.drawLine(drawingXPosition + this.viewOffset - this.horizontalMargin, 0, drawingXPosition + this.viewOffset - this.horizontalMargin, this.graphHeight - this.verticalMargin);
-                this.drawLineTime(currentColumn, drawingXPosition + this.viewOffset);
+        for(let drawingXPosition = this.graphWidth; drawingXPosition + this.viewOffset > 0; drawingXPosition = drawingXPosition - this.graphZoom) { 
+            const actualDrawingXPosition = drawingXPosition + this.viewOffset - this.horizontalMargin;
+            const actualYStartPosition = 0;
+            const actualYEndPosition = this.graphHeight - this.verticalMargin;
+            
+            if(actualDrawingXPosition > 0) {
+                this.drawLine(actualDrawingXPosition, actualYStartPosition, actualDrawingXPosition, actualYEndPosition);
+                this.drawLineTime(currentColumn, actualDrawingXPosition);
+                this.drawSubLines(actualDrawingXPosition);
                 currentColumn++;
+                this.updateColumns();
             }
         }
+    }
+
+    private drawSubLines(xStartPosition: number): void {
+        let startX = xStartPosition;
+        const gap = this.graphZoom / 5;
+
+        for(let currentSubLine = 0; currentSubLine < 5; currentSubLine++) {
+            const actualXStart = startX - gap;
+            this.drawLine(actualXStart, 0, actualXStart, this.graphHeight - this.verticalMargin);
+            startX = startX - gap;
+        }
+    }
+
+    private updateColumns(): void {
+        // this is where all the columns will be updated
     }
 
     private drawTimeline(): void {
@@ -89,7 +109,10 @@ export class ChartRenderer implements Renderer {
 
         this.context.font = "12px sans-serif";
         this.context.fillStyle = '#A9A9A9';
-        this.context.fillText((currentTime - currentColumn).toString(), xPosition - this.horizontalMargin - 5, this.graphHeight - 50);
+
+        const date = new Date();
+        date.setHours(date.getHours() - currentColumn);
+        this.context.fillText(date.getHours().toString(), xPosition - 5, this.graphHeight - 50);
     }
 
     private addCanvasListeners(): void {
