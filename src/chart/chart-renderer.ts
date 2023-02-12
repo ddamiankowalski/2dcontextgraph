@@ -4,6 +4,10 @@ export class ChartRenderer implements Renderer {
     constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
         this.context = context;
         this.canvas = canvas;
+        this.canvas.style.width = '100%';
+        this.canvas.style.height = '100%';
+        this.canvas.height = canvas.offsetHeight;
+        this.canvas.width = canvas.offsetWidth;
         this.graphWidth = canvas.width;
         this.graphHeight = canvas.height;
         this.graphZoom = 100;
@@ -24,18 +28,24 @@ export class ChartRenderer implements Renderer {
     private mouseXPosition: number;
     private mouseYPosition: number;
 
-    public draw(): void {
+
+
+    public draw(timePassed: number): void {
         this.context.clearRect(0, 0, this.graphWidth, this.graphHeight);
 
         this.drawGrid();
+        window.requestAnimationFrame(this.draw.bind(this));
     }
 
     drawGrid(): void {
+        this.drawVerticalLines();
+        //this.drawMousePosition();
+    }
+
+    private drawVerticalLines(): void {
         for(let drawingInterval = 0; drawingInterval < this.graphHeight; drawingInterval = drawingInterval + this.graphZoom) {
             this.drawLine(0, drawingInterval, this.graphWidth - this.horizontalMargin, drawingInterval);
         }
-
-        this.drawMousePosition();
     }
 
     private drawMousePosition(): void {
@@ -48,7 +58,7 @@ export class ChartRenderer implements Renderer {
         this.context.moveTo(xStart, yStart);
         this.context.lineTo(xEnd, yEnd);
         this.context.strokeStyle = '#FFFFFF';
-        this.context.lineWidth = .1;
+        this.context.lineWidth = 1;
         this.context.stroke();
     }
 
@@ -61,13 +71,11 @@ export class ChartRenderer implements Renderer {
             } else {
                 this.graphZoom = this.graphZoom + 2;
             }
-            this.draw();
         })
 
         this.canvas.addEventListener('mousemove', (event: MouseEvent) => {
             this.mouseXPosition = event.clientX;
             this.mouseYPosition = event.clientY;
-            this.draw();
         });
     }
 }

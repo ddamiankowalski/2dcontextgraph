@@ -1,5 +1,5 @@
 export abstract class Renderer {
-    abstract draw(): void;
+    abstract draw(timePassed?: number): void;
     abstract drawGrid(): void;
     abstract drawLine(xStart: number, yStart: number, xEnd: number, yEnd: number): void;
 }
