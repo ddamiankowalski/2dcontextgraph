@@ -1,0 +1,5 @@
+export abstract class Renderer {
+    abstract draw(): void;
+    abstract drawGrid(): void;
+    abstract drawLine(xStart: number, yStart: number, xEnd: number, yEnd: number): void;
+}
