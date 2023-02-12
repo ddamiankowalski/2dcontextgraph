@@ -10,7 +10,7 @@ export class ChartRenderer implements Renderer {
         this.canvas.width = canvas.offsetWidth;
         this.graphWidth = canvas.width;
         this.graphHeight = canvas.height;
-        this.scrollSpeed = 2;
+        this.scrollSpeed = 10;
         this.graphZoom = 130;
 
         this.canvas.style.backgroundColor = "#252525";
