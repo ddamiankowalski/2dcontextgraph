@@ -22,8 +22,8 @@ export class ChartRenderer implements Renderer {
     private graphHeight: number;
     private graphZoom: number;
 
-    private horizontalMargin: number = 50;
-    private verticalMargin: number = 50;
+    private horizontalMargin: number = 70;
+    private verticalMargin: number = 70;
 
     private mouseXPosition: number;
     private mouseYPosition: number;
@@ -58,7 +58,7 @@ export class ChartRenderer implements Renderer {
         let currentColumn = 0;
         // todo, this is where we need to shuffle things around a bit
         for(let drawingXPosition = this.graphWidth; drawingXPosition + this.viewOffset > 0; drawingXPosition = drawingXPosition - this.graphZoom) {
-            this.drawLine(drawingXPosition + this.viewOffset, 0, drawingXPosition + this.viewOffset, this.graphHeight - this.verticalMargin);
+            this.drawLine(drawingXPosition + this.viewOffset - this.horizontalMargin, 0, drawingXPosition + this.viewOffset - this.horizontalMargin, this.graphHeight - this.verticalMargin);
             this.drawLineTime(currentColumn, drawingXPosition + this.viewOffset);
             currentColumn++;
         }
@@ -85,7 +85,7 @@ export class ChartRenderer implements Renderer {
 
         this.context.font = "12px sans-serif";
         this.context.fillStyle = '#A9A9A9';
-        this.context.fillText((currentTime - currentColumn).toString(), xPosition, this.graphHeight - 35);
+        this.context.fillText((currentTime - currentColumn).toString(), xPosition - this.horizontalMargin - 5, this.graphHeight - 50);
     }
 
     private addCanvasListeners(): void {
@@ -126,7 +126,9 @@ export class ChartRenderer implements Renderer {
 
         this.canvas.addEventListener('mousemove', (event: MouseEvent) => {
             if(this.mouseDown) {
-                this.viewOffset = this.viewOffset + event.movementX;
+                if(this.viewOffset + event.movementX > 0) {
+                    this.viewOffset = this.viewOffset + event.movementX;
+                }
             }
         })
     }
