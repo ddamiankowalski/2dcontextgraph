@@ -28,7 +28,7 @@ export class ChartRenderer implements Renderer {
     private mouseXPosition: number;
     private mouseYPosition: number;
 
-
+    private xGridThreshold: number = 50;
 
     public draw(timePassed: number): void {
         this.context.clearRect(0, 0, this.graphWidth, this.graphHeight);
@@ -43,8 +43,8 @@ export class ChartRenderer implements Renderer {
     }
 
     private drawVerticalLines(): void {
-        for(let drawingInterval = 0; drawingInterval < this.graphHeight; drawingInterval = drawingInterval + this.graphZoom) {
-            this.drawLine(0, drawingInterval, this.graphWidth - this.horizontalMargin, drawingInterval);
+        for(let drawingXPosition = 0; drawingXPosition < this.graphWidth; drawingXPosition = drawingXPosition + this.graphZoom) {
+            this.drawLine(drawingXPosition, 0, drawingXPosition, this.graphHeight);
         }
     }
 
@@ -66,10 +66,16 @@ export class ChartRenderer implements Renderer {
         this.canvas.addEventListener('wheel', (event: WheelEvent) => {
             if(event.deltaY > 0) {
                 if(this.graphZoom - 2 !== 30) {
-                    this.graphZoom = this.graphZoom - 2;
+                    this.graphZoom = this.graphZoom - .5;
                 }
             } else {
-                this.graphZoom = this.graphZoom + 2;
+                this.graphZoom = this.graphZoom + .5;
+            }
+
+            console.log(this.graphZoom, this.xGridThreshold)
+
+            if(this.graphZoom < this.xGridThreshold) {
+                this.graphZoom = this.xGridThreshold + 100;
             }
         })
 
