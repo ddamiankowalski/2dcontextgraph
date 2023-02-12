@@ -39,8 +39,6 @@ export class ChartRenderer implements Renderer {
     public draw(timePassed: number): void {
         this.context.clearRect(0, 0, this.graphWidth, this.graphHeight);
 
-        this.viewOffset++;
-
         this.drawGrid();
         this.startTime = new Date().getTime();
         window.requestAnimationFrame(this.draw.bind(this));
@@ -106,5 +104,9 @@ export class ChartRenderer implements Renderer {
             this.mouseXPosition = event.clientX;
             this.mouseYPosition = event.clientY;
         });
+
+        this.canvas.addEventListener('mousedown', (event: MouseEvent) => {
+            console.log(event)
+        })
     }
 }
