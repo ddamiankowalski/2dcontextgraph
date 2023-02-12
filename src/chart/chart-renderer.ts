@@ -30,13 +30,19 @@ export class ChartRenderer implements Renderer {
 
     private xGridThreshold: number = 50;
 
+    private currentTimeSpan: number = 3600000; // the timespan that means what is the current time difference between two vertical lines
+
     private startTime: number = new Date().getTime();
-    private endTime: number = new Date().getTime();
+    
+    private viewOffset: number = 0;
 
     public draw(timePassed: number): void {
         this.context.clearRect(0, 0, this.graphWidth, this.graphHeight);
 
+        this.viewOffset++;
+
         this.drawGrid();
+        this.startTime = new Date().getTime();
         window.requestAnimationFrame(this.draw.bind(this));
     }
 
@@ -47,8 +53,9 @@ export class ChartRenderer implements Renderer {
     }
 
     private drawVerticalLines(): void {
-        for(let drawingXPosition = this.graphWidth; drawingXPosition > 0; drawingXPosition = drawingXPosition - this.graphZoom) {
-            this.drawLine(drawingXPosition, 0, drawingXPosition, this.graphHeight - this.verticalMargin);
+        // todo, this is where we need to shuffle things around a bit
+        for(let drawingXPosition = this.graphWidth; drawingXPosition + this.viewOffset > 0; drawingXPosition = drawingXPosition - this.graphZoom) {
+            this.drawLine(drawingXPosition + this.viewOffset, 0, drawingXPosition + this.viewOffset, this.graphHeight - this.verticalMargin);
         }
     }
 
@@ -56,7 +63,7 @@ export class ChartRenderer implements Renderer {
         this.context.font = "12px sans-serif";
         this.context.fillStyle = '#A9A9A9';
         this.context.fillText(this.startTime.toString(), this.graphWidth - 100, this.graphHeight - 20);
-        this.context.fillText('Current time span between columns:', this.graphWidth / 2 - 100, this.graphHeight - 20);
+        this.context.fillText('Current time span in min: ' + (this.currentTimeSpan / 1000 / 60), this.graphWidth / 2 - 100, this.graphHeight - 20);
     }
 
     private drawMousePosition(): void {
@@ -87,8 +94,10 @@ export class ChartRenderer implements Renderer {
 
             if(this.graphZoom === this.xGridThreshold) {
                 this.graphZoom = this.xGridThreshold * 2 - 1;
+                this.currentTimeSpan = this.currentTimeSpan * 2;
             } else if(this.graphZoom === this.xGridThreshold * 2) {
                 this.graphZoom = this.xGridThreshold + 1;
+                this.currentTimeSpan = this.currentTimeSpan / 2;
             }
         })
 
