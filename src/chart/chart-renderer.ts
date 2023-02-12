@@ -36,6 +36,10 @@ export class ChartRenderer implements Renderer {
     
     private viewOffset: number = 0;
 
+    private mouseDown: boolean;
+    private mouseDownPosX: number;
+    private mouseUpPosX: number;
+
     public draw(timePassed: number): void {
         this.context.clearRect(0, 0, this.graphWidth, this.graphHeight);
 
@@ -51,9 +55,12 @@ export class ChartRenderer implements Renderer {
     }
 
     private drawVerticalLines(): void {
+        let currentColumn = 0;
         // todo, this is where we need to shuffle things around a bit
         for(let drawingXPosition = this.graphWidth; drawingXPosition + this.viewOffset > 0; drawingXPosition = drawingXPosition - this.graphZoom) {
             this.drawLine(drawingXPosition + this.viewOffset, 0, drawingXPosition + this.viewOffset, this.graphHeight - this.verticalMargin);
+            this.drawLineTime(currentColumn, drawingXPosition + this.viewOffset);
+            currentColumn++;
         }
     }
 
@@ -64,11 +71,6 @@ export class ChartRenderer implements Renderer {
         this.context.fillText('Current time span in min: ' + (this.currentTimeSpan / 1000 / 60), this.graphWidth / 2 - 100, this.graphHeight - 20);
     }
 
-    private drawMousePosition(): void {
-        this.drawLine(0, this.mouseYPosition, this.graphWidth, this.mouseYPosition);
-        this.drawLine(this.mouseXPosition, 0, this.mouseXPosition, this.graphHeight);
-    }
-
     drawLine(xStart: number, yStart: number, xEnd: number, yEnd: number): void {
         this.context.beginPath();
         this.context.moveTo(xStart, yStart);
@@ -76,6 +78,14 @@ export class ChartRenderer implements Renderer {
         this.context.strokeStyle = '#A9A9A9';
         this.context.lineWidth = 1;
         this.context.stroke();
+    }
+
+    private drawLineTime(currentColumn: number, xPosition: number): void {
+        const currentTime = new Date().getHours();
+
+        this.context.font = "12px sans-serif";
+        this.context.fillStyle = '#A9A9A9';
+        this.context.fillText((currentTime - currentColumn).toString(), xPosition, this.graphHeight - 35);
     }
 
     private addCanvasListeners(): void {
@@ -106,7 +116,18 @@ export class ChartRenderer implements Renderer {
         });
 
         this.canvas.addEventListener('mousedown', (event: MouseEvent) => {
-            console.log(event)
+            this.mouseDown = true;
+            this.mouseDownPosX = event.x;
+        })
+
+        this.canvas.addEventListener('mouseup', (event: MouseEvent) => {
+            this.mouseDown = false;
+        })
+
+        this.canvas.addEventListener('mousemove', (event: MouseEvent) => {
+            if(this.mouseDown) {
+                this.viewOffset = this.viewOffset + event.movementX;
+            }
         })
     }
 }
