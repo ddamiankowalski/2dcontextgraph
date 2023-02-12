@@ -46,6 +46,7 @@ export class ChartRenderer implements Renderer {
     private mouseUpPosX: number;
 
     private columns: number;
+    
 
     public draw(timePassed: number): void {
         this.context.clearRect(0, 0, this.graphWidth, this.graphHeight);
@@ -103,17 +104,19 @@ export class ChartRenderer implements Renderer {
 
         // wheel event
         this.canvas.addEventListener('wheel', (event: WheelEvent) => {
+            const columnToGraphZoomRatio = (this.graphWidth + this.viewOffset - this.horizontalMargin - event.offsetX) / this.graphZoom;
+
             if(event.deltaY > 0) {
                 if(this.graphZoom - 2 !== 30) {
                     this.graphZoom = this.graphZoom - 1;
 
                     // refactor this
-                    this.viewOffset = this.viewOffset - (this.graphWidth + this.viewOffset - this.horizontalMargin - event.offsetX) / this.graphZoom;
+                    this.viewOffset = this.viewOffset - columnToGraphZoomRatio;
                 }
             } else {
                 this.graphZoom = this.graphZoom + 1;
 
-                this.viewOffset = this.viewOffset + (this.graphWidth + this.viewOffset - this.horizontalMargin - event.offsetX) / this.graphZoom;
+                this.viewOffset = this.viewOffset + columnToGraphZoomRatio;
             }
 
             if(this.graphZoom === this.xGridThreshold) {
@@ -126,11 +129,11 @@ export class ChartRenderer implements Renderer {
                 console.log('zoomed out, current offsetview: ', this.viewOffset)
                 
                 // WHY DOES THAT WORK?????
-                this.viewOffset = this.viewOffset - (this.graphWidth + this.viewOffset - this.horizontalMargin - event.offsetX) / this.graphZoom * 2;
+                this.viewOffset = this.viewOffset - columnToGraphZoomRatio / 2;
             } else if(this.graphZoom === this.xGridThreshold * 2) {
                 this.graphZoom = this.xGridThreshold + 1;
                 this.currentTimeSpan = this.currentTimeSpan / 2;
-                this.viewOffset = this.viewOffset + (this.graphWidth + this.viewOffset - this.horizontalMargin - event.offsetX) / this.graphZoom * 2;
+                this.viewOffset = this.viewOffset + columnToGraphZoomRatio * 2;
 
 
                 console.log('zoomed in, currentoffsetview: ', this.viewOffset)
@@ -162,7 +165,6 @@ export class ChartRenderer implements Renderer {
         })
 
         this.canvas.addEventListener('mousemove', (event: MouseEvent) => {
-            console.log((this.graphWidth + this.viewOffset - this.horizontalMargin - event.offsetX) / this.graphZoom);
             //console.log((this.graphWidth - this.horizontalMargin - event.offsetX)/ this.graphZoom, this.columns);
             if(this.mouseDown) {
                 if(this.viewOffset + event.movementX > 0) {
