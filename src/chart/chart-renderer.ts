@@ -10,7 +10,8 @@ export class ChartRenderer implements Renderer {
         this.canvas.width = canvas.offsetWidth;
         this.graphWidth = canvas.width;
         this.graphHeight = canvas.height;
-        this.graphZoom = 75;
+        this.scrollSpeed = 2;
+        this.graphZoom = 60;
 
         this.canvas.style.backgroundColor = "#252525";
         this.addCanvasListeners();
@@ -30,10 +31,7 @@ export class ChartRenderer implements Renderer {
     private horizontalMargin: number = 70;
     private verticalMargin: number = 70;
 
-    private mouseXPosition: number;
-    private mouseYPosition: number;
-
-    private xGridThreshold: number = 50;
+    private xGridThreshold: number = 48;
 
     private currentTimeSpan: number = 3600000; // the timespan that means what is the current time difference between two vertical lines
 
@@ -42,11 +40,8 @@ export class ChartRenderer implements Renderer {
     private viewOffset: number = 0;
 
     private mouseDown: boolean;
-    private mouseDownPosX: number;
-    private mouseUpPosX: number;
 
-    private columns: number;
-    
+    private scrollSpeed: number;
 
     public draw(timePassed: number): void {
         this.context.clearRect(0, 0, this.graphWidth, this.graphHeight);
@@ -58,7 +53,6 @@ export class ChartRenderer implements Renderer {
 
     drawGrid(): void {
         this.drawVerticalLines();
-        //this.drawMousePosition();
         this.drawTimeline();
     }
 
@@ -72,8 +66,6 @@ export class ChartRenderer implements Renderer {
                 currentColumn++;
             }
         }
-
-        this.columns = currentColumn;
     }
 
     private drawTimeline(): void {
@@ -101,37 +93,27 @@ export class ChartRenderer implements Renderer {
     }
 
     private addCanvasListeners(): void {
-
         // wheel event
         this.canvas.addEventListener('wheel', (event: WheelEvent) => {
-            const columnToGraphZoomRatio = (this.graphWidth + this.viewOffset - this.horizontalMargin - event.offsetX) / this.graphZoom;
+            const columnToGraphZoomRatio = (this.graphWidth + this.viewOffset - this.horizontalMargin - event.offsetX) / this.graphZoom * this.scrollSpeed;
 
-            if(event.deltaY > 0) {
-                if(this.graphZoom - 2 !== 30) {
-                    this.graphZoom = this.graphZoom - 1;
-
-                    // refactor this
-                    this.viewOffset = this.viewOffset - columnToGraphZoomRatio;
-                }
-            } else {
-                this.graphZoom = this.graphZoom + 1;
-
+            if(event.deltaY > 0 && (this.graphZoom - this.scrollSpeed > this.xGridThreshold && this.currentTimeSpan || this.currentTimeSpan !== 3600000)) {
+                this.graphZoom = this.graphZoom - this.scrollSpeed;
+                this.viewOffset = this.viewOffset - columnToGraphZoomRatio;
+            } else if(event.deltaY < 0) {
+                this.graphZoom = this.graphZoom + this.scrollSpeed;
                 this.viewOffset = this.viewOffset + columnToGraphZoomRatio;
             }
 
             if(this.graphZoom === this.xGridThreshold) {
                 if(this.currentTimeSpan === 3600000) {
-                    return;   
+                    return;
                 }
-
-                this.graphZoom = this.xGridThreshold * 2 - 1;
+                this.graphZoom = this.xGridThreshold * 2 - this.scrollSpeed;
                 this.currentTimeSpan = this.currentTimeSpan * 2;
-                console.log('zoomed out, current offsetview: ', this.viewOffset)
-                
-                // WHY DOES THAT WORK?????
                 this.viewOffset = this.viewOffset - columnToGraphZoomRatio / 2;
             } else if(this.graphZoom === this.xGridThreshold * 2) {
-                this.graphZoom = this.xGridThreshold + 1;
+                this.graphZoom = this.xGridThreshold + this.scrollSpeed;
                 this.currentTimeSpan = this.currentTimeSpan / 2;
                 this.viewOffset = this.viewOffset + columnToGraphZoomRatio * 2;
 
@@ -139,25 +121,15 @@ export class ChartRenderer implements Renderer {
                 console.log('zoomed in, currentoffsetview: ', this.viewOffset)
             }
 
-            // console.log('This is the current x scroll mouse position: ', event.offsetX);
-            // console.log('This is the middle of canvas: ', (this.graphWidth / 2));
-            // console.log('The max should be 375: ', (event.offsetX - (this.graphWidth / 2)) / (this.graphWidth / 2));
-
-            // this is to reset the offset if the view is maxed out
-            if(this.viewOffset < 0) {
-                this.viewOffset = 0;
-            }
+            this.blockViewOffset();
         })
 
-        // mousemove event
-        this.canvas.addEventListener('mousemove', (event: MouseEvent) => {
-            this.mouseXPosition = event.clientX;
-            this.mouseYPosition = event.clientY;
+        this.canvas.addEventListener('mouseout', (event: MouseEvent) => {
+            this.mouseDown = false;
         });
 
         this.canvas.addEventListener('mousedown', (event: MouseEvent) => {
             this.mouseDown = true;
-            this.mouseDownPosX = event.x;
         })
 
         this.canvas.addEventListener('mouseup', (event: MouseEvent) => {
@@ -165,12 +137,15 @@ export class ChartRenderer implements Renderer {
         })
 
         this.canvas.addEventListener('mousemove', (event: MouseEvent) => {
-            //console.log((this.graphWidth - this.horizontalMargin - event.offsetX)/ this.graphZoom, this.columns);
-            if(this.mouseDown) {
-                if(this.viewOffset + event.movementX > 0) {
-                    this.viewOffset = this.viewOffset + event.movementX;
-                }
+            if(this.viewOffset + event.movementX > 0 && this.mouseDown) {
+                this.viewOffset = this.viewOffset + event.movementX;
             }
         })
+    }
+
+    private blockViewOffset(): void {
+        if(this.viewOffset < 0) {
+            this.viewOffset = 0;
+        }
     }
 }
