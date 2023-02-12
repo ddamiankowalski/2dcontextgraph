@@ -4,8 +4,8 @@ export class ChartRenderer implements Renderer {
     constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
         this.context = context;
         this.canvas = canvas;
-        this.canvas.style.width = '100%';
-        this.canvas.style.height = '100%';
+        this.canvas.style.width = '850px';
+        this.canvas.style.height = '450px';
         this.canvas.height = canvas.offsetHeight;
         this.canvas.width = canvas.offsetWidth;
         this.graphWidth = canvas.width;
@@ -15,6 +15,11 @@ export class ChartRenderer implements Renderer {
         this.canvas.style.backgroundColor = "#252525";
         this.addCanvasListeners();
     }
+
+    /**
+     * My suggestion is to calculate the absolute canvas width (canvas.style.width - this.horizontalMargin)
+     * In current situation, this will leave
+     */
 
     private context: CanvasRenderingContext2D | undefined;
     private canvas: HTMLCanvasElement | undefined;
@@ -58,9 +63,11 @@ export class ChartRenderer implements Renderer {
         let currentColumn = 0;
         // todo, this is where we need to shuffle things around a bit
         for(let drawingXPosition = this.graphWidth; drawingXPosition + this.viewOffset > 0; drawingXPosition = drawingXPosition - this.graphZoom) {
-            this.drawLine(drawingXPosition + this.viewOffset - this.horizontalMargin, 0, drawingXPosition + this.viewOffset - this.horizontalMargin, this.graphHeight - this.verticalMargin);
-            this.drawLineTime(currentColumn, drawingXPosition + this.viewOffset);
-            currentColumn++;
+            if(drawingXPosition + this.viewOffset - this.horizontalMargin > 0) {
+                this.drawLine(drawingXPosition + this.viewOffset - this.horizontalMargin, 0, drawingXPosition + this.viewOffset - this.horizontalMargin, this.graphHeight - this.verticalMargin);
+                this.drawLineTime(currentColumn, drawingXPosition + this.viewOffset);
+                currentColumn++;
+            }
         }
     }
 
@@ -95,17 +102,40 @@ export class ChartRenderer implements Renderer {
             if(event.deltaY > 0) {
                 if(this.graphZoom - 2 !== 30) {
                     this.graphZoom = this.graphZoom - 1;
+                    this.viewOffset = this.viewOffset - 3;
                 }
             } else {
                 this.graphZoom = this.graphZoom + 1;
+                this.viewOffset = this.viewOffset + 3;
             }
 
             if(this.graphZoom === this.xGridThreshold) {
+                if(this.currentTimeSpan === 3600000) {
+                    return;   
+                }
+
                 this.graphZoom = this.xGridThreshold * 2 - 1;
                 this.currentTimeSpan = this.currentTimeSpan * 2;
+                console.log('zoomed out, current offsetview: ', this.viewOffset)
+                
+                // WHY DOES THAT WORK?????
+                this.viewOffset = this.viewOffset - 3 * 2;
             } else if(this.graphZoom === this.xGridThreshold * 2) {
                 this.graphZoom = this.xGridThreshold + 1;
                 this.currentTimeSpan = this.currentTimeSpan / 2;
+                this.viewOffset = this.viewOffset + 3 * 2;
+
+
+                console.log('zoomed in, currentoffsetview: ', this.viewOffset)
+            }
+
+            // console.log('This is the current x scroll mouse position: ', event.offsetX);
+            // console.log('This is the middle of canvas: ', (this.graphWidth / 2));
+            // console.log('The max should be 375: ', (event.offsetX - (this.graphWidth / 2)) / (this.graphWidth / 2));
+
+            // this is to reset the offset if the view is maxed out
+            if(this.viewOffset < 0) {
+                this.viewOffset = 0;
             }
         })
 
