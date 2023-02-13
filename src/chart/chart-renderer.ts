@@ -1,11 +1,12 @@
 import { Renderer } from '../interfaces/renderer';
+import { CanvasDimensions } from './canvas-dimensions';
 
 export class ChartRenderer implements Renderer {
     constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
-        this.context = context;
-        this.canvas = canvas;
-        this.canvas.style.width = '850px';
-        this.canvas.style.height = '450px';
+        this.initializeCanvasAndContext(context, canvas);
+
+        // this.canvas.style.width = '850px';
+        // this.canvas.style.height = '450px';
         this.canvas.height = canvas.offsetHeight;
         this.canvas.width = canvas.offsetWidth;
         this.graphWidth = canvas.width;
@@ -17,10 +18,14 @@ export class ChartRenderer implements Renderer {
         this.addCanvasListeners();
     }
 
-    /**
-     * My suggestion is to calculate the absolute canvas width (canvas.style.width - this.horizontalMargin)
-     * In current situation, this will leave
-     */
+    private dimensions: CanvasDimensions;
+
+    private initializeCanvasAndContext(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement): void {
+        this.context = context;
+        this.canvas = canvas;
+        this.dimensions = new CanvasDimensions(this.canvas);
+    }
+
 
     private context: CanvasRenderingContext2D | undefined;
     private canvas: HTMLCanvasElement | undefined;
@@ -44,11 +49,16 @@ export class ChartRenderer implements Renderer {
     private scrollSpeed: number;
 
     public draw(timePassed: number): void {
+        this.clearView();
         this.context.clearRect(0, 0, this.graphWidth, this.graphHeight);
 
         this.drawGrid();
         this.startTime = new Date().getTime();
         window.requestAnimationFrame(this.draw.bind(this));
+    }
+
+    private clearView(): void {
+        this.context.clearRect(0, 0, this.graphWidth, this.graphHeight);
     }
 
     drawGrid(): void {
