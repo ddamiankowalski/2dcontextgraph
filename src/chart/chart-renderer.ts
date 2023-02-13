@@ -62,15 +62,17 @@ export class ChartRenderer implements Renderer {
             const actualDrawingXPosition = drawingXPosition + this.viewOffset - this.horizontalMargin;
             const actualYStartPosition = 0;
             const actualYEndPosition = this.graphHeight - this.verticalMargin;
+            currentColumn++;
             
-            if(actualDrawingXPosition > 0) {
+            if(actualDrawingXPosition > 0 && actualDrawingXPosition < this.graphWidth + this.graphZoom) {
                 this.drawLine(actualDrawingXPosition, actualYStartPosition, actualDrawingXPosition, actualYEndPosition);
                 this.drawLineTime(currentColumn, actualDrawingXPosition);
                 this.drawSubLines(actualDrawingXPosition);
-                currentColumn++;
                 this.updateColumns();
             }
         }
+
+        console.log('This is the drawing offset: ', this.graphWidth + this.viewOffset, currentColumn)
     }
 
     private drawSubLines(xStartPosition: number): void {
