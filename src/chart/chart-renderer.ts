@@ -30,8 +30,6 @@ export class ChartRenderer implements Renderer {
 
     private startTime: number = new Date().getTime();
     
-    private viewOffset: number = 0;
-
     private mouseDown: boolean;
 
     private scrollSpeed: number;
@@ -54,8 +52,8 @@ export class ChartRenderer implements Renderer {
     private drawMainColumns(): void {
         const { width, height } = this.dimensions.getDimensions();
         let currentColumn = 0;
-        for(let drawingOffset = width; drawingOffset + this.viewOffset > 0; drawingOffset = drawingOffset - this.position.colsDistance) { 
-            const xDrawingPosition = drawingOffset + this.viewOffset - this.horizontalMargin;
+        for(let drawingOffset = width; drawingOffset + this.position.viewOffset > 0; drawingOffset = drawingOffset - this.position.colsDistance) { 
+            const xDrawingPosition = drawingOffset + this.position.viewOffset - this.horizontalMargin;
             const [ yStartDrawingPosition, yEndDrawingPosition ] = [0, height - this.verticalMargin];
 
             if(xDrawingPosition > 0 && xDrawingPosition < width + this.position.colsDistance) {
@@ -119,14 +117,14 @@ export class ChartRenderer implements Renderer {
         const graphWidth = this.dimensions.getWidth();
         // wheel event
         this.canvas.addEventListener('wheel', (event: WheelEvent) => {
-            const zoomOffsetSyncValue = (graphWidth + this.viewOffset - this.horizontalMargin - event.offsetX) / this.position.colsDistance * this.scrollSpeed;
+            const zoomOffsetSyncValue = (graphWidth + this.position.viewOffset - this.horizontalMargin - event.offsetX) / this.position.colsDistance * this.scrollSpeed;
 
             if(event.deltaY > 0 && (this.position.colsDistance - this.scrollSpeed > this.position.maxColsDistance && this.currentTimeSpan || this.currentTimeSpan !== 3600000)) {
                 this.position.colsDistance = this.position.colsDistance - this.scrollSpeed;
-                this.viewOffset = this.viewOffset - zoomOffsetSyncValue;
+                this.position.viewOffset = this.position.viewOffset - zoomOffsetSyncValue;
             } else if(event.deltaY < 0) {
                 this.position.colsDistance = this.position.colsDistance + this.scrollSpeed;
-                this.viewOffset = this.viewOffset + zoomOffsetSyncValue;
+                this.position.viewOffset = this.position.viewOffset + zoomOffsetSyncValue;
             }
 
             if(this.position.colsDistance === this.position.maxColsDistance) {
@@ -135,14 +133,14 @@ export class ChartRenderer implements Renderer {
                 }
                 this.position.colsDistance = this.position.maxColsDistance * 2 - this.scrollSpeed;
                 this.currentTimeSpan = this.currentTimeSpan * 2;
-                this.viewOffset = this.viewOffset - zoomOffsetSyncValue / 2;
+                this.position.viewOffset = this.position.viewOffset - zoomOffsetSyncValue / 2;
             } else if(this.position.colsDistance === this.position.maxColsDistance * 2) {
                 this.position.colsDistance = this.position.maxColsDistance + this.scrollSpeed;
                 this.currentTimeSpan = this.currentTimeSpan / 2;
-                this.viewOffset = this.viewOffset + zoomOffsetSyncValue * 2;
+                this.position.viewOffset = this.position.viewOffset + zoomOffsetSyncValue * 2;
 
 
-                console.log('zoomed in, currentoffsetview: ', this.viewOffset)
+                console.log('zoomed in, currentoffsetview: ', this.position.viewOffset)
             }
 
             this.blockViewOffset();
@@ -161,15 +159,15 @@ export class ChartRenderer implements Renderer {
         })
 
         this.canvas.addEventListener('mousemove', (event: MouseEvent) => {
-            if(this.viewOffset + event.movementX > 0 && this.mouseDown) {
-                this.viewOffset = this.viewOffset + event.movementX;
+            if(this.position.viewOffset + event.movementX > 0 && this.mouseDown) {
+                this.position.viewOffset = this.position.viewOffset + event.movementX;
             }
         })
     }
 
     private blockViewOffset(): void {
-        if(this.viewOffset <= 0) {
-            this.viewOffset = 0;
+        if(this.position.viewOffset <= 0) {
+            this.position.viewOffset = 0;
         }
     }
 }
