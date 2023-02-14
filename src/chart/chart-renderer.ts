@@ -74,13 +74,13 @@ export class ChartRenderer implements Renderer {
     private drawLineTime(): void {
         const yDrawingPosition = this.dimensions.getHeight() - 50;
 
-        this.context.font = "12px sans-serif";
+        this.context.font = "8px sans-serif";
         this.context.fillStyle = '#A9A9A9';
 
         for(let currentLineTime = 0; currentLineTime < this.chartLines.length; currentLineTime++) {
-            const date = new Date();
-            date.setHours(date.getHours() - this.chartLines[currentLineTime].getTime() * this.currentTimeSpanMult);
-            this.context.fillText(date.getHours().toString(), this.chartLines[currentLineTime].getXPosition() - 5, yDrawingPosition);
+            const timeDiff = this.startTime - this.currentTimeSpanMult * this.currentTimeSpan * this.chartLines[currentLineTime].getTime();
+            const date = new Date(timeDiff);
+            this.context.fillText(`${date.getHours()} : ${date.getMinutes()}`, this.chartLines[currentLineTime].getXPosition() - 10, yDrawingPosition);
 
         }        
     }
