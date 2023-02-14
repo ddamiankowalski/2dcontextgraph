@@ -4,13 +4,6 @@ import { CanvasDimensions } from './canvas-dimensions';
 export class ChartRenderer implements Renderer {
     constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
         this.initializeCanvasAndContext(context, canvas);
-
-        // this.canvas.style.width = '850px';
-        // this.canvas.style.height = '450px';
-        this.canvas.height = canvas.offsetHeight;
-        this.canvas.width = canvas.offsetWidth;
-        this.graphWidth = canvas.width;
-        this.graphHeight = canvas.height;
         this.scrollSpeed = 10;
         this.graphZoom = 130;
 
@@ -29,8 +22,6 @@ export class ChartRenderer implements Renderer {
 
     private context: CanvasRenderingContext2D | undefined;
     private canvas: HTMLCanvasElement | undefined;
-    private graphWidth: number;
-    private graphHeight: number;
     private graphZoom: number;
 
     private horizontalMargin: number = 70;
@@ -50,49 +41,48 @@ export class ChartRenderer implements Renderer {
 
     public draw(timePassed: number): void {
         this.clearView();
-        this.context.clearRect(0, 0, this.graphWidth, this.graphHeight);
-
         this.drawGrid();
-        this.startTime = new Date().getTime();
         window.requestAnimationFrame(this.draw.bind(this));
     }
 
     private clearView(): void {
-        this.context.clearRect(0, 0, this.graphWidth, this.graphHeight);
+        this.context.clearRect(0, 0, this.dimensions.getWidth(), this.dimensions.getHeight());
     }
 
     drawGrid(): void {
-        this.drawVerticalLines();
+        this.drawMainColumns();
         this.drawTimeline();
     }
 
-    private drawVerticalLines(): void {
+    private drawMainColumns(): void {
+        const { width, height } = this.dimensions.getDimensions();
         let currentColumn = 0;
-        for(let drawingXPosition = this.graphWidth; drawingXPosition + this.viewOffset > 0; drawingXPosition = drawingXPosition - this.graphZoom) { 
-            const actualDrawingXPosition = drawingXPosition + this.viewOffset - this.horizontalMargin;
-            const actualYStartPosition = 0;
-            const actualYEndPosition = this.graphHeight - this.verticalMargin;
+        for(let drawingOffset = width; drawingOffset + this.viewOffset > 0; drawingOffset = drawingOffset - this.graphZoom) { 
+            const xDrawingPosition = drawingOffset + this.viewOffset - this.horizontalMargin;
+            const [ yStartDrawingPosition, yEndDrawingPosition ] = [0, height - this.verticalMargin];
             currentColumn++;
-            
-            if(actualDrawingXPosition > 0 && actualDrawingXPosition < this.graphWidth + this.graphZoom) {
-                this.drawLine(actualDrawingXPosition, actualYStartPosition, actualDrawingXPosition, actualYEndPosition);
-                this.drawLineTime(currentColumn, actualDrawingXPosition);
-                this.drawSubLines(actualDrawingXPosition);
+
+            if(xDrawingPosition > 0 && xDrawingPosition < width + this.graphZoom) {
+                this.drawLine(xDrawingPosition, yStartDrawingPosition, xDrawingPosition, yEndDrawingPosition);
+                this.drawLineTime(currentColumn, xDrawingPosition);
+                this.drawSubLines(xDrawingPosition);
                 this.updateColumns();
             }
         }
 
-        console.log('This is the drawing offset: ', this.graphWidth + this.viewOffset, currentColumn)
+        console.log(currentColumn)
     }
 
     private drawSubLines(xStartPosition: number): void {
-        let startX = xStartPosition;
-        const gap = this.graphZoom / 5;
+        let drawingOffset = xStartPosition;
+        const columnQuantity = 5;
+        const gap = this.graphZoom / columnQuantity;
+        const graphHeight = this.dimensions.getHeight();
 
-        for(let currentSubLine = 0; currentSubLine < 5; currentSubLine++) {
-            const actualXStart = startX - gap;
-            this.drawLine(actualXStart, 0, actualXStart, this.graphHeight - this.verticalMargin);
-            startX = startX - gap;
+        for(let currentSubLine = 0; currentSubLine < columnQuantity; currentSubLine++) {
+            const actualXStart = drawingOffset - gap;
+            this.drawLine(actualXStart, 0, actualXStart, graphHeight - this.verticalMargin);
+            drawingOffset = drawingOffset - gap;
         }
     }
 
@@ -101,10 +91,11 @@ export class ChartRenderer implements Renderer {
     }
 
     private drawTimeline(): void {
+        const { width, height } = this.dimensions.getDimensions();
         this.context.font = "12px sans-serif";
         this.context.fillStyle = '#A9A9A9';
-        this.context.fillText(this.startTime.toString(), this.graphWidth - 100, this.graphHeight - 20);
-        this.context.fillText('Current time span in min: ' + (this.currentTimeSpan / 1000 / 60), this.graphWidth / 2 - 100, this.graphHeight - 20);
+        this.context.fillText(this.startTime.toString(), width - 100, height - 20);
+        this.context.fillText('Current time span in min: ' + (this.currentTimeSpan / 1000 / 60), width / 2 - 100, height - 20);
     }
 
     drawLine(xStart: number, yStart: number, xEnd: number, yEnd: number): void {
@@ -117,27 +108,28 @@ export class ChartRenderer implements Renderer {
     }
 
     private drawLineTime(currentColumn: number, xPosition: number): void {
-        const currentTime = new Date().getHours();
+        const graphHeight = this.dimensions.getHeight();
 
         this.context.font = "12px sans-serif";
         this.context.fillStyle = '#A9A9A9';
 
         const date = new Date();
         date.setHours(date.getHours() - currentColumn);
-        this.context.fillText(date.getHours().toString(), xPosition - 5, this.graphHeight - 50);
+        this.context.fillText(date.getHours().toString(), xPosition - 5, graphHeight - 50);
     }
 
     private addCanvasListeners(): void {
+        const graphWidth = this.dimensions.getWidth();
         // wheel event
         this.canvas.addEventListener('wheel', (event: WheelEvent) => {
-            const columnToGraphZoomRatio = (this.graphWidth + this.viewOffset - this.horizontalMargin - event.offsetX) / this.graphZoom * this.scrollSpeed;
+            const zoomOffsetSyncValue = (graphWidth + this.viewOffset - this.horizontalMargin - event.offsetX) / this.graphZoom * this.scrollSpeed;
 
             if(event.deltaY > 0 && (this.graphZoom - this.scrollSpeed > this.xGridThreshold && this.currentTimeSpan || this.currentTimeSpan !== 3600000)) {
                 this.graphZoom = this.graphZoom - this.scrollSpeed;
-                this.viewOffset = this.viewOffset - columnToGraphZoomRatio;
+                this.viewOffset = this.viewOffset - zoomOffsetSyncValue;
             } else if(event.deltaY < 0) {
                 this.graphZoom = this.graphZoom + this.scrollSpeed;
-                this.viewOffset = this.viewOffset + columnToGraphZoomRatio;
+                this.viewOffset = this.viewOffset + zoomOffsetSyncValue;
             }
 
             if(this.graphZoom === this.xGridThreshold) {
@@ -146,11 +138,11 @@ export class ChartRenderer implements Renderer {
                 }
                 this.graphZoom = this.xGridThreshold * 2 - this.scrollSpeed;
                 this.currentTimeSpan = this.currentTimeSpan * 2;
-                this.viewOffset = this.viewOffset - columnToGraphZoomRatio / 2;
+                this.viewOffset = this.viewOffset - zoomOffsetSyncValue / 2;
             } else if(this.graphZoom === this.xGridThreshold * 2) {
                 this.graphZoom = this.xGridThreshold + this.scrollSpeed;
                 this.currentTimeSpan = this.currentTimeSpan / 2;
-                this.viewOffset = this.viewOffset + columnToGraphZoomRatio * 2;
+                this.viewOffset = this.viewOffset + zoomOffsetSyncValue * 2;
 
 
                 console.log('zoomed in, currentoffsetview: ', this.viewOffset)
@@ -179,7 +171,7 @@ export class ChartRenderer implements Renderer {
     }
 
     private blockViewOffset(): void {
-        if(this.viewOffset < 0) {
+        if(this.viewOffset <= 0) {
             this.viewOffset = 0;
         }
     }
