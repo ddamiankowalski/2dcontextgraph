@@ -1,34 +1,31 @@
 import { Renderer } from '../interfaces/renderer';
 import { CanvasDimensions } from './canvas-dimensions';
-
+import { ChartPosition } from './chart-position';
 export class ChartRenderer implements Renderer {
     constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
         this.initializeCanvasAndContext(context, canvas);
         this.scrollSpeed = 10;
-        this.graphZoom = 130;
 
         this.canvas.style.backgroundColor = "#252525";
         this.addCanvasListeners();
     }
 
     private dimensions: CanvasDimensions;
+    private position: ChartPosition;
 
     private initializeCanvasAndContext(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement): void {
         this.context = context;
         this.canvas = canvas;
         this.dimensions = new CanvasDimensions(this.canvas);
+        this.position = new ChartPosition(130, 130);
     }
 
 
     private context: CanvasRenderingContext2D | undefined;
     private canvas: HTMLCanvasElement | undefined;
-    private graphZoom: number;
 
     private horizontalMargin: number = 70;
     private verticalMargin: number = 70;
-
-    private xGridThreshold: number = 130;
-
     private currentTimeSpan: number = 3600000; // the timespan that means what is the current time difference between two vertical lines
 
     private startTime: number = new Date().getTime();
@@ -57,16 +54,16 @@ export class ChartRenderer implements Renderer {
     private drawMainColumns(): void {
         const { width, height } = this.dimensions.getDimensions();
         let currentColumn = 0;
-        for(let drawingOffset = width; drawingOffset + this.viewOffset > 0; drawingOffset = drawingOffset - this.graphZoom) { 
+        for(let drawingOffset = width; drawingOffset + this.viewOffset > 0; drawingOffset = drawingOffset - this.position.colsDistance) { 
             const xDrawingPosition = drawingOffset + this.viewOffset - this.horizontalMargin;
             const [ yStartDrawingPosition, yEndDrawingPosition ] = [0, height - this.verticalMargin];
-            currentColumn++;
 
-            if(xDrawingPosition > 0 && xDrawingPosition < width + this.graphZoom) {
+            if(xDrawingPosition > 0 && xDrawingPosition < width + this.position.colsDistance) {
                 this.drawLine(xDrawingPosition, yStartDrawingPosition, xDrawingPosition, yEndDrawingPosition);
                 this.drawLineTime(currentColumn, xDrawingPosition);
                 this.drawSubLines(xDrawingPosition);
                 this.updateColumns();
+                currentColumn++;
             }
         }
 
@@ -76,7 +73,7 @@ export class ChartRenderer implements Renderer {
     private drawSubLines(xStartPosition: number): void {
         let drawingOffset = xStartPosition;
         const columnQuantity = 5;
-        const gap = this.graphZoom / columnQuantity;
+        const gap = this.position.colsDistance / columnQuantity;
         const graphHeight = this.dimensions.getHeight();
 
         for(let currentSubLine = 0; currentSubLine < columnQuantity; currentSubLine++) {
@@ -122,25 +119,25 @@ export class ChartRenderer implements Renderer {
         const graphWidth = this.dimensions.getWidth();
         // wheel event
         this.canvas.addEventListener('wheel', (event: WheelEvent) => {
-            const zoomOffsetSyncValue = (graphWidth + this.viewOffset - this.horizontalMargin - event.offsetX) / this.graphZoom * this.scrollSpeed;
+            const zoomOffsetSyncValue = (graphWidth + this.viewOffset - this.horizontalMargin - event.offsetX) / this.position.colsDistance * this.scrollSpeed;
 
-            if(event.deltaY > 0 && (this.graphZoom - this.scrollSpeed > this.xGridThreshold && this.currentTimeSpan || this.currentTimeSpan !== 3600000)) {
-                this.graphZoom = this.graphZoom - this.scrollSpeed;
+            if(event.deltaY > 0 && (this.position.colsDistance - this.scrollSpeed > this.position.maxColsDistance && this.currentTimeSpan || this.currentTimeSpan !== 3600000)) {
+                this.position.colsDistance = this.position.colsDistance - this.scrollSpeed;
                 this.viewOffset = this.viewOffset - zoomOffsetSyncValue;
             } else if(event.deltaY < 0) {
-                this.graphZoom = this.graphZoom + this.scrollSpeed;
+                this.position.colsDistance = this.position.colsDistance + this.scrollSpeed;
                 this.viewOffset = this.viewOffset + zoomOffsetSyncValue;
             }
 
-            if(this.graphZoom === this.xGridThreshold) {
+            if(this.position.colsDistance === this.position.maxColsDistance) {
                 if(this.currentTimeSpan === 3600000) {
                     return;
                 }
-                this.graphZoom = this.xGridThreshold * 2 - this.scrollSpeed;
+                this.position.colsDistance = this.position.maxColsDistance * 2 - this.scrollSpeed;
                 this.currentTimeSpan = this.currentTimeSpan * 2;
                 this.viewOffset = this.viewOffset - zoomOffsetSyncValue / 2;
-            } else if(this.graphZoom === this.xGridThreshold * 2) {
-                this.graphZoom = this.xGridThreshold + this.scrollSpeed;
+            } else if(this.position.colsDistance === this.position.maxColsDistance * 2) {
+                this.position.colsDistance = this.position.maxColsDistance + this.scrollSpeed;
                 this.currentTimeSpan = this.currentTimeSpan / 2;
                 this.viewOffset = this.viewOffset + zoomOffsetSyncValue * 2;
 

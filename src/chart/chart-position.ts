@@ -1,12 +1,10 @@
 export class ChartPosition {
-    constructor(canvas: HTMLCanvasElement, initialColsDist: number, maxZoomColsDistance: number) {
-        this.canvas = canvas;
+    constructor(initialColsDist: number, maxColsDistance: number) {
         this._colsDistance = initialColsDist;
-        this._maxColsDistance = maxZoomColsDistance;
+        this._maxColsDistance = maxColsDistance;
         this._viewOffset = 0;
     }
 
-    private canvas: HTMLCanvasElement;
     private _colsDistance: number;
     private _maxColsDistance: number;
     private _viewOffset;
