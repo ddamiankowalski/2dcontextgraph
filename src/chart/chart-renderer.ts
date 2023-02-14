@@ -1,6 +1,7 @@
 import { Renderer } from '../interfaces/renderer';
 import { CanvasDimensions } from './canvas-dimensions';
 import { ChartPosition } from './chart-position';
+import { ChartLine } from './chartline'; 
 export class ChartRenderer implements Renderer {
     constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
         this.initializeCanvasAndContext(context, canvas);
@@ -12,6 +13,7 @@ export class ChartRenderer implements Renderer {
 
     private dimensions: CanvasDimensions;
     private position: ChartPosition;
+    private chartLines: ChartLine[];
 
     private initializeCanvasAndContext(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement): void {
         this.context = context;
@@ -27,6 +29,7 @@ export class ChartRenderer implements Renderer {
     private horizontalMargin: number = 70;
     private verticalMargin: number = 70;
     private currentTimeSpan: number = 3600000; // the timespan that means what is the current time difference between two vertical lines
+    private currentTimeSpanMult: number = 1;
 
     private startTime: number = new Date().getTime();
     
@@ -41,6 +44,7 @@ export class ChartRenderer implements Renderer {
     }
 
     private clearView(): void {
+        this.chartLines = [];
         this.context.clearRect(0, 0, this.dimensions.getWidth(), this.dimensions.getHeight());
     }
 
@@ -55,17 +59,30 @@ export class ChartRenderer implements Renderer {
         for(let drawingOffset = width; drawingOffset + this.position.viewOffset > 0; drawingOffset = drawingOffset - this.position.colsDistance) { 
             const xDrawingPosition = drawingOffset + this.position.viewOffset - this.horizontalMargin;
             const [ yStartDrawingPosition, yEndDrawingPosition ] = [0, height - this.verticalMargin];
+            currentColumn++;
 
             if(xDrawingPosition > 0 && xDrawingPosition < width + this.position.colsDistance) {
                 this.drawLine(xDrawingPosition, yStartDrawingPosition, xDrawingPosition, yEndDrawingPosition);
-                this.drawLineTime(currentColumn, xDrawingPosition);
                 this.drawSubLines(xDrawingPosition);
-                this.updateColumns();
-                currentColumn++;
+                this.updateColumns(currentColumn, xDrawingPosition);
             }
         }
 
-        console.log(currentColumn)
+        this.drawLineTime();
+    }
+
+    private drawLineTime(): void {
+        const yDrawingPosition = this.dimensions.getHeight() - 50;
+
+        this.context.font = "12px sans-serif";
+        this.context.fillStyle = '#A9A9A9';
+
+        for(let currentLineTime = 0; currentLineTime < this.chartLines.length; currentLineTime++) {
+            const date = new Date();
+            date.setHours(date.getHours() - this.chartLines[currentLineTime].getTime() * this.currentTimeSpanMult);
+            this.context.fillText(date.getHours().toString(), this.chartLines[currentLineTime].getXPosition() - 5, yDrawingPosition);
+
+        }        
     }
 
     private drawSubLines(xStartPosition: number): void {
@@ -81,8 +98,8 @@ export class ChartRenderer implements Renderer {
         }
     }
 
-    private updateColumns(): void {
-        // this is where all the columns will be updated
+    private updateColumns(columnNumber: number, xPosition: number): void {
+        this.chartLines.push(new ChartLine(columnNumber, xPosition));
     }
 
     private drawTimeline(): void {
@@ -100,17 +117,6 @@ export class ChartRenderer implements Renderer {
         this.context.strokeStyle = '#A9A9A9';
         this.context.lineWidth = 1;
         this.context.stroke();
-    }
-
-    private drawLineTime(currentColumn: number, xPosition: number): void {
-        const graphHeight = this.dimensions.getHeight();
-
-        this.context.font = "12px sans-serif";
-        this.context.fillStyle = '#A9A9A9';
-
-        const date = new Date();
-        date.setHours(date.getHours() - currentColumn);
-        this.context.fillText(date.getHours().toString(), xPosition - 5, graphHeight - 50);
     }
 
     private addCanvasListeners(): void {
@@ -134,11 +140,13 @@ export class ChartRenderer implements Renderer {
                 this.position.colsDistance = this.position.maxColsDistance * 2 - this.scrollSpeed;
                 this.currentTimeSpan = this.currentTimeSpan * 2;
                 this.position.viewOffset = this.position.viewOffset - zoomOffsetSyncValue / 2;
+                this.currentTimeSpanMult = this.currentTimeSpanMult * 2;
+
             } else if(this.position.colsDistance === this.position.maxColsDistance * 2) {
                 this.position.colsDistance = this.position.maxColsDistance + this.scrollSpeed;
                 this.currentTimeSpan = this.currentTimeSpan / 2;
                 this.position.viewOffset = this.position.viewOffset + zoomOffsetSyncValue * 2;
-
+                this.currentTimeSpanMult = this.currentTimeSpanMult / 2;
 
                 console.log('zoomed in, currentoffsetview: ', this.position.viewOffset)
             }

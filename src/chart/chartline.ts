@@ -1,7 +1,17 @@
 export class ChartLine {
-    constructor(context: CanvasRenderingContext2D) {
-        this.context = context;
+    constructor(time: number, xPosition: number) {
+        this.time = time;
+        this.xPosition = xPosition;
     }
 
-    private context: CanvasRenderingContext2D | undefined;
+    private time: number;
+    private xPosition: number;
+
+    public getTime(): number {
+        return this.time;
+    }
+
+    public getXPosition(): number {
+        return this.xPosition;
+    }
 }
