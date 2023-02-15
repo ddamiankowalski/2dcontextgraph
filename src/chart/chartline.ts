@@ -1,14 +1,14 @@
 export class ChartLine {
-    constructor(time: number, xPosition: number) {
-        this.time = time;
+    constructor(columnOffset: number, xPosition: number) {
+        this.columnOffset = columnOffset;
         this.xPosition = xPosition;
     }
 
-    private time: number;
+    private columnOffset: number;
     private xPosition: number;
 
-    public getTime(): number {
-        return this.time;
+    public getColumnOffset(): number {
+        return this.columnOffset;
     }
 
     public getXPosition(): number {

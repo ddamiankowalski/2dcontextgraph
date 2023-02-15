@@ -2,6 +2,7 @@ import { Renderer } from '../interfaces/renderer';
 import { CanvasDimensions } from './canvas-dimensions';
 import { ChartPosition } from './chart-position';
 import { ChartLine } from './chartline'; 
+import { ChartTime } from './chart-time';
 export class ChartRenderer implements Renderer {
     constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
         this.initializeCanvasAndContext(context, canvas);
@@ -14,12 +15,14 @@ export class ChartRenderer implements Renderer {
     private dimensions: CanvasDimensions;
     private position: ChartPosition;
     private chartLines: ChartLine[];
+    private time: ChartTime;
 
     private initializeCanvasAndContext(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement): void {
         this.context = context;
         this.canvas = canvas;
         this.dimensions = new CanvasDimensions(this.canvas);
         this.position = new ChartPosition(130, 130);
+        this.time = new ChartTime();
     }
 
 
@@ -78,9 +81,9 @@ export class ChartRenderer implements Renderer {
         this.context.fillStyle = '#A9A9A9';
 
         for(let currentLineTime = 0; currentLineTime < this.chartLines.length; currentLineTime++) {
-            const timeDiff = this.startTime - this.currentTimeSpanMult * this.currentTimeSpan * this.chartLines[currentLineTime].getTime();
-            const date = new Date(timeDiff);
-            this.context.fillText(`${date.getHours()} : ${date.getMinutes()}`, this.chartLines[currentLineTime].getXPosition() - 10, yDrawingPosition);
+            const columnOffset =  this.chartLines[currentLineTime].getColumnOffset();
+            const dateToRender = this.time.getTime(columnOffset);
+            this.context.fillText(dateToRender, this.chartLines[currentLineTime].getXPosition() - 10, yDrawingPosition);
 
         }        
     }
@@ -99,6 +102,7 @@ export class ChartRenderer implements Renderer {
     }
 
     private updateColumns(columnNumber: number, xPosition: number): void {
+        // here inside chart line we will probably mock a random candle and preview it
         this.chartLines.push(new ChartLine(columnNumber, xPosition));
     }
 
@@ -107,7 +111,7 @@ export class ChartRenderer implements Renderer {
         this.context.font = "12px sans-serif";
         this.context.fillStyle = '#A9A9A9';
         this.context.fillText(this.startTime.toString(), width - 100, height - 20);
-        this.context.fillText('Current time span in min: ' + (this.currentTimeSpan / 1000 / 60), width / 2 - 100, height - 20);
+        this.context.fillText('Current time span in min: ' + (this.time.getCurrentTimeSpan() / 1000 / 60), width / 2 - 100, height - 20);
     }
 
     drawLine(xStart: number, yStart: number, xEnd: number, yEnd: number): void {
@@ -125,26 +129,29 @@ export class ChartRenderer implements Renderer {
         this.canvas.addEventListener('wheel', (event: WheelEvent) => {
             const zoomOffsetSyncValue = (graphWidth + this.position.viewOffset - this.horizontalMargin - event.offsetX) / this.position.colsDistance * this.scrollSpeed;
 
-            if(event.deltaY > 0 && (this.position.colsDistance - this.scrollSpeed > this.position.maxColsDistance && this.currentTimeSpan || this.currentTimeSpan !== 3600000)) {
+            if(event.deltaY > 0 && (this.position.colsDistance - this.scrollSpeed > this.position.maxColsDistance || !this.time.checkIfMaxTimeSpan())) {
                 this.position.colsDistance = this.position.colsDistance - this.scrollSpeed;
                 this.position.viewOffset = this.position.viewOffset - zoomOffsetSyncValue;
-            } else if(event.deltaY < 0) {
+            } else if(event.deltaY < 0 && (!this.time.checkIfMinTimeSpan() || this.position.colsDistance + this.scrollSpeed !== this.position.maxColsDistance * 2)) {
                 this.position.colsDistance = this.position.colsDistance + this.scrollSpeed;
                 this.position.viewOffset = this.position.viewOffset + zoomOffsetSyncValue;
             }
 
             if(this.position.colsDistance === this.position.maxColsDistance) {
-                if(this.currentTimeSpan === 3600000) {
+                if(this.time.checkIfMaxTimeSpan()) {
                     return;
                 }
                 this.position.colsDistance = this.position.maxColsDistance * 2 - this.scrollSpeed;
-                this.currentTimeSpan = this.currentTimeSpan * 2;
+                this.time.enlargeTimeSpan();
                 this.position.viewOffset = this.position.viewOffset - zoomOffsetSyncValue / 2;
                 this.currentTimeSpanMult = this.currentTimeSpanMult * 2;
 
             } else if(this.position.colsDistance === this.position.maxColsDistance * 2) {
+                // if(this.currentTimeSpan === 1800000) {
+                //     return;
+                // }
                 this.position.colsDistance = this.position.maxColsDistance + this.scrollSpeed;
-                this.currentTimeSpan = this.currentTimeSpan / 2;
+                this.time.reduceTimeSpan();
                 this.position.viewOffset = this.position.viewOffset + zoomOffsetSyncValue * 2;
                 this.currentTimeSpanMult = this.currentTimeSpanMult / 2;
 
