@@ -82,9 +82,10 @@ export class ChartRenderer implements Renderer {
 
         for(let currentLineTime = 0; currentLineTime < this.chartLines.length; currentLineTime++) {
             const columnOffset =  this.chartLines[currentLineTime].getColumnOffset();
-            const dateToRender = this.time.getTime(columnOffset);
-            this.context.fillText(dateToRender, this.chartLines[currentLineTime].getXPosition() - 10, yDrawingPosition);
-
+            if(columnOffset) {
+                const dateToRender = this.time.getTime(columnOffset);
+                this.context.fillText(dateToRender, this.chartLines[currentLineTime].getXPosition() - 10, yDrawingPosition);
+            }
         }        
     }
 
@@ -97,13 +98,14 @@ export class ChartRenderer implements Renderer {
         for(let currentSubLine = 0; currentSubLine < columnQuantity; currentSubLine++) {
             const actualXStart = drawingOffset - gap;
             this.drawLine(actualXStart, 0, actualXStart, graphHeight - this.verticalMargin);
+            this.updateColumns(null, actualXStart);
             drawingOffset = drawingOffset - gap;
         }
     }
 
     private updateColumns(columnNumber: number, xPosition: number): void {
         // here inside chart line we will probably mock a random candle and preview it
-        this.chartLines.push(new ChartLine(columnNumber, xPosition));
+        this.chartLines.push(new ChartLine(columnNumber, xPosition, this.context));
     }
 
     private drawTimeline(): void {
