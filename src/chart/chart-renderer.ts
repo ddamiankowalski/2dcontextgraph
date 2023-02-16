@@ -145,12 +145,12 @@ export class ChartRenderer implements Renderer {
                 this.position.colsDistance = this.position.colsDistance - this.scrollSpeed;
                 this.position.viewOffset = this.position.viewOffset - zoomOffsetSyncValue;
 
-                this.zoom = this.zoom - .15;
+                this.zoom = this.zoom - .1;
             } else if(event.deltaY < 0 && (!this.time.checkIfMinTimeSpan() || this.position.colsDistance + this.scrollSpeed !== this.position.maxColsDistance * 2)) {
                 this.position.colsDistance = this.position.colsDistance + this.scrollSpeed;
                 this.position.viewOffset = this.position.viewOffset + zoomOffsetSyncValue;
 
-                this.zoom = this.zoom + .15;
+                this.zoom = this.zoom + .1;
             }
 
             if(this.position.colsDistance === this.position.maxColsDistance) {

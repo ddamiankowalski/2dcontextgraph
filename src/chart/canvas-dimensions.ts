@@ -28,7 +28,7 @@ export class CanvasDimensions {
         this.dimensions.width = this.canvas.offsetWidth;
     }
 
-    private setCanvasStyleWidthAndHeight(width: number = 850, height: number = 450): void {
+    private setCanvasStyleWidthAndHeight(width: number = 1020, height: number = 750): void {
         this.canvas.style.width = `${width}px`;
         this.canvas.style.height = `${height}px`;
     }
