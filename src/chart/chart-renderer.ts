@@ -32,6 +32,7 @@ export class ChartRenderer implements Renderer {
     private horizontalMargin: number = 70;
     private verticalMargin: number = 70;
     private currentTimeSpanMult: number = 1;
+    private zoom: number = 1;
 
     private candlesInInterval: number = 60;
 
@@ -79,18 +80,18 @@ export class ChartRenderer implements Renderer {
     private addCandles(xMainColumnDrawingPosition: number): void {
         const intervalCols = this.position.colsDistance / this.candlesInInterval;
         for(let candle = 0; candle < this.candlesInInterval; candle++) {
-            this.candles.push(new Candle(xMainColumnDrawingPosition - candle * intervalCols, this.context))
+            this.candles.push(new Candle(xMainColumnDrawingPosition - candle * intervalCols, this.zoom, this.context))
         }
     }
 
     private drawLineTime(columnOffset: number): void {
         const yDrawingPosition = this.dimensions.getHeight() - 50;
 
-        this.context.font = "8px sans-serif";
+        this.context.font = "10px sans-serif";
         this.context.fillStyle = '#A9A9A9';
 
         for(let currentLineTime = 0; currentLineTime < this.candles.length; currentLineTime++) {
-            if(currentLineTime === 0 || currentLineTime % 60 === 0) {
+            if(currentLineTime % 60 === 0) {
                 if(columnOffset) {
                     const dateToRender = this.time.getTime(columnOffset);
                     this.context.fillText(dateToRender, this.candles[currentLineTime].getXPosition() - 10, yDrawingPosition);
@@ -119,7 +120,7 @@ export class ChartRenderer implements Renderer {
 
     private drawTimeline(): void {
         const { width, height } = this.dimensions.getDimensions();
-        this.context.font = "12px sans-serif";
+        this.context.font = "14px sans-serif";
         this.context.fillStyle = '#A9A9A9';
         this.context.fillText(this.startTime.toString(), width - 100, height - 20);
         this.context.fillText('Current time span in min: ' + (this.time.getCurrentTimeSpan() / 1000 / 60), width / 2 - 100, height - 20);
@@ -143,9 +144,13 @@ export class ChartRenderer implements Renderer {
             if(event.deltaY > 0 && (this.position.colsDistance - this.scrollSpeed > this.position.maxColsDistance || !this.time.checkIfMaxTimeSpan())) {
                 this.position.colsDistance = this.position.colsDistance - this.scrollSpeed;
                 this.position.viewOffset = this.position.viewOffset - zoomOffsetSyncValue;
+
+                this.zoom = this.zoom - .15;
             } else if(event.deltaY < 0 && (!this.time.checkIfMinTimeSpan() || this.position.colsDistance + this.scrollSpeed !== this.position.maxColsDistance * 2)) {
                 this.position.colsDistance = this.position.colsDistance + this.scrollSpeed;
                 this.position.viewOffset = this.position.viewOffset + zoomOffsetSyncValue;
+
+                this.zoom = this.zoom + .15;
             }
 
             if(this.position.colsDistance === this.position.maxColsDistance) {
