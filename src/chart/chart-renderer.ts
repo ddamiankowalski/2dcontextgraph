@@ -1,7 +1,7 @@
 import { Renderer } from '../interfaces/renderer';
 import { CanvasDimensions } from './canvas-dimensions';
 import { ChartPosition } from './chart-position';
-import { ChartLine } from './chartline'; 
+import { Candle } from './candle'; 
 import { ChartTime } from './chart-time';
 export class ChartRenderer implements Renderer {
     constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
@@ -14,14 +14,14 @@ export class ChartRenderer implements Renderer {
 
     private dimensions: CanvasDimensions;
     private position: ChartPosition;
-    private chartLines: ChartLine[];
+    private candles: Candle[];
     private time: ChartTime;
 
     private initializeCanvasAndContext(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement): void {
         this.context = context;
         this.canvas = canvas;
         this.dimensions = new CanvasDimensions(this.canvas);
-        this.position = new ChartPosition(130, 130);
+        this.position = new ChartPosition(300, 300);
         this.time = new ChartTime();
     }
 
@@ -31,8 +31,9 @@ export class ChartRenderer implements Renderer {
 
     private horizontalMargin: number = 70;
     private verticalMargin: number = 70;
-    private currentTimeSpan: number = 3600000; // the timespan that means what is the current time difference between two vertical lines
     private currentTimeSpanMult: number = 1;
+
+    private candlesInInterval: number = 60;
 
     private startTime: number = new Date().getTime();
     
@@ -47,7 +48,7 @@ export class ChartRenderer implements Renderer {
     }
 
     private clearView(): void {
-        this.chartLines = [];
+        this.candles = [];
         this.context.clearRect(0, 0, this.dimensions.getWidth(), this.dimensions.getHeight());
     }
 
@@ -62,50 +63,58 @@ export class ChartRenderer implements Renderer {
         for(let drawingOffset = width; drawingOffset + this.position.viewOffset > 0; drawingOffset = drawingOffset - this.position.colsDistance) { 
             const xDrawingPosition = drawingOffset + this.position.viewOffset - this.horizontalMargin;
             const [ yStartDrawingPosition, yEndDrawingPosition ] = [0, height - this.verticalMargin];
-            currentColumn++;
+            
+
 
             if(xDrawingPosition > 0 && xDrawingPosition < width + this.position.colsDistance) {
+                this.addCandles(xDrawingPosition);
                 this.drawLine(xDrawingPosition, yStartDrawingPosition, xDrawingPosition, yEndDrawingPosition);
-                this.drawSubLines(xDrawingPosition);
-                this.updateColumns(currentColumn, xDrawingPosition);
+                this.drawSubLines(xDrawingPosition);      
+                currentColumn++;          
             }
+            this.drawLineTime(currentColumn);
         }
-
-        this.drawLineTime();
     }
 
-    private drawLineTime(): void {
+    private addCandles(xMainColumnDrawingPosition: number): void {
+        const intervalCols = this.position.colsDistance / this.candlesInInterval;
+        for(let candle = 0; candle < this.candlesInInterval; candle++) {
+            this.candles.push(new Candle(xMainColumnDrawingPosition - candle * intervalCols, this.context))
+        }
+    }
+
+    private drawLineTime(columnOffset: number): void {
         const yDrawingPosition = this.dimensions.getHeight() - 50;
 
         this.context.font = "8px sans-serif";
         this.context.fillStyle = '#A9A9A9';
 
-        for(let currentLineTime = 0; currentLineTime < this.chartLines.length; currentLineTime++) {
-            const columnOffset =  this.chartLines[currentLineTime].getColumnOffset();
-            if(columnOffset) {
-                const dateToRender = this.time.getTime(columnOffset);
-                this.context.fillText(dateToRender, this.chartLines[currentLineTime].getXPosition() - 10, yDrawingPosition);
+        for(let currentLineTime = 0; currentLineTime < this.candles.length; currentLineTime++) {
+            if(currentLineTime === 0 || currentLineTime % 60 === 0) {
+                if(columnOffset) {
+                    const dateToRender = this.time.getTime(columnOffset);
+                    this.context.fillText(dateToRender, this.candles[currentLineTime].getXPosition() - 10, yDrawingPosition);
+                }
             }
         }        
     }
 
     private drawSubLines(xStartPosition: number): void {
         let drawingOffset = xStartPosition;
-        const columnQuantity = 5;
+        const columnQuantity = 3;
         const gap = this.position.colsDistance / columnQuantity;
         const graphHeight = this.dimensions.getHeight();
 
         for(let currentSubLine = 0; currentSubLine < columnQuantity; currentSubLine++) {
             const actualXStart = drawingOffset - gap;
             this.drawLine(actualXStart, 0, actualXStart, graphHeight - this.verticalMargin);
-            this.updateColumns(null, actualXStart);
             drawingOffset = drawingOffset - gap;
         }
     }
 
     private updateColumns(columnNumber: number, xPosition: number): void {
         // here inside chart line we will probably mock a random candle and preview it
-        this.chartLines.push(new ChartLine(columnNumber, xPosition, this.context));
+        //this.candles.push(new Candle(columnNumber, xPosition, this.context));
     }
 
     private drawTimeline(): void {
@@ -147,6 +156,7 @@ export class ChartRenderer implements Renderer {
                 this.time.enlargeTimeSpan();
                 this.position.viewOffset = this.position.viewOffset - zoomOffsetSyncValue / 2;
                 this.currentTimeSpanMult = this.currentTimeSpanMult * 2;
+                this.candlesInInterval = this.candlesInInterval * 2;
 
             } else if(this.position.colsDistance === this.position.maxColsDistance * 2) {
                 // if(this.currentTimeSpan === 1800000) {
@@ -158,6 +168,7 @@ export class ChartRenderer implements Renderer {
                 this.currentTimeSpanMult = this.currentTimeSpanMult / 2;
 
                 console.log('zoomed in, currentoffsetview: ', this.position.viewOffset)
+                this.candlesInInterval = this.candlesInInterval / 2;
             }
 
             this.blockViewOffset();

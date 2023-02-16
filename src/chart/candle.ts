@@ -1,24 +1,27 @@
-export class ChartLine {
-    constructor(columnOffset: number, xPosition: number, context: CanvasRenderingContext2D) {
-        this.columnOffset = columnOffset;
+export class Candle {
+    constructor(xPosition: number, context: CanvasRenderingContext2D) {
         this.xPosition = xPosition;
 
         this.renderCandle(context, xPosition);
     }
 
-    private columnOffset: number;
+    private static columnOffset: number = 0;
     private xPosition: number;
 
     private renderCandle(context: CanvasRenderingContext2D, xPosition: number): void {
         context.beginPath();
-        context.moveTo(xPosition, 0);
-        context.lineTo(xPosition, 20);
+        context.moveTo(xPosition, 100);
+        context.lineTo(xPosition, 120);
         context.strokeStyle = '#ff0000';
-        context.lineWidth = 4;
+        context.lineWidth = 2;
         context.stroke();
     }
+
+    public static incrementColumnOffset(): void {
+        Candle.columnOffset++;
+    }
     
-    public getColumnOffset(): number {
+    public static getColumnOffset(): number {
         return this.columnOffset;
     }
 

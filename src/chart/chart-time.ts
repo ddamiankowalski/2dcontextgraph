@@ -9,8 +9,6 @@ export class ChartTime {
     private initializeTimeMap(): void {
         this.timeMap.set('M60', 3600000);
         this.currentTimeSpan = this.timeMap.get('M60');
-
-        this.timeMap.set('M30', 1800000);
     }
 
     public getCurrentTimeSpan(): number {
@@ -23,7 +21,7 @@ export class ChartTime {
     }
 
     public checkIfMinTimeSpan(): boolean {
-        return this.currentTimeSpan === 1800000;
+        return this.currentTimeSpan === 900000;
     }
 
     public enlargeTimeSpan(): void {
