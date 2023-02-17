@@ -1,7 +1,14 @@
+import { Candlestick } from '../interfaces/candlestick';
 export class Candle {
-    constructor(xPosition: number, zoom: number, context: CanvasRenderingContext2D) {
+    constructor(xPosition: number, candle: Candlestick, zoom: number, context: CanvasRenderingContext2D) {
         this.xPosition = xPosition;
         this.zoom = zoom;
+
+        this.yStart = (candle?.high - 1800) * 5;
+        this.yEnd = (candle?.low - 1800) * 15;
+
+        // this.yStart = 40;
+        // this.yEnd = 200;
 
         this.renderCandle(context, xPosition);
     }
@@ -10,26 +17,25 @@ export class Candle {
     private xPosition: number;
     private zoom: number;
 
+    private yStart: number;
+    private yEnd: number;
+
     private renderCandle(context: CanvasRenderingContext2D, xPosition: number): void {
         context.beginPath();
 
-        context.moveTo(xPosition, 99);
-        context.lineTo(xPosition, 121);
+        context.moveTo(xPosition, this.yStart);
+        context.lineTo(xPosition, this.yEnd);
         context.strokeStyle = '#00ff00';
         context.lineWidth = 1 * this.zoom + 1;
         context.stroke();
 
         context.beginPath();
 
-        context.moveTo(xPosition, 100);
-        context.lineTo(xPosition, 120);
+        context.moveTo(xPosition, this.yStart - 5);
+        context.lineTo(xPosition, this.yEnd + 5);
         context.strokeStyle = '#ff0000';
         context.lineWidth = 1 * this.zoom;
         context.stroke();
-    }
-
-    public static incrementColumnOffset(): void {
-        Candle.columnOffset++;
     }
     
     public static getColumnOffset(): number {
