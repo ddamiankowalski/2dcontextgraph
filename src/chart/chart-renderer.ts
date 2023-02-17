@@ -94,13 +94,13 @@ export class ChartRenderer implements Renderer {
 
     private drawSubLines(xStartPosition: number): void {
         let drawingOffset = xStartPosition;
-        const columnQuantity = 3;
+        const columnQuantity = 10;
         const gap = this.position.colsDistance / columnQuantity;
         const graphHeight = this.dimensions.getHeight();
 
         for(let currentSubLine = 0; currentSubLine < columnQuantity; currentSubLine++) {
             const actualXStart = drawingOffset - gap;
-            this.drawLine(actualXStart, 0, actualXStart, graphHeight - this.verticalMargin);
+            this.drawLine(actualXStart, 0, actualXStart, graphHeight - this.verticalMargin, .2);
             drawingOffset = drawingOffset - gap;
         }
     }
@@ -112,12 +112,12 @@ export class ChartRenderer implements Renderer {
         this.context.fillText('Current time span in min: ' + `${this.time.getCurrentTimeSpan() / 1000 / 60}`, width / 2 - 100, height - 20);
     }
 
-    drawLine(xStart: number, yStart: number, xEnd: number, yEnd: number): void {
+    drawLine(xStart: number, yStart: number, xEnd: number, yEnd: number, lineWidth: number = 1): void {
         this.context.beginPath();
         this.context.moveTo(xStart, yStart);
         this.context.lineTo(xEnd, yEnd);
         this.context.strokeStyle = '#A9A9A9';
-        this.context.lineWidth = 1;
+        this.context.lineWidth = lineWidth;
         this.context.stroke();
     }
 
