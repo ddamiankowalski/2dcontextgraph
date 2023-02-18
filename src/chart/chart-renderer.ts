@@ -75,7 +75,8 @@ export class ChartRenderer implements Renderer {
             this.drawTimeStamps(xDrawingPosition, currentColumn);
         }
 
-        this.candleRenderer.draw(this.candles);
+        this.candleRenderer.draw(this.candles, height - this.verticalMargin);
+        console.log(this.candles);
     }
 
     private addCandlesInInterval(xMainColumnDrawingPosition: number, candlesData: Candlestick[], currentColumn: number): void {
@@ -83,7 +84,9 @@ export class ChartRenderer implements Renderer {
         for(let candle = 0; candle < this.time.candlesInInterval(); candle++) {
             const currentCandleToRender = candlesData[candle + this.time.candlesInInterval() * (currentColumn - 1)];
 
-            this.candles.push(new Candle(xMainColumnDrawingPosition - candle * intervalCols, currentCandleToRender, this.zoom))
+            if(xMainColumnDrawingPosition - candle * intervalCols > 0 && xMainColumnDrawingPosition - candle * intervalCols < 1020) {
+                this.candles.push(new Candle(xMainColumnDrawingPosition - candle * intervalCols, currentCandleToRender, this.zoom))
+            }
         }
     }
 

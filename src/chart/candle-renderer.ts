@@ -7,19 +7,24 @@ export class CandleRenderer {
 
     private context: CanvasRenderingContext2D;
 
-    public draw(candles: Candle[]): void {
-        const [ maxHighCandle, maxLowCandle ] = Candle.getHighLow(); // high oznacza maksymalna wartosc na gorze, czyli jak gdyby 0 px, low oznacza maksymalna wartosc na dole, czyli jak gdyby 680
-        /**
-         * high === 0
-         * low === 680
-         */
-        const chartMaxHeight = 680;
-        const chartMinHeight = 0;
+    public draw(candles: Candle[], graphHeight: number): void {
+        const [ maxHighCandle, maxLowCandle ] = Candle.getHighLow(); 
 
-        
         candles.forEach(candle => {
-            const yDrawingStart = this.interpolate(680, candle.yStart, maxLowCandle, maxHighCandle);
-            const yDrawingEnd = this.interpolate(680, candle.yEnd, maxLowCandle, maxHighCandle);
+            // 680 is the current height of the graph
+
+            const yDrawingHigh = this.interpolate(graphHeight, candle.yHigh, maxLowCandle, maxHighCandle);
+            const yDrawingLow = this.interpolate(graphHeight, candle.yLow, maxLowCandle, maxHighCandle);
+
+            this.context.beginPath();
+            this.context.moveTo(candle.xPosition, yDrawingHigh);
+            this.context.lineTo(candle.xPosition, yDrawingLow);
+            this.context.strokeStyle = '#ffff00';
+            this.context.lineWidth = 1;
+            this.context.stroke();
+
+            const yDrawingStart = this.interpolate(graphHeight, candle.yStart, maxLowCandle, maxHighCandle);
+            const yDrawingEnd = this.interpolate(graphHeight, candle.yEnd, maxLowCandle, maxHighCandle);
 
             this.context.beginPath();
             this.context.moveTo(candle.xPosition, yDrawingStart);
