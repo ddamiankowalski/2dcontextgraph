@@ -39,8 +39,6 @@ export class ChartTime {
     }
 
     public enlargeTimeSpan(): void {
-            console.log(this.currentTimeSpan, this.getPrevMaxDistanceRatio(), 'zoom out')
-
             this.currentTimeSpan = this.currentTimeSpan * this.getPrevMaxDistanceRatio();
             this.currentIntervalStep--;
 
@@ -48,7 +46,6 @@ export class ChartTime {
 
     public reduceTimeSpan(): void {
         if(this.getCurrentMaxDistanceRatio()) {
-            console.log(this.currentTimeSpan, this.getCurrentMaxDistanceRatio(), 'zoom in')
             this.currentTimeSpan = this.currentTimeSpan / this.getCurrentMaxDistanceRatio();
             this.currentIntervalStep++;
         }

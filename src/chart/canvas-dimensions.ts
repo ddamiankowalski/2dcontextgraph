@@ -1,13 +1,17 @@
 import { GraphDimensions } from '../interfaces/dimensions';
 
 export class CanvasDimensions {
-    constructor(canvas: HTMLCanvasElement) {
+    constructor(canvas: HTMLCanvasElement, horizontalMargin: number, verticalMargin: number) {
         this.canvas = canvas;
+        this.horizontalMargin = horizontalMargin;
+        this.verticalMargin = verticalMargin;
         this.setDimensions();
     }
 
     private canvas: HTMLCanvasElement;
     private dimensions: GraphDimensions = {};
+    private horizontalMargin: number;
+    private verticalMargin: number;
 
     public getWidth(): number {
         return this.dimensions.width;
@@ -19,6 +23,14 @@ export class CanvasDimensions {
 
     public getDimensions(): GraphDimensions {
         return this.dimensions;
+    }
+
+    public getVerticalMargin(): number {
+        return this.verticalMargin;
+    }
+
+    public getHorizontalMargin(): number {
+        return this.horizontalMargin;
     }
 
     private setDimensions(): void {

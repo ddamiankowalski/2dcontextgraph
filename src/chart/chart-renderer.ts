@@ -23,8 +23,8 @@ export class ChartRenderer implements Renderer {
     private initializeCanvasAndContext(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement): void {
         this.context = context;
         this.canvas = canvas;
-        this.dimensions = new CanvasDimensions(this.canvas);
-        this.position = new ChartPosition(300, 300);
+        this.dimensions = new CanvasDimensions(this.canvas, 70, 70);
+        this.position = new ChartPosition(350, 300);
         this.time = new ChartTime();
         this.candleRenderer = new CandleRenderer(this.context);
     }
@@ -33,8 +33,6 @@ export class ChartRenderer implements Renderer {
     private context: CanvasRenderingContext2D | undefined;
     private canvas: HTMLCanvasElement | undefined;
 
-    private horizontalMargin: number = 70;
-    private verticalMargin: number = 70;
     private zoom: number = 1;
     
     private mouseDown: boolean;
@@ -63,8 +61,8 @@ export class ChartRenderer implements Renderer {
         Candle.resetHighLow();
         let currentColumn = 0;
         for(let drawingOffset = width; drawingOffset + this.position.viewOffset > 0; drawingOffset = drawingOffset - this.position.colsDistance) { 
-            const xDrawingPosition = drawingOffset + this.position.viewOffset - this.horizontalMargin;
-            const [ yStartDrawingPosition, yEndDrawingPosition ] = [0, height - this.verticalMargin];
+            const xDrawingPosition = drawingOffset + this.position.viewOffset - this.dimensions.getHorizontalMargin();
+            const [ yStartDrawingPosition, yEndDrawingPosition ] = [0, height - this.dimensions.getVerticalMargin()];
             currentColumn++;          
 
             if(xDrawingPosition > 0 && xDrawingPosition < width + this.position.colsDistance) {
@@ -72,11 +70,10 @@ export class ChartRenderer implements Renderer {
                 this.drawLine(xDrawingPosition, yStartDrawingPosition, xDrawingPosition, yEndDrawingPosition);
                 this.drawSubLines(xDrawingPosition);      
             }
-            this.drawTimeStamps(xDrawingPosition, currentColumn);
+            this.drawTimeStamps(xDrawingPosition, currentColumn, candlesData);
         }
 
-        this.candleRenderer.draw(this.candles, height - this.verticalMargin);
-        console.log(this.candles);
+        this.candleRenderer.draw(this.candles, height - this.dimensions.getVerticalMargin());
     }
 
     private addCandlesInInterval(xMainColumnDrawingPosition: number, candlesData: Candlestick[], currentColumn: number, graphWidth: number): void {
@@ -90,14 +87,13 @@ export class ChartRenderer implements Renderer {
         }
     }
 
-    private drawTimeStamps(xDrawingPosition: number, columnOffset: number): void {
+    private drawTimeStamps(xDrawingPosition: number, columnOffset: number, candlesData: Candlestick[]): void {
         const yDrawingPosition = this.dimensions.getHeight() - 50;
-
         this.context.font = "8px sans-serif";
         this.context.fillStyle = '#A9A9A9';
 
         // the time should technically start with the first candle from a set of candles from backend, and should be updated each time a candle arrives.
-        const date = new Date();
+        const date = new Date(Date.parse(candlesData[0].time));
         date.setMinutes(date.getMinutes() - this.time.candlesInInterval() * (columnOffset - 1));
         this.context.fillText(`${date.getHours()}:${date.getMinutes()}`, xDrawingPosition - 10, yDrawingPosition);
     }
@@ -107,10 +103,11 @@ export class ChartRenderer implements Renderer {
         const columnQuantity = 10;
         const gap = this.position.colsDistance / columnQuantity;
         const graphHeight = this.dimensions.getHeight();
+        const verticalMargin = this.dimensions.getVerticalMargin();
 
         for(let currentSubLine = 0; currentSubLine < columnQuantity; currentSubLine++) {
             const actualXStart = drawingOffset - gap;
-            this.drawLine(actualXStart, 0, actualXStart, graphHeight - this.verticalMargin, .2);
+            this.drawLine(actualXStart, 0, actualXStart, graphHeight - verticalMargin, .2);
             drawingOffset = drawingOffset - gap;
         }
     }
@@ -135,7 +132,7 @@ export class ChartRenderer implements Renderer {
         const graphWidth = this.dimensions.getWidth();
         // wheel event
         this.canvas.addEventListener('wheel', (event: WheelEvent) => {
-            const zoomOffsetSyncValue = (graphWidth + this.position.viewOffset - this.horizontalMargin - event.offsetX) / this.position.colsDistance * this.scrollSpeed;
+            const zoomOffsetSyncValue = (graphWidth + this.position.viewOffset - this.dimensions.getHorizontalMargin() - event.offsetX) / this.position.colsDistance * this.scrollSpeed;
 
             if(event.deltaY > 0 && (this.position.colsDistance - this.scrollSpeed > this.position.maxColsDistance || !this.time.checkIfMaxTimeSpan())) {
                 this.position.colsDistance = this.position.colsDistance - this.scrollSpeed;
