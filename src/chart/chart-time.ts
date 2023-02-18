@@ -5,7 +5,7 @@ export class ChartTime {
 
     private timeMap: Map<string, number> = new Map();
     private currentTimeSpan: number;
-    private intervalCandlesConfig: Array<number> = [60, 30, 15, 5, 1];
+    private intervalCandlesConfig: Array<number> = [60, 30, 15, 5];
     private maxColsDistToTimeRatioConfig: Array<number> = [2, 2, 3];
     private currentIntervalStep: number = 0;
 

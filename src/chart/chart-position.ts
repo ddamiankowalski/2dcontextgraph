@@ -10,8 +10,6 @@ export class ChartPosition {
     private _colsDistance: number;
     private _maxColsDistance: number;
     private _viewOffset;
-    private _candleMaxHigh: number = 0;
-    private _candleMaxLow: number = undefined;
 
     get colsDistance(): number {
         return this._colsDistance;
@@ -35,10 +33,5 @@ export class ChartPosition {
 
     set viewOffset(value: number) {
         this._viewOffset = value;
-    }
-
-    public resetCandleMaxValues(): void {
-        this._candleMaxHigh = 0;
-        this._candleMaxLow = undefined;
     }
 }
