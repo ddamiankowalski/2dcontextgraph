@@ -3,10 +3,11 @@ export class Candle {
     constructor(xPosition: number, candle: Candlestick, zoom: number) {
         this.setCurrentHighLow(candle);
         this.zoom = zoom;
-        this.yStart = candle.open;
-        this.yEnd = candle.close;
+        this.yStart = candle.close;
+        this.yEnd = candle.open;
         this.yHigh = candle.high;
-        this.yLow =candle.low;
+        this.yLow = candle.low;
+        this.time = candle.time;
         this.xPosition = xPosition;
     }
 
@@ -18,6 +19,7 @@ export class Candle {
     public yEnd: number;
     public yHigh: number;
     public yLow: number;
+    private time: string;
     public xPosition: number;
 
     private setCurrentHighLow(candle: Candlestick): void {

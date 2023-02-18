@@ -17,6 +17,6 @@ export class Chart {
         this.canvas = document.getElementById('chart') as HTMLCanvasElement;
         this.canvasContext = this.canvas.getContext('2d');
         this.renderer = new ChartRenderer(this.canvasContext, this.canvas);
-        this.renderer.draw(candles);
+        this.renderer.draw(candles.reverse());
     }
 }
