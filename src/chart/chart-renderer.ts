@@ -68,7 +68,7 @@ export class ChartRenderer implements Renderer {
             currentColumn++;          
 
             if(xDrawingPosition > 0 && xDrawingPosition < width + this.position.colsDistance) {
-                this.addCandlesInInterval(xDrawingPosition, candlesData, currentColumn);
+                this.addCandlesInInterval(xDrawingPosition, candlesData, currentColumn, width);
                 this.drawLine(xDrawingPosition, yStartDrawingPosition, xDrawingPosition, yEndDrawingPosition);
                 this.drawSubLines(xDrawingPosition);      
             }
@@ -79,12 +79,12 @@ export class ChartRenderer implements Renderer {
         console.log(this.candles);
     }
 
-    private addCandlesInInterval(xMainColumnDrawingPosition: number, candlesData: Candlestick[], currentColumn: number): void {
+    private addCandlesInInterval(xMainColumnDrawingPosition: number, candlesData: Candlestick[], currentColumn: number, graphWidth: number): void {
         const intervalCols = this.position.colsDistance / this.time.candlesInInterval();
         for(let candle = 0; candle < this.time.candlesInInterval(); candle++) {
             const currentCandleToRender = candlesData[candle + this.time.candlesInInterval() * (currentColumn - 1)];
 
-            if(xMainColumnDrawingPosition - candle * intervalCols > 0 && xMainColumnDrawingPosition - candle * intervalCols < 1020) {
+            if(xMainColumnDrawingPosition - candle * intervalCols > 0 && xMainColumnDrawingPosition - candle * intervalCols < graphWidth) {
                 this.candles.push(new Candle(xMainColumnDrawingPosition - candle * intervalCols, currentCandleToRender, this.zoom))
             }
         }
