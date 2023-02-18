@@ -26,7 +26,7 @@ export class ChartRenderer implements Renderer {
         this.dimensions = new CanvasDimensions(this.canvas, 70, 70);
         this.position = new ChartPosition(350, 300);
         this.time = new ChartTime();
-        this.candleRenderer = new CandleRenderer(this.context);
+        this.candleRenderer = new CandleRenderer(this.context, this.dimensions);
     }
 
 
@@ -104,14 +104,16 @@ export class ChartRenderer implements Renderer {
     }
 
     private drawTimeStamps(xDrawingPosition: number, columnOffset: number, candlesData: Candlestick[]): void {
-        const yDrawingPosition = this.dimensions.getHeight() - 50;
-        this.context.font = "8px sans-serif";
-        this.context.fillStyle = '#A9A9A9';
-
-        // the time should technically start with the first candle from a set of candles from backend, and should be updated each time a candle arrives.
-        const date = new Date(Date.parse(candlesData[0].time));
-        date.setMinutes(date.getMinutes() - this.time.candlesInInterval() * (columnOffset - 1));
-        this.context.fillText(`${date.getHours()}:${date.getMinutes()}`, xDrawingPosition - 10, yDrawingPosition);
+        if(xDrawingPosition <= this.dimensions.getWidth() - this.dimensions.getHorizontalMargin() + 10) {
+            const yDrawingPosition = this.dimensions.getHeight() - 50;
+            this.context.font = "8px sans-serif";
+            this.context.fillStyle = '#A9A9A9';
+    
+            // the time should technically start with the first candle from a set of candles from backend, and should be updated each time a candle arrives.
+            const date = new Date(Date.parse(candlesData[0].time));
+            date.setMinutes(date.getMinutes() - this.time.candlesInInterval() * (columnOffset - 1));
+            this.context.fillText(`${date.getHours()}:${date.getMinutes()}`, xDrawingPosition - 10, yDrawingPosition);
+        }
     }
 
     private drawSubLines(xStartPosition: number): void {
@@ -136,12 +138,14 @@ export class ChartRenderer implements Renderer {
     }
 
     drawLine(xStart: number, yStart: number, xEnd: number, yEnd: number, lineWidth: number = 1): void {
-        this.context.beginPath();
-        this.context.moveTo(xStart, yStart);
-        this.context.lineTo(xEnd, yEnd);
-        this.context.strokeStyle = '#A9A9A9';
-        this.context.lineWidth = lineWidth;
-        this.context.stroke();
+        if(xStart <= this.dimensions.getWidth() - this.dimensions.getHorizontalMargin() + 10) {
+            this.context.beginPath();
+            this.context.moveTo(xStart, yStart);
+            this.context.lineTo(xEnd, yEnd);
+            this.context.strokeStyle = '#A9A9A9';
+            this.context.lineWidth = lineWidth;
+            this.context.stroke();
+        }
     }
 
 
