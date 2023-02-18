@@ -4,6 +4,7 @@ import { ChartPosition } from './chart-position';
 import { Candle } from './candle'; 
 import { ChartTime } from './chart-time';
 import { Candlestick } from '../interfaces/candlestick';
+import { CandleRenderer } from './candle-renderer';
 export class ChartRenderer implements Renderer {
     constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
         this.initializeCanvasAndContext(context, canvas);
@@ -17,6 +18,7 @@ export class ChartRenderer implements Renderer {
     private position: ChartPosition;
     private candles: Candle[];
     private time: ChartTime;
+    private candleRenderer: CandleRenderer;
 
     private initializeCanvasAndContext(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement): void {
         this.context = context;
@@ -24,6 +26,7 @@ export class ChartRenderer implements Renderer {
         this.dimensions = new CanvasDimensions(this.canvas);
         this.position = new ChartPosition(300, 300);
         this.time = new ChartTime();
+        this.candleRenderer = new CandleRenderer();
     }
 
 
@@ -57,6 +60,7 @@ export class ChartRenderer implements Renderer {
 
     private drawMainColumns(candlesData: Candlestick[]): void {
         const { width, height } = this.dimensions.getDimensions();
+        Candle.resetHighLow();
         let currentColumn = 0;
         for(let drawingOffset = width; drawingOffset + this.position.viewOffset > 0; drawingOffset = drawingOffset - this.position.colsDistance) { 
             const xDrawingPosition = drawingOffset + this.position.viewOffset - this.horizontalMargin;
@@ -71,17 +75,15 @@ export class ChartRenderer implements Renderer {
             this.drawTimeStamps(xDrawingPosition, currentColumn);
         }
 
-        console.log(this.position.getMaxAndLow())
+        this.candleRenderer.draw(this.candles);
     }
 
     private addCandlesInInterval(xMainColumnDrawingPosition: number, candlesData: Candlestick[], currentColumn: number): void {
         const intervalCols = this.position.colsDistance / this.time.candlesInInterval();
         for(let candle = 0; candle < this.time.candlesInInterval(); candle++) {
             const currentCandleToRender = candlesData[candle + this.time.candlesInInterval() * (currentColumn - 1)];
-            this.position.setCandleMaxHigh(currentCandleToRender);
-            this.position.setCandleMaxLow(currentCandleToRender);
 
-            this.candles.push(new Candle(xMainColumnDrawingPosition - candle * intervalCols, currentCandleToRender, this.zoom, this.position.getMaxAndLow(), this.context))
+            this.candles.push(new Candle(xMainColumnDrawingPosition - candle * intervalCols, currentCandleToRender, this.zoom, this.context))
         }
     }
 

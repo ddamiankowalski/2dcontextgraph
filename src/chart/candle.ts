@@ -1,29 +1,20 @@
 import { Candlestick } from '../interfaces/candlestick';
 export class Candle {
-    constructor(xPosition: number, candle: Candlestick, zoom: number, currentMaxAndLow: Array<number>, context: CanvasRenderingContext2D) {
-        this.xPosition = xPosition;
+    constructor(xPosition: number, candle: Candlestick, zoom: number, context: CanvasRenderingContext2D) {
         this.zoom = zoom;
 
-        const [ max, low ] = currentMaxAndLow;
-        const currentCandleMax = candle?.high;
-        const currentCandleLow = candle?.low;
+        this.setCurrentHighLow(candle);
 
-
-        const yDrawingStart = currentCandleMax / max * 680;
-        const yDrawingEnd = currentCandleLow / low * 680;
-
-        debugger
-
-        this.yStart = yDrawingStart - 630;
-        this.yEnd = yDrawingEnd - 50;
+        this.yStart = 630;
+        this.yEnd = 50;
         // this.yStart = 40;
         // this.yEnd = 200;
 
         this.renderCandle(context, xPosition);
     }
 
-    private static columnOffset: number = 0;
-    private xPosition: number;
+    private static currentMaxHigh?: number;
+    private static currentMaxLow?: number;
     private zoom: number;
 
     private yStart: number;
@@ -46,12 +37,23 @@ export class Candle {
         context.lineWidth = 1 * this.zoom;
         context.stroke();
     }
-    
-    public static getColumnOffset(): number {
-        return this.columnOffset;
+
+    private setCurrentHighLow(candle: Candlestick): void {
+        if(!Candle.currentMaxHigh || candle.high > Candle.currentMaxHigh) {
+            Candle.currentMaxHigh = candle.high;
+        }
+
+        if(!Candle.currentMaxLow || candle.low < Candle.currentMaxLow) {
+            Candle.currentMaxLow = candle.low;
+        }
     }
 
-    public getXPosition(): number {
-        return this.xPosition;
+    public static resetHighLow(): void {
+        Candle.currentMaxHigh = undefined;
+        Candle.currentMaxLow = undefined;
+    }
+
+    public static getHighLow(): Array<number> {
+        return [ Candle.currentMaxHigh, Candle.currentMaxLow ];
     }
 }

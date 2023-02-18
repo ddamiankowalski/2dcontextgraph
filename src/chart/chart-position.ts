@@ -11,7 +11,7 @@ export class ChartPosition {
     private _maxColsDistance: number;
     private _viewOffset;
     private _candleMaxHigh: number = 0;
-    private _candleMaxLow: number = 0;
+    private _candleMaxLow: number = undefined;
 
     get colsDistance(): number {
         return this._colsDistance;
@@ -39,22 +39,6 @@ export class ChartPosition {
 
     public resetCandleMaxValues(): void {
         this._candleMaxHigh = 0;
-        this._candleMaxLow = 0;
-    }
-
-    public setCandleMaxHigh(candleToTest: Candlestick): void {
-        if(candleToTest.high > this._candleMaxHigh) {
-            this._candleMaxHigh = candleToTest.high;
-        }
-    }
-
-    public setCandleMaxLow(candleToTest: Candlestick): void {
-        if(candleToTest.low > this._candleMaxLow) {
-            this._candleMaxLow = candleToTest.low;
-        }
-    }
-
-    public getMaxAndLow(): Array<number> {
-        return [ this._candleMaxHigh, this._candleMaxLow ];
+        this._candleMaxLow = undefined;
     }
 }
