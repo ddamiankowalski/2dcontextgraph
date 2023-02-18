@@ -24,8 +24,6 @@ export class ChartRenderer implements Renderer {
         this.dimensions = new CanvasDimensions(this.canvas);
         this.position = new ChartPosition(300, 300);
         this.time = new ChartTime();
-
-        
     }
 
 
@@ -52,6 +50,7 @@ export class ChartRenderer implements Renderer {
     }
 
     drawGrid(candlesData: Candlestick[]): void {
+        this.position.resetCandleMaxValues();
         this.drawMainColumns(candlesData);
         this.drawTimeline();
     }
@@ -71,12 +70,18 @@ export class ChartRenderer implements Renderer {
             }
             this.drawTimeStamps(xDrawingPosition, currentColumn);
         }
+
+        console.log(this.position.getMaxAndLow())
     }
 
     private addCandlesInInterval(xMainColumnDrawingPosition: number, candlesData: Candlestick[], currentColumn: number): void {
         const intervalCols = this.position.colsDistance / this.time.candlesInInterval();
         for(let candle = 0; candle < this.time.candlesInInterval(); candle++) {
-            this.candles.push(new Candle(xMainColumnDrawingPosition - candle * intervalCols, candlesData[candle + this.time.candlesInInterval() * (currentColumn - 1)], this.zoom, this.context))
+            const currentCandleToRender = candlesData[candle + this.time.candlesInInterval() * (currentColumn - 1)];
+            this.position.setCandleMaxHigh(currentCandleToRender);
+            this.position.setCandleMaxLow(currentCandleToRender);
+
+            this.candles.push(new Candle(xMainColumnDrawingPosition - candle * intervalCols, currentCandleToRender, this.zoom, this.position.getMaxAndLow(), this.context))
         }
     }
 
