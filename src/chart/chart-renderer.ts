@@ -53,6 +53,7 @@ export class ChartRenderer implements Renderer {
     drawGrid(candlesData: Candlestick[]): void {
         this.drawMainColumns(candlesData);
         this.drawTimeline();
+        this.drawValueLines();
     }
 
     private drawMainColumns(candlesData: Candlestick[]): void {
@@ -97,7 +98,7 @@ export class ChartRenderer implements Renderer {
     ): void {
         if(
             xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles > 0 && 
-            xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles < graphWidth
+            xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles < graphWidth - this.dimensions.getHorizontalMargin() + 10
         ) {
             this.candles.push(new Candle(xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles, currentCandleToRender, this.zoom))
         }
@@ -127,6 +128,30 @@ export class ChartRenderer implements Renderer {
             const actualXStart = drawingOffset - gap;
             this.drawLine(actualXStart, 0, actualXStart, graphHeight - verticalMargin, .2);
             drawingOffset = drawingOffset - gap;
+        }
+    }
+
+    private drawValueLines(): void {
+        const { width, height } = this.dimensions.getDimensions();
+        const [ maxHighCandle, maxLowCandle ] = Candle.getHighLow(); 
+
+        const yMax = 10;
+        const yLow = height - this.dimensions.getVerticalMargin();
+        const columnNumbers = 10;
+        const colDistance = (yLow - yMax) / columnNumbers;
+        console.log(colDistance)
+
+        for(let valueColumns = 0; valueColumns <= columnNumbers; valueColumns++) {
+            this.context.beginPath();
+            this.context.moveTo(width - 15, yMax + colDistance * valueColumns);
+            this.context.lineTo(width, yMax + colDistance * valueColumns);
+            this.context.strokeStyle = '#A9A9A9';
+            this.context.lineWidth = 1;
+            this.context.stroke();
+
+            this.context.font = "8px sans-serif";
+            this.context.fillStyle = '#A9A9A9';
+            this.context.fillText(`${maxHighCandle}`, width - 50, yMax + colDistance * valueColumns + 3);
         }
     }
 

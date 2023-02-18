@@ -38,7 +38,7 @@ export class CandleRenderer {
     }
 
     private interpolate(chartHeight: number, yToDraw: number, maxLowCandle: number, maxHighCandle: number, graphHeight: number): number {
-        const interpolation = ((chartHeight) * (yToDraw - maxLowCandle)) / (maxHighCandle - maxLowCandle);
+        const interpolation = ((chartHeight - 10) * (yToDraw - maxLowCandle)) / (maxHighCandle - maxLowCandle);
         // reflection, #TODO think about more optimized option
         if(interpolation > graphHeight / 2) {
             let diff = Math.abs(interpolation - graphHeight / 2);
