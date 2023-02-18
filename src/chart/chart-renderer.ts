@@ -8,7 +8,7 @@ import { CandleRenderer } from './candle-renderer';
 export class ChartRenderer implements Renderer {
     constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
         this.initializeCanvasAndContext(context, canvas);
-        this.scrollSpeed = 20;
+        this.scrollSpeed = 10;
 
         this.canvas.style.backgroundColor = "#252525";
         this.addCanvasListeners();
@@ -51,7 +51,6 @@ export class ChartRenderer implements Renderer {
     }
 
     drawGrid(candlesData: Candlestick[]): void {
-        this.position.resetCandleMaxValues();
         this.drawMainColumns(candlesData);
         this.drawTimeline();
     }
@@ -77,13 +76,30 @@ export class ChartRenderer implements Renderer {
     }
 
     private addCandlesInInterval(xMainColumnDrawingPosition: number, candlesData: Candlestick[], currentColumn: number, graphWidth: number): void {
-        const intervalCols = this.position.colsDistance / this.time.candlesInInterval();
+        const distanceBetweenCandles = this.getIntervalCandleDistance();
+
         for(let candle = 0; candle < this.time.candlesInInterval(); candle++) {
             const currentCandleToRender = candlesData[candle + this.time.candlesInInterval() * (currentColumn - 1)];
+            this.addCandleIfInView(xMainColumnDrawingPosition, candle, distanceBetweenCandles, graphWidth, currentCandleToRender);
+        }
+    }
 
-            if(xMainColumnDrawingPosition - candle * intervalCols > 0 && xMainColumnDrawingPosition - candle * intervalCols < graphWidth) {
-                this.candles.push(new Candle(xMainColumnDrawingPosition - candle * intervalCols, currentCandleToRender, this.zoom))
-            }
+    private getIntervalCandleDistance(): number {
+        return this.position.colsDistance / this.time.candlesInInterval();
+    }
+
+    private addCandleIfInView(
+        xMainColumnDrawingPosition: number, 
+        candleNumInInterval: number, 
+        distanceBetweenCandles: number, 
+        graphWidth: number,
+        currentCandleToRender: Candlestick
+    ): void {
+        if(
+            xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles > 0 && 
+            xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles < graphWidth
+        ) {
+            this.candles.push(new Candle(xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles, currentCandleToRender, this.zoom))
         }
     }
 
@@ -127,6 +143,26 @@ export class ChartRenderer implements Renderer {
         this.context.lineWidth = lineWidth;
         this.context.stroke();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private addCanvasListeners(): void {
         const graphWidth = this.dimensions.getWidth();
