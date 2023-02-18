@@ -139,19 +139,19 @@ export class ChartRenderer implements Renderer {
         const yLow = height - this.dimensions.getVerticalMargin();
         const columnNumbers = 10;
         const colDistance = (yLow - yMax) / columnNumbers;
-        console.log(colDistance)
+        const valDiff = (maxHighCandle - maxLowCandle) / columnNumbers;
 
         for(let valueColumns = 0; valueColumns <= columnNumbers; valueColumns++) {
             this.context.beginPath();
-            this.context.moveTo(width - 15, yMax + colDistance * valueColumns);
-            this.context.lineTo(width, yMax + colDistance * valueColumns);
+            this.context.moveTo(0, yMax + colDistance * valueColumns);
+            this.context.lineTo(width - 55, yMax + colDistance * valueColumns);
             this.context.strokeStyle = '#A9A9A9';
-            this.context.lineWidth = 1;
+            this.context.lineWidth = .1;
             this.context.stroke();
 
-            this.context.font = "8px sans-serif";
+            this.context.font = "9px sans-serif";
             this.context.fillStyle = '#A9A9A9';
-            this.context.fillText(`${maxHighCandle}`, width - 50, yMax + colDistance * valueColumns + 3);
+            this.context.fillText(`${(maxHighCandle + valDiff * valueColumns).toFixed(2)}`, width - 45, yMax + colDistance * valueColumns + 4);
         }
     }
 
