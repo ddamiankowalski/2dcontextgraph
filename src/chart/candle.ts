@@ -7,9 +7,15 @@ export class Candle {
         const [ max, low ] = currentMaxAndLow;
         const currentCandleMax = candle?.high;
         const currentCandleLow = candle?.low;
+
+
+        const yDrawingStart = currentCandleMax / max * 680;
+        const yDrawingEnd = currentCandleLow / low * 680;
+
         debugger
-        this.yStart = (candle?.high - 1800) * 5;
-        this.yEnd = (candle?.low - 1800) * 15;
+
+        this.yStart = yDrawingStart - 630;
+        this.yEnd = yDrawingEnd - 50;
         // this.yStart = 40;
         // this.yEnd = 200;
 
