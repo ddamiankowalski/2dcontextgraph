@@ -26,7 +26,7 @@ export class ChartRenderer implements Renderer {
         this.dimensions = new CanvasDimensions(this.canvas);
         this.position = new ChartPosition(300, 300);
         this.time = new ChartTime();
-        this.candleRenderer = new CandleRenderer();
+        this.candleRenderer = new CandleRenderer(this.context);
     }
 
 
@@ -83,7 +83,7 @@ export class ChartRenderer implements Renderer {
         for(let candle = 0; candle < this.time.candlesInInterval(); candle++) {
             const currentCandleToRender = candlesData[candle + this.time.candlesInInterval() * (currentColumn - 1)];
 
-            this.candles.push(new Candle(xMainColumnDrawingPosition - candle * intervalCols, currentCandleToRender, this.zoom, this.context))
+            this.candles.push(new Candle(xMainColumnDrawingPosition - candle * intervalCols, currentCandleToRender, this.zoom))
         }
     }
 
