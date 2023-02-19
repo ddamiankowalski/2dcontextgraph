@@ -101,6 +101,7 @@
     "wildcard": "^2.0.0"
   },
   "scripts": {
+    "start": "concurrently \"json-server --watch ./src/data/candles.json\" \"webpack serve\"",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode=production --node-env=production",
     "build:dev": "webpack --mode=development",
