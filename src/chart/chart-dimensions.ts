@@ -1,6 +1,6 @@
 import { GraphDimensions } from '../interfaces/dimensions';
 
-export class CanvasDimensions {
+export class ChartDimensions {
     constructor(canvas: HTMLCanvasElement, horizontalMargin: number, verticalMargin: number) {
         this.canvas = canvas;
         this.horizontalMargin = horizontalMargin;

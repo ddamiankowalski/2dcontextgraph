@@ -1,5 +1,5 @@
 import { ElementCollector } from './elements/element-collector';
-import { CanvasDimensions } from './canvas-dimensions';
+import { ChartDimensions } from './chart-dimensions';
 import { ChartPosition } from './chart-position';
 import { Candle } from './elements/candle'; 
 import { ChartTime } from './chart-time';
@@ -7,7 +7,7 @@ import { Candlestick } from '../interfaces/candlestick';
 import { Renderer } from './renderer/renderer';
 import { Element } from './elements/element';
 
-export class CanvasManager {
+export class ChartManager {
     constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
         this.initializeCanvasAndContext(context, canvas);
         this.addCanvasListeners();
@@ -15,7 +15,7 @@ export class CanvasManager {
         this.canvas.style.backgroundColor = "#252525";
     }
 
-    private dimensions: CanvasDimensions;
+    private dimensions: ChartDimensions;
     private position: ChartPosition;
     private time: ChartTime;
     private renderer: Renderer;
@@ -25,7 +25,7 @@ export class CanvasManager {
     private initializeCanvasAndContext(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement): void {
         this.context = context;
         this.canvas = canvas;
-        this.dimensions = new CanvasDimensions(this.canvas, 70, 40);
+        this.dimensions = new ChartDimensions(this.canvas, 70, 40);
         this.position = new ChartPosition(350, 300, 1);
         this.time = new ChartTime();
         this.renderer = new Renderer(this.context, this.dimensions);

@@ -1,7 +1,7 @@
 import { Candle } from '../elements/candle';
-import { CanvasDimensions } from '../canvas-dimensions';
+import { ChartDimensions } from '../chart-dimensions';
 export class CandleRenderer {
-    public draw(candle: Candle, dimensions: CanvasDimensions, context: CanvasRenderingContext2D): void {
+    public draw(candle: Candle, dimensions: ChartDimensions, context: CanvasRenderingContext2D): void {
         const [ maxHighCandle, maxLowCandle ] = Candle.getHighLow(); 
         const graphHeight = dimensions.getHeight() - dimensions.getVerticalMargin();
 

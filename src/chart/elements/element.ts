@@ -1,5 +1,5 @@
 import { I2DCoords, IRenderProperties } from '../../interfaces/renderelement';
-import { CanvasDimensions } from '../canvas-dimensions';
+import { ChartDimensions } from '../chart-dimensions';
 
 export class Element {
     constructor(
@@ -39,5 +39,5 @@ export class Element {
         return this.renderProperties;
     }
 
-    public render(element: Element, context: CanvasRenderingContext2D, dimensions: CanvasDimensions): void {};
+    public render(element: Element, context: CanvasRenderingContext2D, dimensions: ChartDimensions): void {};
 }

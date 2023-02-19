@@ -1,5 +1,5 @@
 import { ChartTime } from '../chart-time';
-import { CanvasDimensions } from '../canvas-dimensions';
+import { ChartDimensions } from '../chart-dimensions';
 import { ChartPosition } from '../chart-position';
 import { Candlestick } from '../../interfaces/candlestick';
 import { Candle } from './candle';
@@ -9,7 +9,7 @@ import { Element } from './element';
 export class ElementCollector {
     constructor(
         time: ChartTime,
-        dimensions: CanvasDimensions,
+        dimensions: ChartDimensions,
         position: ChartPosition,
         candleData: Candlestick[],
         context: CanvasRenderingContext2D
@@ -28,7 +28,7 @@ export class ElementCollector {
     private renderingElementsSet: Set<Element[]> = new Set();
 
     private time: ChartTime;
-    private dimensions: CanvasDimensions;
+    private dimensions: ChartDimensions;
     private position: ChartPosition;
     private candleData: Candlestick[];
     

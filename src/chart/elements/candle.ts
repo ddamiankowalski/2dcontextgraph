@@ -2,7 +2,7 @@ import { Candlestick } from '../../interfaces/candlestick';
 import { Element } from './element';
 import { I2DCoords, IRenderProperties } from '../../interfaces/renderelement';
 import { CandleRenderer } from '../renderer/candle-renderer';
-import { CanvasDimensions } from '../canvas-dimensions';
+import { ChartDimensions } from '../chart-dimensions';
 
 export class Candle extends Element {
     constructor(
@@ -33,7 +33,7 @@ export class Candle extends Element {
     public yLow: number;
     private time: string;
 
-    public render(element: Candle, context: CanvasRenderingContext2D, dimensions: CanvasDimensions): void {
+    public render(element: Candle, context: CanvasRenderingContext2D, dimensions: ChartDimensions): void {
         Candle.renderer.draw(element, dimensions, context);
     }
 
