@@ -41,8 +41,8 @@ export class ChartManager {
     public draw(candlesData: Candlestick[]): void {
         this.clearView();
         this.candleData = candlesData;
-        const renderElements = this.getRenderingElements();
-        this.renderElements(renderElements);
+        const elements = this.getRenderingElements();
+        this.renderElements(elements);
         this.drawValueLines();
         window.requestAnimationFrame(this.draw.bind(this, candlesData));
     }
