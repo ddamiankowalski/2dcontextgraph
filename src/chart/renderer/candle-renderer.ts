@@ -1,5 +1,5 @@
-import { Candle } from './candle';
-import { CanvasDimensions } from './canvas-dimensions';
+import { Candle } from '../drawelements/candle';
+import { CanvasDimensions } from '../canvas-dimensions';
 export class CandleRenderer {
     constructor(context: CanvasRenderingContext2D, dimensions: CanvasDimensions) {
         this.context = context;
@@ -13,23 +13,24 @@ export class CandleRenderer {
         const [ maxHighCandle, maxLowCandle ] = Candle.getHighLow(); 
 
         candles.forEach(candle => {
-            if(candle.xPosition <= this.dimensions.getWidth() - this.dimensions.getHorizontalMargin() + 10) {
+            if(candle.getXStart() <= this.dimensions.getWidth() - this.dimensions.getHorizontalMargin() + 10) {
                 const yDrawingHigh = this.interpolate(graphHeight, candle.yHigh, maxLowCandle, maxHighCandle, graphHeight);
                 const yDrawingLow = this.interpolate(graphHeight, candle.yLow, maxLowCandle, maxHighCandle, graphHeight);
     
                 this.context.beginPath();
-                this.context.moveTo(candle.xPosition, yDrawingLow);
-                this.context.lineTo(candle.xPosition, yDrawingHigh);
+                this.context.moveTo(candle.getXStart(), yDrawingLow);
+                this.context.lineTo(candle.getXStart(), yDrawingHigh);
                 this.context.strokeStyle = '#ffff00';
                 this.context.lineWidth = 1;
                 this.context.stroke();
-    
-                const yDrawingStart = this.interpolate(graphHeight, candle.yStart, maxLowCandle, maxHighCandle, graphHeight);
-                const yDrawingEnd = this.interpolate(graphHeight, candle.yEnd, maxLowCandle, maxHighCandle, graphHeight);
+
+
+                const yDrawingStart = this.interpolate(graphHeight, candle.getYStart(), maxLowCandle, maxHighCandle, graphHeight);
+                const yDrawingEnd = this.interpolate(graphHeight, candle.getYEnd(), maxLowCandle, maxHighCandle, graphHeight);
     
                 this.context.beginPath();
-                this.context.moveTo(candle.xPosition, yDrawingEnd);
-                this.context.lineTo(candle.xPosition, yDrawingStart);
+                this.context.moveTo(candle.getXStart(), yDrawingEnd);
+                this.context.lineTo(candle.getXStart(), yDrawingStart);
                 this.context.strokeStyle = '#00ff00';
                 this.context.lineWidth = 1 * candle.zoom + 1;
                 this.context.stroke();

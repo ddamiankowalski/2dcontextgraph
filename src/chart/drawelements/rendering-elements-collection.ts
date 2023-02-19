@@ -2,29 +2,30 @@ import { ChartTime } from '../chart-time';
 import { CanvasDimensions } from '../canvas-dimensions';
 import { ChartPosition } from '../chart-position';
 import { Candlestick } from '../../interfaces/candlestick';
-import { Candle } from '../candle';
-
+import { Candle } from './candle';
+import { Line } from './line';
+import { RenderElement } from './render-element';
 export class RenderingElementsCollection {
     constructor(
         time: ChartTime,
         dimensions: CanvasDimensions,
         position: ChartPosition,
         candleData: Candlestick[],
-
-
         context: CanvasRenderingContext2D
     ) {
         this.time = time;
         this.dimensions = dimensions;
         this.position = position;
         this.candleData = candleData;
-
         this.context = context;
-
-        this.createVerticalLines();
+        this.setElements();
     }
 
-    private renderingElements: Map<any, any> = new Map();
+    /**
+     * a set of elements to render in the end
+     */
+    private renderingElementsSet: Set<RenderElement[]> = new Set();
+
     private time: ChartTime;
     private dimensions: CanvasDimensions;
     private position: ChartPosition;
@@ -33,15 +34,18 @@ export class RenderingElementsCollection {
     private context: CanvasRenderingContext2D;
 
     private candles: Candle[] = [];
+    private mainColumnLines: Line[] = [];
+    private subColumnLines: Line[] = [];
 
     public getCandles(): Candle[] {
         return this.candles;
     }
 
-    /**
-     * THIS SECTION SHOULD PROBABLY BE IN A SEPERATE CLASS
-     */
-    private createVerticalLines(): void {
+    public getElements(): Set<RenderElement[]> {
+        return this.renderingElementsSet;
+    }
+
+    private setElements(): void {
         const { width: canvasWidth, height: canvasHeight } = this.dimensions.getDimensions();
         let currentColumn = 0;
 
@@ -52,11 +56,19 @@ export class RenderingElementsCollection {
 
             if(xDrawingPosition > 0 && xDrawingPosition < canvasWidth + this.position.colsDistance) {
                 this.addCandlesInInterval(xDrawingPosition, this.candleData, currentColumn, canvasWidth);
-                this.drawLine(xDrawingPosition, yStartDrawingPosition, xDrawingPosition, yEndDrawingPosition);
-                this.drawSubLines(xDrawingPosition);      
+                this.addMainColumnLine(xDrawingPosition, yStartDrawingPosition, yEndDrawingPosition);
+                this.addSubColumnLines(xDrawingPosition, yStartDrawingPosition, yEndDrawingPosition);      
             }
             this.drawTimeStamps(xDrawingPosition, currentColumn, this.candleData);
         }
+
+        this.renderingElementsSet.add(this.mainColumnLines);
+        this.renderingElementsSet.add(this.subColumnLines);
+        this.renderingElementsSet.add(this.candles);
+    }
+
+    private addMainColumnLine(xStart: number, yStart: number, yEnd: number): void {
+        this.mainColumnLines.push(new Line({ xStart, xEnd: xStart, yStart, yEnd }, { color: '#ff0000' }));
     }
 
     private addCandlesInInterval(xMainColumnDrawingPosition: number, candlesData: Candlestick[], currentColumn: number, graphWidth: number): void {
@@ -83,31 +95,19 @@ export class RenderingElementsCollection {
             xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles > 0 && 
             xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles < graphWidth - this.dimensions.getHorizontalMargin() + 10
         ) {
-            this.candles.push(new Candle(xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles, currentCandleToRender, this.position.zoom))
+            const candleXRenderPosition = xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles;
+            this.candles.push(new Candle({ xStart: candleXRenderPosition }, {}, currentCandleToRender, this.position.zoom))
         }
     }
 
-    private drawLine(xStart: number, yStart: number, xEnd: number, yEnd: number, lineWidth: number = 1): void {
-        if(xStart <= this.dimensions.getWidth() - this.dimensions.getHorizontalMargin() + 10) {
-            this.context.beginPath();
-            this.context.moveTo(xStart, yStart);
-            this.context.lineTo(xEnd, yEnd);
-            this.context.strokeStyle = '#A9A9A9';
-            this.context.lineWidth = lineWidth;
-            this.context.stroke();
-        }
-    }
-
-    private drawSubLines(xStartPosition: number): void {
-        let drawingOffset = xStartPosition;
+    private addSubColumnLines(xStart: number, yStart: number, yEnd: number): void {
+        let drawingOffset = xStart;
         const columnQuantity = 10;
         const gap = this.position.colsDistance / columnQuantity;
-        const graphHeight = this.dimensions.getHeight();
-        const verticalMargin = this.dimensions.getVerticalMargin();
 
         for(let currentSubLine = 0; currentSubLine < columnQuantity; currentSubLine++) {
-            const actualXStart = drawingOffset - gap;
-            this.drawLine(actualXStart, 0, actualXStart, graphHeight - verticalMargin, .2);
+            const xStart = drawingOffset - gap;
+            this.subColumnLines.push(new Line({ xStart, xEnd: xStart, yStart, yEnd }, {}));
             drawingOffset = drawingOffset - gap;
         }
     }

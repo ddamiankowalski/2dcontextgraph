@@ -1,12 +1,7 @@
 import { RenderElement } from "./render-element";
-
+import { I2DCoords, IRenderProperties } from '../../interfaces/renderelement';
 export class Line extends RenderElement {
-    constructor(
-        xStart: number,
-        xEnd: number,
-        yStart: number,
-        yEnd: number
-    ) {
-        super(xStart, xEnd, yStart, yEnd);
+    constructor(coords: I2DCoords, properties: IRenderProperties) {
+        super(coords, properties);
     }
 }

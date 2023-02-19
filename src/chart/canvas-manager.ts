@@ -1,10 +1,10 @@
 import { RenderingElementsCollection } from './drawelements/rendering-elements-collection';
 import { CanvasDimensions } from './canvas-dimensions';
 import { ChartPosition } from './chart-position';
-import { Candle } from './candle'; 
+import { Candle } from './drawelements/candle'; 
 import { ChartTime } from './chart-time';
 import { Candlestick } from '../interfaces/candlestick';
-import { CandleRenderer } from './candle-renderer';
+import { Renderer } from './renderer/renderer';
 
 export class CanvasManager {
     constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
@@ -19,7 +19,7 @@ export class CanvasManager {
     private position: ChartPosition;
     private candles: Candle[];
     private time: ChartTime;
-    private candleRenderer: CandleRenderer;
+    private renderer: Renderer;
 
     private candleData: Candlestick[];
 
@@ -29,7 +29,7 @@ export class CanvasManager {
         this.dimensions = new CanvasDimensions(this.canvas, 70, 40);
         this.position = new ChartPosition(350, 300, 1);
         this.time = new ChartTime();
-        this.candleRenderer = new CandleRenderer(this.context, this.dimensions);
+        this.renderer = new Renderer(this.context, this.dimensions);
     }
 
 
@@ -43,7 +43,7 @@ export class CanvasManager {
     public draw(candlesData: Candlestick[]): void {
         this.clearView();
         this.candleData = candlesData;
-        this.drawGrid();
+        this.getRenderingElements();
         window.requestAnimationFrame(this.draw.bind(this, candlesData));
     }
 
@@ -53,29 +53,10 @@ export class CanvasManager {
         this.context.clearRect(0, 0, this.dimensions.getWidth(), this.dimensions.getHeight());
     }
 
-    drawGrid(): void {
+    getRenderingElements(): void {
         const elementsCollection = new RenderingElementsCollection(this.time, this.dimensions, this.position, this.candleData, this.context);
-        //this.addVerticalGrid();
-        //this.drawValueLines();
-        this.candleRenderer.draw(elementsCollection.getCandles(), this.dimensions.getHeight() - this.dimensions.getVerticalMargin());
-    }
-
-    private addVerticalGrid(): void {
-        const { width, height } = this.dimensions.getDimensions();
-        let currentColumn = 0;
-        for(let drawingOffset = width; drawingOffset + this.position.viewOffset > 0; drawingOffset = drawingOffset - this.position.colsDistance) { 
-            const xDrawingPosition = drawingOffset + this.position.viewOffset - this.dimensions.getHorizontalMargin();
-            const [ yStartDrawingPosition, yEndDrawingPosition ] = [0, height - this.dimensions.getVerticalMargin()];
-            currentColumn++;          
-
-            if(xDrawingPosition > 0 && xDrawingPosition < width + this.position.colsDistance) {
-                this.addCandlesInInterval(xDrawingPosition, this.candleData, currentColumn, width);
-                this.drawLine(xDrawingPosition, yStartDrawingPosition, xDrawingPosition, yEndDrawingPosition);
-                this.drawSubLines(xDrawingPosition);      
-            }
-            this.drawTimeStamps(xDrawingPosition, currentColumn, this.candleData);
-        }
-
+        this.drawValueLines();
+        this.renderer.draw(elementsCollection.getElements());
     }
 
     private addCandlesInInterval(xMainColumnDrawingPosition: number, candlesData: Candlestick[], currentColumn: number, graphWidth: number): void {
@@ -102,7 +83,7 @@ export class CanvasManager {
             xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles > 0 && 
             xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles < graphWidth - this.dimensions.getHorizontalMargin() + 10
         ) {
-            this.candles.push(new Candle(xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles, currentCandleToRender, this.position.zoom))
+           // this.candles.push(new Candle(xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles, currentCandleToRender, this.position.zoom))
         }
     }
 
