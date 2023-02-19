@@ -1,10 +1,10 @@
 import { Candlestick } from '../../interfaces/candlestick';
-import { RenderElement } from './render-element';
+import { Element } from './element';
 import { I2DCoords, IRenderProperties } from '../../interfaces/renderelement';
 import { CandleRenderer } from '../renderer/candle-renderer';
 import { CanvasDimensions } from '../canvas-dimensions';
 
-export class Candle extends RenderElement {
+export class Candle extends Element {
     constructor(
         coords: I2DCoords, 
         properties: IRenderProperties, 

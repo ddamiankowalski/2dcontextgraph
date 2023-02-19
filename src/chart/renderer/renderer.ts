@@ -1,5 +1,5 @@
 import { CanvasDimensions } from '../canvas-dimensions';
-import { RenderElement } from '../elements/render-element'
+import { Element } from '../elements/element'
 export class Renderer {
     constructor(
         context: CanvasRenderingContext2D,
@@ -12,7 +12,7 @@ export class Renderer {
     private context: CanvasRenderingContext2D;
     private dimensions: CanvasDimensions;
 
-    public draw(elementSet: Set<RenderElement[]>): void {
+    public draw(elementSet: Set<Element[]>): void {
         elementSet.forEach(renderElement => {
             renderElement.forEach(el => {
                 this.render(el);
@@ -20,7 +20,7 @@ export class Renderer {
         })
     }
 
-    private render(element: RenderElement): void {
+    private render(element: Element): void {
         if(element.getXStart() <= this.dimensions.getWidth() - this.dimensions.getHorizontalMargin() + 10) {
             element.render(element, this.context, this.dimensions);
         }

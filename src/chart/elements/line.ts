@@ -1,9 +1,9 @@
-import { RenderElement } from "./render-element";
+import { Element } from "./element";
 import { I2DCoords, IRenderProperties } from '../../interfaces/renderelement';
 import { LineRenderer } from '../renderer/line-renderer';
 import { CanvasDimensions } from "../canvas-dimensions";
 
-export class Line extends RenderElement {
+export class Line extends Element {
     constructor(coords: I2DCoords, properties: IRenderProperties) {
         super(coords, properties);
 

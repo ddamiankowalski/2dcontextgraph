@@ -4,7 +4,7 @@ import { ChartPosition } from '../chart-position';
 import { Candlestick } from '../../interfaces/candlestick';
 import { Candle } from './candle';
 import { Line } from './line';
-import { RenderElement } from './render-element';
+import { Element } from './element';
 
 export class ElementCollector {
     constructor(
@@ -25,7 +25,7 @@ export class ElementCollector {
     /**
      * a set of elements to render in the end
      */
-    private renderingElementsSet: Set<RenderElement[]> = new Set();
+    private renderingElementsSet: Set<Element[]> = new Set();
 
     private time: ChartTime;
     private dimensions: CanvasDimensions;
@@ -38,7 +38,7 @@ export class ElementCollector {
     private mainColumnLines: Line[] = [];
     private subColumnLines: Line[] = [];
 
-    public getElements(): Set<RenderElement[]> {
+    public getElements(): Set<Element[]> {
         return this.renderingElementsSet;
     }
 

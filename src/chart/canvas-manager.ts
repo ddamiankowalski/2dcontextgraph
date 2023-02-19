@@ -5,7 +5,7 @@ import { Candle } from './elements/candle';
 import { ChartTime } from './chart-time';
 import { Candlestick } from '../interfaces/candlestick';
 import { Renderer } from './renderer/renderer';
-import { RenderElement } from './elements/render-element';
+import { Element } from './elements/element';
 
 export class CanvasManager {
     constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
@@ -52,11 +52,11 @@ export class CanvasManager {
         this.context.clearRect(0, 0, this.dimensions.getWidth(), this.dimensions.getHeight());
     }
 
-    private getRenderingElements(): Set<RenderElement[]> {
+    private getRenderingElements(): Set<Element[]> {
         return new ElementCollector(this.time, this.dimensions, this.position, this.candleData, this.context).getElements();
     }
 
-    private renderElements(elements: Set<RenderElement[]>): void {
+    private renderElements(elements: Set<Element[]>): void {
         this.renderer.draw(elements);
     }
 
