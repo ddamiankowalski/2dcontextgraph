@@ -1,4 +1,4 @@
-import { RenderElement } from "./renderelement";
+import { RenderElement } from "./render-element";
 
 export class Line extends RenderElement {
     constructor(
