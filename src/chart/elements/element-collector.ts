@@ -38,10 +38,6 @@ export class ElementCollector {
     private mainColumnLines: Line[] = [];
     private subColumnLines: Line[] = [];
 
-    public getCandles(): Candle[] {
-        return this.candles;
-    }
-
     public getElements(): Set<RenderElement[]> {
         return this.renderingElementsSet;
     }

@@ -5,14 +5,14 @@ import { Candle } from './elements/candle';
 import { ChartTime } from './chart-time';
 import { Candlestick } from '../interfaces/candlestick';
 import { Renderer } from './renderer/renderer';
+import { RenderElement } from './elements/render-element';
 
 export class CanvasManager {
     constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
         this.initializeCanvasAndContext(context, canvas);
-        this.scrollSpeed = 10;
-
-        this.canvas.style.backgroundColor = "#252525";
         this.addCanvasListeners();
+        this.scrollSpeed = 10;
+        this.canvas.style.backgroundColor = "#252525";
     }
 
     private dimensions: CanvasDimensions;
@@ -41,7 +41,9 @@ export class CanvasManager {
     public draw(candlesData: Candlestick[]): void {
         this.clearView();
         this.candleData = candlesData;
-        this.getRenderingElements();
+        const renderElements = this.getRenderingElements();
+        this.renderElements(renderElements);
+        this.drawValueLines();
         window.requestAnimationFrame(this.draw.bind(this, candlesData));
     }
 
@@ -50,10 +52,12 @@ export class CanvasManager {
         this.context.clearRect(0, 0, this.dimensions.getWidth(), this.dimensions.getHeight());
     }
 
-    getRenderingElements(): void {
-        const elementsCollection = new ElementCollector(this.time, this.dimensions, this.position, this.candleData, this.context);
-        this.drawValueLines();
-        this.renderer.draw(elementsCollection.getElements());
+    private getRenderingElements(): Set<RenderElement[]> {
+        return new ElementCollector(this.time, this.dimensions, this.position, this.candleData, this.context).getElements();
+    }
+
+    private renderElements(elements: Set<RenderElement[]>): void {
+        this.renderer.draw(elements);
     }
 
 
