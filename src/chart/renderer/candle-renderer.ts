@@ -9,8 +9,9 @@ export class CandleRenderer {
     private context: CanvasRenderingContext2D;
     private dimensions: CanvasDimensions;
 
-    public draw(candles: Candle[], graphHeight: number): void {
+    public draw(candles: Candle[]): void {
         const [ maxHighCandle, maxLowCandle ] = Candle.getHighLow(); 
+        const graphHeight = this.dimensions.getHeight() - this.dimensions.getVerticalMargin();
 
         candles.forEach(candle => {
             if(candle.getXStart() <= this.dimensions.getWidth() - this.dimensions.getHorizontalMargin() + 10) {

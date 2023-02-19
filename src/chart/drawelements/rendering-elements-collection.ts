@@ -62,13 +62,13 @@ export class RenderingElementsCollection {
             this.drawTimeStamps(xDrawingPosition, currentColumn, this.candleData);
         }
 
-        this.renderingElementsSet.add(this.mainColumnLines);
         this.renderingElementsSet.add(this.subColumnLines);
+        this.renderingElementsSet.add(this.mainColumnLines);
         this.renderingElementsSet.add(this.candles);
     }
 
     private addMainColumnLine(xStart: number, yStart: number, yEnd: number): void {
-        this.mainColumnLines.push(new Line({ xStart, xEnd: xStart, yStart, yEnd }, { color: '#ff0000' }));
+        this.mainColumnLines.push(new Line({ xStart, xEnd: xStart, yStart, yEnd }, { width: 1 }));
     }
 
     private addCandlesInInterval(xMainColumnDrawingPosition: number, candlesData: Candlestick[], currentColumn: number, graphWidth: number): void {
@@ -96,7 +96,7 @@ export class RenderingElementsCollection {
             xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles < graphWidth - this.dimensions.getHorizontalMargin() + 10
         ) {
             const candleXRenderPosition = xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles;
-            this.candles.push(new Candle({ xStart: candleXRenderPosition }, {}, currentCandleToRender, this.position.zoom))
+            this.candles.push(new Candle({ xStart: candleXRenderPosition }, { color: '#ff00ff', width: 1 }, currentCandleToRender, this.position.zoom))
         }
     }
 
