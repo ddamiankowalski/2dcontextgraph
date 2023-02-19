@@ -1,5 +1,4 @@
-import { Renderer } from '../interfaces/renderer';
-import { ChartRenderer } from './chart-renderer';
+import { CanvasManager } from './canvas-manager';
 import { Candlestick } from '../interfaces/candlestick';
 
 export class Chart {
@@ -11,14 +10,14 @@ export class Chart {
     }
 
     private canvas: HTMLCanvasElement | undefined;
-    private renderer: Renderer;
+    private canvasManager: CanvasManager;
     private canvasContext: RenderingContext;
     private chartId: string;
 
     private intitializeChart(document: Document, candles: Candlestick[]): void {
         this.canvas = document.getElementById(this.chartId) as HTMLCanvasElement;
         this.canvasContext = this.canvas.getContext('2d');
-        this.renderer = new ChartRenderer(this.canvasContext, this.canvas);
-        this.renderer.draw(candles.reverse());
+        this.canvasManager = new CanvasManager(this.canvasContext, this.canvas);
+        this.canvasManager.draw(candles.reverse());
     }
 }

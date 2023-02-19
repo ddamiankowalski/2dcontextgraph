@@ -1,15 +1,15 @@
-import { Candlestick } from "../interfaces/candlestick";
-
 export class ChartPosition {
-    constructor(initialColsDist: number, maxColsDistance: number) {
+    constructor(initialColsDist: number, maxColsDistance: number, zoom: number) {
         this._colsDistance = initialColsDist;
         this._maxColsDistance = maxColsDistance;
         this._viewOffset = 0;
+        this._zoom = zoom;
     }
 
     private _colsDistance: number;
     private _maxColsDistance: number;
-    private _viewOffset;
+    private _viewOffset: number;
+    private _zoom: number;
 
     get colsDistance(): number {
         return this._colsDistance;
@@ -33,5 +33,13 @@ export class ChartPosition {
 
     set viewOffset(value: number) {
         this._viewOffset = value;
+    }
+
+    get zoom(): number {
+        return this._zoom;
+    }
+
+    set zoom(value: number) {
+        this._zoom = value;
     }
 }
