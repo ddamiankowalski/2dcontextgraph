@@ -31,7 +31,6 @@ export class CanvasManager {
         this.renderer = new Renderer(this.context, this.dimensions);
     }
 
-
     private context: CanvasRenderingContext2D | undefined;
     private canvas: HTMLCanvasElement | undefined;
     
@@ -57,6 +56,10 @@ export class CanvasManager {
         this.renderer.draw(elementsCollection.getElements());
     }
 
+
+    /**
+     * MOVE THAT TO A RENDERING ELEMENT
+     */
     private drawValueLines(): void {
         const { width, height } = this.dimensions.getDimensions();
         const [ maxHighCandle, maxLowCandle ] = Candle.getHighLow(); 
@@ -81,16 +84,6 @@ export class CanvasManager {
         }
     }
 
-    drawLine(xStart: number, yStart: number, xEnd: number, yEnd: number, lineWidth: number = 1): void {
-        if(xStart <= this.dimensions.getWidth() - this.dimensions.getHorizontalMargin() + 10) {
-            this.context.beginPath();
-            this.context.moveTo(xStart, yStart);
-            this.context.lineTo(xEnd, yEnd);
-            this.context.strokeStyle = '#A9A9A9';
-            this.context.lineWidth = lineWidth;
-            this.context.stroke();
-        }
-    }
 
 
 
