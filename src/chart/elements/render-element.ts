@@ -1,6 +1,11 @@
 import { I2DCoords, IRenderProperties } from '../../interfaces/renderelement';
+import { CanvasDimensions } from '../canvas-dimensions';
+
 export class RenderElement {
-    constructor({ xStart, xEnd, yStart, yEnd }: I2DCoords, properties: IRenderProperties) {
+    constructor(
+        { xStart, xEnd, yStart, yEnd }: I2DCoords, 
+        properties: IRenderProperties,
+    ) {
         this.xStart = xStart;
         this.xEnd = xEnd ?? xStart;
         this.yStart = yStart;
@@ -33,4 +38,6 @@ export class RenderElement {
     public getProperties(): IRenderProperties {
         return this.renderProperties;
     }
+
+    public render(element: RenderElement, context: CanvasRenderingContext2D, dimensions: CanvasDimensions): void {};
 }

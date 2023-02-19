@@ -1,11 +1,19 @@
 import { Candlestick } from '../../interfaces/candlestick';
 import { RenderElement } from './render-element';
 import { I2DCoords, IRenderProperties } from '../../interfaces/renderelement';
+import { CandleRenderer } from '../renderer/candle-renderer';
+import { CanvasDimensions } from '../canvas-dimensions';
 
 export class Candle extends RenderElement {
-    constructor(coords: I2DCoords, properties: IRenderProperties, candle: Candlestick, zoom: number) {
+    constructor(
+        coords: I2DCoords, 
+        properties: IRenderProperties, 
+        candle: Candlestick, 
+        zoom: number
+    ) {
         super(coords, properties);
         this.setCurrentHighLow(candle);
+        Candle.initializeRenderer();
 
         this.zoom = zoom;
         this.yEnd = candle.open;
@@ -15,6 +23,8 @@ export class Candle extends RenderElement {
         this.time = candle.time;
     }
 
+    private static renderer: CandleRenderer;
+
     private static currentMaxHigh?: number;
     private static currentMaxLow?: number;
     
@@ -22,6 +32,10 @@ export class Candle extends RenderElement {
     public yHigh: number;
     public yLow: number;
     private time: string;
+
+    public render(element: Candle, context: CanvasRenderingContext2D, dimensions: CanvasDimensions): void {
+        Candle.renderer.draw(element, dimensions, context);
+    }
 
     public getCandleTime(): string {
         return this.time;
@@ -44,5 +58,11 @@ export class Candle extends RenderElement {
 
     public static getHighLow(): Array<number> {
         return [ Candle.currentMaxHigh, Candle.currentMaxLow ];
+    }
+
+    private static initializeRenderer(): void {
+        if(!Candle.renderer) {
+            Candle.renderer = new CandleRenderer();
+        }
     }
 }

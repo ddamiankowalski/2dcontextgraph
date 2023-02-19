@@ -1,7 +1,7 @@
-import { RenderingElementsCollection } from './drawelements/rendering-elements-collection';
+import { ElementCollector } from './elements/element-collector';
 import { CanvasDimensions } from './canvas-dimensions';
 import { ChartPosition } from './chart-position';
-import { Candle } from './drawelements/candle'; 
+import { Candle } from './elements/candle'; 
 import { ChartTime } from './chart-time';
 import { Candlestick } from '../interfaces/candlestick';
 import { Renderer } from './renderer/renderer';
@@ -17,7 +17,6 @@ export class CanvasManager {
 
     private dimensions: CanvasDimensions;
     private position: ChartPosition;
-    private candles: Candle[];
     private time: ChartTime;
     private renderer: Renderer;
 
@@ -49,69 +48,13 @@ export class CanvasManager {
 
     private clearView(): void {
         Candle.resetHighLow();
-        this.candles = [];
         this.context.clearRect(0, 0, this.dimensions.getWidth(), this.dimensions.getHeight());
     }
 
     getRenderingElements(): void {
-        const elementsCollection = new RenderingElementsCollection(this.time, this.dimensions, this.position, this.candleData, this.context);
+        const elementsCollection = new ElementCollector(this.time, this.dimensions, this.position, this.candleData, this.context);
         this.drawValueLines();
         this.renderer.draw(elementsCollection.getElements());
-    }
-
-    private addCandlesInInterval(xMainColumnDrawingPosition: number, candlesData: Candlestick[], currentColumn: number, graphWidth: number): void {
-        const distanceBetweenCandles = this.getIntervalCandleDistance();
-
-        for(let candle = 0; candle < this.time.candlesInInterval(); candle++) {
-            const currentCandleToRender = candlesData[candle + this.time.candlesInInterval() * (currentColumn - 1)];
-            this.addCandleIfInView(xMainColumnDrawingPosition, candle, distanceBetweenCandles, graphWidth, currentCandleToRender);
-        }
-    }
-
-    private getIntervalCandleDistance(): number {
-        return this.position.colsDistance / this.time.candlesInInterval();
-    }
-
-    private addCandleIfInView(
-        xMainColumnDrawingPosition: number, 
-        candleNumInInterval: number, 
-        distanceBetweenCandles: number, 
-        graphWidth: number,
-        currentCandleToRender: Candlestick
-    ): void {
-        if(
-            xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles > 0 && 
-            xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles < graphWidth - this.dimensions.getHorizontalMargin() + 10
-        ) {
-           // this.candles.push(new Candle(xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles, currentCandleToRender, this.position.zoom))
-        }
-    }
-
-    private drawTimeStamps(xDrawingPosition: number, columnOffset: number, candlesData: Candlestick[]): void {
-        if(xDrawingPosition <= this.dimensions.getWidth() - this.dimensions.getHorizontalMargin() + 10) {
-            const yDrawingPosition = this.dimensions.getHeight() - this.dimensions.getVerticalMargin() + 16;
-            this.context.font = "8px sans-serif";
-            this.context.fillStyle = '#A9A9A9';
-    
-            // the time should technically start with the first candle from a set of candles from backend, and should be updated each time a candle arrives.
-            const date = new Date(Date.parse(candlesData[0].time));
-            date.setMinutes(date.getMinutes() - this.time.candlesInInterval() * (columnOffset - 1));
-            this.context.fillText(`${date.getHours()}:${date.getMinutes()}`, xDrawingPosition - 10, yDrawingPosition);
-        }
-    }
-
-    private drawSubLines(xStartPosition: number): void {
-        let drawingOffset = xStartPosition;
-        const columnQuantity = 10;
-        const gap = this.position.colsDistance / columnQuantity;
-        const graphHeight = this.dimensions.getHeight();
-        const verticalMargin = this.dimensions.getVerticalMargin();
-
-        for(let currentSubLine = 0; currentSubLine < columnQuantity; currentSubLine++) {
-            const actualXStart = drawingOffset - gap;
-            this.drawLine(actualXStart, 0, actualXStart, graphHeight - verticalMargin, .2);
-            drawingOffset = drawingOffset - gap;
-        }
     }
 
     private drawValueLines(): void {

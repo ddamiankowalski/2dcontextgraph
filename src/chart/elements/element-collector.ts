@@ -5,7 +5,8 @@ import { Candlestick } from '../../interfaces/candlestick';
 import { Candle } from './candle';
 import { Line } from './line';
 import { RenderElement } from './render-element';
-export class RenderingElementsCollection {
+
+export class ElementCollector {
     constructor(
         time: ChartTime,
         dimensions: CanvasDimensions,
@@ -107,7 +108,7 @@ export class RenderingElementsCollection {
 
         for(let currentSubLine = 0; currentSubLine < columnQuantity; currentSubLine++) {
             const xStart = drawingOffset - gap;
-            this.subColumnLines.push(new Line({ xStart, xEnd: xStart, yStart, yEnd }, {}));
+            this.subColumnLines.push(new Line({ xStart, xEnd: xStart, yStart, yEnd }, { width: .1 }));
             drawingOffset = drawingOffset - gap;
         }
     }
