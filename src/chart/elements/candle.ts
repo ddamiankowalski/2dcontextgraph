@@ -13,7 +13,6 @@ export class Candle extends Element {
     ) {
         super(coords, properties);
         this.setCurrentHighLow(candle);
-        this.setAllHighLow(candle);
         Candle.initializeRenderer();
 
         this.zoom = zoom;
@@ -29,17 +28,12 @@ export class Candle extends Element {
     private static currentMaxHigh?: number;
     private static currentMaxLow?: number;
 
-    private static allMaxHigh?: number;
-    private static allMaxLow?: number;
+    private static maxLowInData: number[];
     
     public zoom: number;
     public yHigh: number;
     public yLow: number;
     private time: string;
-
-    public static getAllMaxLow(): number[] {
-        return [ this.allMaxHigh, this.allMaxLow ];
-    }
 
     public render(element: Candle, context: CanvasRenderingContext2D, dimensions: ChartDimensions): void {
         Candle.renderer.draw(element, dimensions, context);
@@ -59,14 +53,8 @@ export class Candle extends Element {
         }
     }
 
-    private setAllHighLow(candle: Candlestick): void {
-        if(!Candle.allMaxHigh || candle.high > Candle.allMaxHigh) {
-            Candle.allMaxHigh = candle.high;
-        }
+    public static findMaxLowInData(): void {
 
-        if(!Candle.allMaxLow || candle.low < Candle.allMaxLow) {
-            Candle.allMaxLow = candle.low;
-        }
     }
 
     public static resetHighLow(): void {

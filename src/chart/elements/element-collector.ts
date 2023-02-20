@@ -114,7 +114,7 @@ export class ElementCollector {
 
     private drawTimeStamps(xDrawingPosition: number, columnOffset: number, candlesData: Candlestick[]): void {
         if(xDrawingPosition <= this.dimensions.getWidth() - this.dimensions.getHorizontalMargin() + 10) {
-            const yDrawingPosition = this.dimensions.getHeight() - this.dimensions.getVerticalMargin() + 16;
+            const yDrawingPosition = this.dimensions.getHeight() - this.dimensions.getVerticalMargin() + 26;
             this.context.font = "8px sans-serif";
             this.context.fillStyle = '#A9A9A9';
     

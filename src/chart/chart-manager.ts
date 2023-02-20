@@ -66,7 +66,7 @@ export class ChartManager {
      */
     private drawValueLines(): void {
         const { width, height } = this.dimensions.getDimensions();
-        const [ maxHighCandle, maxLowCandle ] = Candle.getHighLow(); 
+        const [ maxHighCandle, maxLowCandle ] = Candle.getHighLow();
 
         const yMax = 10;
         const yLow = height - this.dimensions.getVerticalMargin();

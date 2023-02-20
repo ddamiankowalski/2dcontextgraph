@@ -5,9 +5,6 @@ export class CandleRenderer {
         const [ maxHighCandle, maxLowCandle ] = Candle.getHighLow(); 
         const graphHeight = dimensions.getHeight() - dimensions.getVerticalMargin();
 
-        const [a, b] = [ Candle.getAllMaxLow(), Candle.getHighLow() ];
-        debugger
-
         if(candle.getXStart() <= dimensions.getWidth() - dimensions.getHorizontalMargin() + 10) {
             const yDrawingHigh = this.interpolate(graphHeight, candle.yHigh, maxLowCandle, maxHighCandle, graphHeight, dimensions);
             const yDrawingLow = this.interpolate(graphHeight, candle.yLow, maxLowCandle, maxHighCandle, graphHeight, dimensions);
