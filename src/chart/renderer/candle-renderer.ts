@@ -6,8 +6,8 @@ export class CandleRenderer {
         const graphHeight = dimensions.getHeight() - dimensions.getVerticalMargin();
 
         if(candle.getXStart() <= dimensions.getWidth() - dimensions.getHorizontalMargin() + 10) {
-            const yDrawingHigh = this.interpolate(graphHeight, candle.yHigh, maxLowCandle, maxHighCandle, graphHeight, dimensions);
-            const yDrawingLow = this.interpolate(graphHeight, candle.yLow, maxLowCandle, maxHighCandle, graphHeight, dimensions);
+            const yDrawingHigh = this.interpolate(graphHeight, candle.yHigh, maxLowCandle, maxHighCandle);
+            const yDrawingLow = this.interpolate(graphHeight, candle.yLow, maxLowCandle, maxHighCandle);
     
             context.beginPath();
             context.moveTo(candle.getXStart(), yDrawingLow);
@@ -17,8 +17,8 @@ export class CandleRenderer {
             context.stroke();
 
 
-            const yDrawingStart = this.interpolate(graphHeight, candle.getYStart(), maxLowCandle, maxHighCandle, graphHeight, dimensions);
-            const yDrawingEnd = this.interpolate(graphHeight, candle.getYEnd(), maxLowCandle, maxHighCandle, graphHeight, dimensions);
+            const yDrawingStart = this.interpolate(graphHeight, candle.getYStart(), maxLowCandle, maxHighCandle);
+            const yDrawingEnd = this.interpolate(graphHeight, candle.getYEnd(), maxLowCandle, maxHighCandle);
     
             context.beginPath();
             context.moveTo(candle.getXStart(), yDrawingEnd);
@@ -29,15 +29,14 @@ export class CandleRenderer {
         }
     }
 
-    private interpolate(chartHeight: number, yToDraw: number, maxLowCandle: number, maxHighCandle: number, graphHeight: number, dimensions: ChartDimensions): number {
-        const verticalMargin = dimensions.getVerticalMargin() / 2;
-        const interpolation = ((chartHeight - verticalMargin) * (yToDraw - maxLowCandle)) / (maxHighCandle - maxLowCandle);
-        if(interpolation > graphHeight / 2) {
-            let diff = Math.abs(interpolation - graphHeight / 2);
-            return graphHeight / 2 - diff;
-        } else if (interpolation < graphHeight / 2) {
-            let diff = Math.abs(interpolation - graphHeight / 2);
-            return graphHeight / 2 + diff;
+    private interpolate(chartHeight: number, yToDraw: number, maxLowCandle: number, maxHighCandle: number): number {
+        const interpolation = ((chartHeight) * (yToDraw - maxLowCandle)) / (maxHighCandle - maxLowCandle);
+        if(interpolation > chartHeight / 2) {
+            let diff = Math.abs(interpolation - chartHeight / 2);
+            return chartHeight / 2 - diff;
+        } else if (interpolation < chartHeight / 2) {
+            let diff = Math.abs(interpolation - chartHeight / 2);
+            return chartHeight / 2 + diff;
         } else {
             return interpolation;
         }

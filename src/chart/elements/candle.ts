@@ -28,7 +28,8 @@ export class Candle extends Element {
     private static currentMaxHigh?: number;
     private static currentMaxLow?: number;
 
-    private static maxLowInData: number[];
+    private static maxHigh: number;
+    private static maxLow: number;
     
     public zoom: number;
     public yHigh: number;
@@ -53,8 +54,22 @@ export class Candle extends Element {
         }
     }
 
-    public static findMaxLowInData(): void {
+    public static findMaxLowInData(candlesData: Candlestick[]): void {
+        candlesData.forEach(candle => {
+            if(!this.maxHigh || candle.high > this.maxHigh) {
+                this.maxHigh = candle.high;
+            }
 
+            if(!this.maxLow || candle.low < this.maxLow) {
+                this.maxLow = candle.low;
+            }
+        })
+
+        console.log(this.maxLow, this.maxHigh, 'Max low and max high values');
+    }
+
+    public static getMaxLowInData(): number[] {
+        return [ this.maxHigh, this.maxLow ];
     }
 
     public static resetHighLow(): void {
@@ -64,6 +79,14 @@ export class Candle extends Element {
 
     public static getHighLow(): Array<number> {
         return [ Candle.currentMaxHigh, Candle.currentMaxLow ];
+    }
+
+    public static getHigh(): number {
+        return Candle.currentMaxHigh;
+    }
+
+    public static getLow(): number {
+        return Candle.currentMaxLow;
     }
 
     private static initializeRenderer(): void {

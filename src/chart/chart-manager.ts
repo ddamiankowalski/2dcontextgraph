@@ -36,9 +36,16 @@ export class ChartManager {
     
     private mouseDown: boolean;
 
+    private candlesCalculated: boolean = false;
+
     private scrollSpeed: number;
 
     public draw(candlesData: Candlestick[]): void {
+        if(!this.candlesCalculated) {
+            Candle.findMaxLowInData(candlesData);
+            this.candlesCalculated = true;
+        }
+
         this.clearView();
         this.candleData = candlesData;
         const elements = this.getRenderingElements();
@@ -66,25 +73,48 @@ export class ChartManager {
      */
     private drawValueLines(): void {
         const { width, height } = this.dimensions.getDimensions();
-        const [ maxHighCandle, maxLowCandle ] = Candle.getHighLow();
+        const [ maxHigh, maxLow ] = Candle.getMaxLowInData();
+        const [ currentMax, currentLow ] = Candle.getHighLow();
 
-        const yMax = 10;
-        const yLow = height - this.dimensions.getVerticalMargin();
-        const columnNumbers = 10;
-        const colDistance = (yLow - yMax) / columnNumbers;
-        const valDiff = (maxHighCandle - maxLowCandle) / columnNumbers;
+        //console.log('current max low', currentMax, currentLow);
+        //console.log('max low high', maxHigh, maxLow)
 
-        for(let valueColumns = 0; valueColumns <= columnNumbers; valueColumns++) {
-            this.context.beginPath();
-            this.context.moveTo(0, yMax + colDistance * valueColumns);
-            this.context.lineTo(width - 55, yMax + colDistance * valueColumns);
-            this.context.strokeStyle = '#A9A9A9';
-            this.context.lineWidth = .1;
-            this.context.stroke();
+        const heightOfDrawingArea = height - this.dimensions.getVerticalMargin();
+        const diffInValueViewArea = currentMax - currentLow;
+        const diffInValueFullArea = maxHigh - maxLow;
 
-            this.context.font = "9px sans-serif";
-            this.context.fillStyle = '#A9A9A9';
-            this.context.fillText(`${(maxHighCandle + valDiff * valueColumns).toFixed(2)}`, width - 45, yMax + colDistance * valueColumns + 4);
+        const graphStartArea = 0; // this should be mapped to currentMax
+
+        for(let horizontalLineOffset = currentMax; horizontalLineOffset >= currentLow; horizontalLineOffset = horizontalLineOffset - 5) {
+            if(horizontalLineOffset <= currentMax && horizontalLineOffset >= currentLow) {
+                const interpolation = this.interpolate(height - this.dimensions.getVerticalMargin(), horizontalLineOffset, currentLow, currentMax);
+
+                this.context.beginPath();
+                this.context.moveTo(0, interpolation);
+                this.context.lineTo(this.dimensions.getWidth() - this.dimensions.getHorizontalMargin(), interpolation);
+                this.context.strokeStyle = '#A9A9A9';
+                this.context.lineWidth = .1;
+                this.context.stroke();
+
+                this.context.font = "9px sans-serif";
+                this.context.fillStyle = '#A9A9A9';
+                this.context.fillText(horizontalLineOffset.toString(), this.dimensions.getWidth() - 45, interpolation + 4);
+            }
+        }
+    }
+
+
+
+    private interpolate(chartHeight: number, yToDraw: number, maxLowCandle: number, maxHighCandle: number): number {
+        const interpolation = ((chartHeight) * (yToDraw - maxLowCandle)) / (maxHighCandle - maxLowCandle);
+        if(interpolation > chartHeight / 2) {
+            let diff = Math.abs(interpolation - chartHeight / 2);
+            return chartHeight / 2 - diff;
+        } else if (interpolation < chartHeight / 2) {
+            let diff = Math.abs(interpolation - chartHeight / 2);
+            return chartHeight / 2 + diff;
+        } else {
+            return interpolation;
         }
     }
 
