@@ -68,6 +68,7 @@ export class ChartManager {
     }
 
 
+    private static prevY: number | null;
     /**
      * MOVE THAT TO A RENDERING ELEMENT
      */
@@ -85,20 +86,26 @@ export class ChartManager {
 
         const graphStartArea = 0; // this should be mapped to currentMax
 
-        for(let horizontalLineOffset = currentMax; horizontalLineOffset >= currentLow; horizontalLineOffset = horizontalLineOffset - 5) {
+        ChartManager.prevY = null;
+
+        for(let horizontalLineOffset = currentMax; horizontalLineOffset >= currentLow; horizontalLineOffset = horizontalLineOffset - 1) {
             if(horizontalLineOffset <= currentMax && horizontalLineOffset >= currentLow) {
                 const interpolation = this.interpolate(height - this.dimensions.getVerticalMargin(), horizontalLineOffset, currentLow, currentMax);
 
-                this.context.beginPath();
-                this.context.moveTo(0, interpolation);
-                this.context.lineTo(this.dimensions.getWidth() - this.dimensions.getHorizontalMargin(), interpolation);
-                this.context.strokeStyle = '#A9A9A9';
-                this.context.lineWidth = .1;
-                this.context.stroke();
-
-                this.context.font = "9px sans-serif";
-                this.context.fillStyle = '#A9A9A9';
-                this.context.fillText(horizontalLineOffset.toString(), this.dimensions.getWidth() - 45, interpolation + 4);
+                if(ChartManager.prevY === undefined || interpolation - ChartManager.prevY > 30) {
+                    this.context.beginPath();
+                    this.context.moveTo(0, interpolation);
+                    this.context.lineTo(this.dimensions.getWidth() - this.dimensions.getHorizontalMargin(), interpolation);
+                    this.context.strokeStyle = '#A9A9A9';
+                    this.context.lineWidth = .1;
+                    this.context.stroke();
+    
+                    this.context.font = "10px sans-serif";
+                    this.context.fillStyle = '#A9A9A9';
+                    this.context.fillText(horizontalLineOffset.toString(), this.dimensions.getWidth() - 50, interpolation + 10);
+    
+                    ChartManager.prevY = interpolation;
+                }
             }
         }
     }
