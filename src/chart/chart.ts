@@ -17,7 +17,7 @@ export class Chart {
     private intitializeChart(document: Document, candles: Candlestick[]): void {
         this.canvas = document.getElementById(this.chartId) as HTMLCanvasElement;
         this.canvasContext = this.canvas.getContext('2d');
-        this.canvasManager = new ChartManager(this.canvasContext, this.canvas);
-        this.canvasManager.draw(candles.reverse());
+        this.canvasManager = new ChartManager(this.canvasContext, this.canvas, candles.reverse());
+        this.canvasManager.draw();
     }
 }

@@ -8,8 +8,8 @@ import { Renderer } from './renderer/renderer';
 import { Element } from './elements/element';
 
 export class ChartManager {
-    constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
-        this.initializeCanvasAndContext(context, canvas);
+    constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, candlesData: Candlestick[]) {
+        this.initializeCanvasAndContext(context, canvas, candlesData);
         this.addCanvasListeners();
         this.scrollSpeed = 10;
         this.canvas.style.backgroundColor = "#252525";
@@ -22,13 +22,19 @@ export class ChartManager {
 
     private candleData: Candlestick[];
 
-    private initializeCanvasAndContext(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement): void {
+    private initializeCanvasAndContext(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, candlesData: Candlestick[]): void {
         this.context = context;
         this.canvas = canvas;
         this.dimensions = new ChartDimensions(this.canvas, 70, 40);
         this.position = new ChartPosition(350, 300, 1);
         this.time = new ChartTime();
         this.renderer = new Renderer(this.context, this.dimensions);
+        this.candleData = candlesData;
+
+        if(!this.candlesCalculated) {
+            Candle.findMaxLowInData(candlesData);
+            this.candlesCalculated = true;
+        }
     }
 
     private context: CanvasRenderingContext2D | undefined;
@@ -40,18 +46,17 @@ export class ChartManager {
 
     private scrollSpeed: number;
 
-    public draw(candlesData: Candlestick[]): void {
-        if(!this.candlesCalculated) {
-            Candle.findMaxLowInData(candlesData);
-            this.candlesCalculated = true;
-        }
+    private lastRender?: number;
 
-        this.clearView();
-        this.candleData = candlesData;
-        const elements = this.getRenderingElements();
-        this.renderElements(elements);
-        this.drawValueLines();
-        window.requestAnimationFrame(this.draw.bind(this, candlesData));
+    public draw(time?: number): void {
+        if(!this.lastRender || time - this.lastRender >= 20) {
+            this.lastRender = time;
+            this.clearView();
+            const elements = this.getRenderingElements();
+            this.renderElements(elements);
+            this.drawValueLines();
+        }
+        window.requestAnimationFrame(this.draw.bind(this));
     }
 
     private clearView(): void {
