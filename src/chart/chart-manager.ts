@@ -88,11 +88,11 @@ export class ChartManager {
 
         ChartManager.prevY = null;
 
-        for(let horizontalLineOffset = currentMax; horizontalLineOffset >= currentLow; horizontalLineOffset = horizontalLineOffset - 1) {
+        for(let horizontalLineOffset = Math.floor(currentMax); horizontalLineOffset >= currentLow; horizontalLineOffset = horizontalLineOffset - .5) {
             if(horizontalLineOffset <= currentMax && horizontalLineOffset >= currentLow) {
                 const interpolation = this.interpolate(height - this.dimensions.getVerticalMargin(), horizontalLineOffset, currentLow, currentMax);
 
-                if(ChartManager.prevY === undefined || interpolation - ChartManager.prevY > 30) {
+                if(ChartManager.prevY === undefined || interpolation - ChartManager.prevY > 25) {
                     this.context.beginPath();
                     this.context.moveTo(0, interpolation);
                     this.context.lineTo(this.dimensions.getWidth() - this.dimensions.getHorizontalMargin(), interpolation);
@@ -102,7 +102,7 @@ export class ChartManager {
     
                     this.context.font = "10px sans-serif";
                     this.context.fillStyle = '#A9A9A9';
-                    this.context.fillText(horizontalLineOffset.toString(), this.dimensions.getWidth() - 50, interpolation + 10);
+                    this.context.fillText(horizontalLineOffset.toString(), this.dimensions.getWidth() - 50, interpolation + 6);
     
                     ChartManager.prevY = interpolation;
                 }
