@@ -49,7 +49,7 @@ export class ChartManager {
     private lastRender?: number;
 
     public draw(time?: number): void {
-        if(!this.lastRender || time - this.lastRender >= 20) {
+        if(!this.lastRender || time - this.lastRender >= 16) {
             this.lastRender = time;
             this.clearView();
             const elements = this.getRenderingElements();
@@ -78,26 +78,22 @@ export class ChartManager {
      * MOVE THAT TO A RENDERING ELEMENT
      */
     private drawValueLines(): void {
-        const { width, height } = this.dimensions.getDimensions();
-        const [ maxHigh, maxLow ] = Candle.getMaxLowInData();
+        const { height } = this.dimensions.getDimensions();
         const [ currentMax, currentLow ] = Candle.getHighLow();
 
-        //console.log('current max low', currentMax, currentLow);
-        //console.log('max low high', maxHigh, maxLow)
+        let currentYZoom = 1;
 
-        const heightOfDrawingArea = height - this.dimensions.getVerticalMargin();
-        const diffInValueViewArea = currentMax - currentLow;
-        const diffInValueFullArea = maxHigh - maxLow;
+        while((Math.floor(currentMax) - Math.floor(currentLow)) / currentYZoom >= 10) {
+            currentYZoom++;
+        }
 
-        const graphStartArea = 0; // this should be mapped to currentMax
-
-        ChartManager.prevY = null;
-
-        for(let horizontalLineOffset = Math.floor(currentMax); horizontalLineOffset >= currentLow; horizontalLineOffset = horizontalLineOffset - .5) {
+        for(let horizontalLineOffset = Math.floor(currentMax); horizontalLineOffset >= currentLow; horizontalLineOffset = horizontalLineOffset - .1) {
             if(horizontalLineOffset <= currentMax && horizontalLineOffset >= currentLow) {
-                const interpolation = this.interpolate(height - this.dimensions.getVerticalMargin(), horizontalLineOffset, currentLow, currentMax);
 
-                if(ChartManager.prevY === undefined || interpolation - ChartManager.prevY > 25) {
+                if(Number(horizontalLineOffset.toFixed(2)) % currentYZoom === 0) {
+
+                    const interpolation = this.interpolate(height - this.dimensions.getVerticalMargin(), horizontalLineOffset, currentLow, currentMax);
+
                     this.context.beginPath();
                     this.context.moveTo(0, interpolation);
                     this.context.lineTo(this.dimensions.getWidth() - this.dimensions.getHorizontalMargin(), interpolation);
@@ -107,9 +103,7 @@ export class ChartManager {
     
                     this.context.font = "10px sans-serif";
                     this.context.fillStyle = '#A9A9A9';
-                    this.context.fillText(horizontalLineOffset.toString(), this.dimensions.getWidth() - 50, interpolation + 6);
-    
-                    ChartManager.prevY = interpolation;
+                    this.context.fillText(horizontalLineOffset.toFixed(2), this.dimensions.getWidth() - 55, interpolation + 6);
                 }
             }
         }

@@ -13,6 +13,7 @@ export class Renderer {
     private dimensions: ChartDimensions;
 
     public draw(elementSet: Set<Element[]>): void {
+        console.log('NEXT RENDER ROUND');
         elementSet.forEach(renderElement => {
             renderElement.forEach(el => {
                 this.render(el);
