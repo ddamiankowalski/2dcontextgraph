@@ -12,7 +12,7 @@ export class ChartManager {
         this.initializeCanvasAndContext(context, canvas, candlesData);
         this.addCanvasListeners();
         this.scrollSpeed = 10;
-        this.canvas.style.backgroundColor = "#252525";
+        this.canvas.style.backgroundColor = "#191f2c";
     }
 
     private dimensions: ChartDimensions;
@@ -83,7 +83,7 @@ export class ChartManager {
 
         let currentYZoom = 1;
 
-        while((Math.floor(currentMax) - Math.floor(currentLow)) / currentYZoom >= 10) {
+        while((Math.floor(currentMax) - Math.floor(currentLow)) / currentYZoom >= 15) {
             currentYZoom++;
         }
 

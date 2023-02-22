@@ -12,7 +12,7 @@ export class CandleRenderer {
             context.beginPath();
             context.moveTo(candle.getXStart(), yDrawingLow);
             context.lineTo(candle.getXStart(), yDrawingHigh);
-            context.strokeStyle = '#ffff00';
+            context.strokeStyle = candle.getColor();
             context.lineWidth = 1;
             context.stroke();
 
@@ -23,7 +23,7 @@ export class CandleRenderer {
             context.beginPath();
             context.moveTo(candle.getXStart(), yDrawingEnd);
             context.lineTo(candle.getXStart(), yDrawingStart);
-            context.strokeStyle = '#00ff00';
+            context.strokeStyle = candle.getColor();
             context.lineWidth = 1 * candle.zoom + 1;
             context.stroke();
         }

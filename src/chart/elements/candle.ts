@@ -14,6 +14,7 @@ export class Candle extends Element {
         super(coords, properties);
         this.setCurrentHighLow(candle);
         Candle.initializeRenderer();
+        this.setColor(candle);
 
         this.zoom = zoom;
         this.yEnd = candle.open;
@@ -30,6 +31,8 @@ export class Candle extends Element {
 
     private static maxHigh: number;
     private static maxLow: number;
+
+    private color?: string;
     
     public zoom: number;
     public yHigh: number;
@@ -42,6 +45,14 @@ export class Candle extends Element {
 
     public getCandleTime(): string {
         return this.time;
+    }
+
+    private setColor(candle: Candlestick): void {
+        this.color = candle.open > candle.close ? '#56b786' : '#eb4e5c';
+    }
+
+    public getColor(): string {
+        return this.color;
     }
 
     private setCurrentHighLow(candle: Candlestick): void {

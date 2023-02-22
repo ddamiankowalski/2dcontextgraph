@@ -93,7 +93,7 @@ export class ElementCollector {
             xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles < graphWidth - this.dimensions.getHorizontalMargin() + 10
         ) {
             const candleXRenderPosition = xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles;
-            this.candles.push(new Candle({ xStart: candleXRenderPosition }, { color: '#ff00ff', width: 1 }, currentCandleToRender, this.position.zoom))
+            this.candles.push(new Candle({ xStart: candleXRenderPosition }, { width: 1 }, currentCandleToRender, this.position.zoom))
         }
     }
 
