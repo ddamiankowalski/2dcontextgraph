@@ -11,7 +11,7 @@ export class ChartManager {
     constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, candlesData: Candlestick[]) {
         this.initializeCanvasAndContext(context, canvas, candlesData);
         this.addCanvasListeners();
-        this.scrollSpeed = 10;
+        this.scrollSpeed = 15;
         this.canvas.style.backgroundColor = "#191f2c";
     }
 
@@ -25,7 +25,7 @@ export class ChartManager {
     private initializeCanvasAndContext(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, candlesData: Candlestick[]): void {
         this.context = context;
         this.canvas = canvas;
-        this.dimensions = new ChartDimensions(this.canvas, 70, 40);
+        this.dimensions = new ChartDimensions(this.canvas, 75, 40);
         this.position = new ChartPosition(350, 300, 1);
         this.time = new ChartTime();
         this.renderer = new Renderer(this.context, this.dimensions);
@@ -83,7 +83,7 @@ export class ChartManager {
 
         let currentYZoom = 1;
 
-        while((Math.floor(currentMax) - Math.floor(currentLow)) / currentYZoom >= 15) {
+        while((Math.floor(currentMax) - Math.floor(currentLow)) / currentYZoom >= 10) {
             currentYZoom++;
         }
 

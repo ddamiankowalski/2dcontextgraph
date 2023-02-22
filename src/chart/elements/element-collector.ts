@@ -100,7 +100,7 @@ export class ElementCollector {
     private addSubColumnLines(xStart: number, yStart: number, yEnd: number): void {
         let drawingOffset = xStart;
         let columnQuantity = this.time.candlesInInterval();
-        if(columnQuantity >= 30) {
+        if(columnQuantity >= 10) {
             columnQuantity = columnQuantity / 5;
         }
         const gap = this.position.colsDistance / columnQuantity;
