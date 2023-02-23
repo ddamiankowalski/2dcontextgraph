@@ -1,14 +1,14 @@
-import { Candlestick } from '../../interfaces/candlestick';
+import { CandlePayload } from '../../interfaces/candlestick';
 import { Element } from './element';
 import { I2DCoords, IRenderProperties } from '../../interfaces/renderelement';
 import { CandleRenderer } from '../renderer/candle-renderer';
-import { ChartDimensions } from '../chart-dimensions';
+import { Dimensions } from '../dimensions';
 
 export class Candle extends Element {
     constructor(
         coords: I2DCoords, 
         properties: IRenderProperties, 
-        candle: Candlestick, 
+        candle: CandlePayload, 
         zoom: number
     ) {
         super(coords, properties);
@@ -39,7 +39,7 @@ export class Candle extends Element {
     public yLow: number;
     private time: string;
 
-    public render(element: Candle, context: CanvasRenderingContext2D, dimensions: ChartDimensions): void {
+    public render(element: Candle, context: CanvasRenderingContext2D, dimensions: Dimensions): void {
         Candle.renderer.draw(element, dimensions, context);
     }
 
@@ -47,7 +47,7 @@ export class Candle extends Element {
         return this.time;
     }
 
-    private setColor(candle: Candlestick): void {
+    private setColor(candle: CandlePayload): void {
         this.color = candle.open > candle.close ? '#56b786' : '#eb4e5c';
     }
 
@@ -55,7 +55,7 @@ export class Candle extends Element {
         return this.color;
     }
 
-    private setCurrentHighLow(candle: Candlestick): void {
+    private setCurrentHighLow(candle: CandlePayload): void {
         if(!Candle.currentMaxHigh || candle.high > Candle.currentMaxHigh) {
             Candle.currentMaxHigh = candle.high;
         }
@@ -65,7 +65,7 @@ export class Candle extends Element {
         }
     }
 
-    public static findMaxLowInData(candlesData: Candlestick[]): void {
+    public static findMaxLowInData(candlesData: CandlePayload[]): void {
         candlesData.forEach(candle => {
             if(!this.maxHigh || candle.high > this.maxHigh) {
                 this.maxHigh = candle.high;

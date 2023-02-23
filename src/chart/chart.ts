@@ -1,23 +1,38 @@
 import { ChartManager } from './chart-manager';
-import { Candlestick } from '../interfaces/candlestick';
+import { CandlePayload } from '../interfaces/candlestick';
 
 export class Chart {
     constructor(document: Document, chartId: string) {
-        this.chartId = chartId;
-        fetch('http://localhost:3000/candles')
+        this.document = document;
+        this.fetchCandles('http://localhost:3000/candles')
             .then(res => res.json())
-            .then(candles => this.intitializeChart(document, candles));
+            .then(candles => this.initChart(candles, chartId));
     }
 
-    private canvas: HTMLCanvasElement | undefined;
+    private canvas: HTMLCanvasElement;
+    private document: Document;
     private canvasManager: ChartManager;
-    private canvasContext: RenderingContext;
-    private chartId: string;
+    private context: CanvasRenderingContext2D;
 
-    private intitializeChart(document: Document, candles: Candlestick[]): void {
-        this.canvas = document.getElementById(this.chartId) as HTMLCanvasElement;
-        this.canvasContext = this.canvas.getContext('2d');
-        this.canvasManager = new ChartManager(this.canvasContext, this.canvas, candles.reverse());
-        this.canvasManager.draw();
+    private initChart(candles: CandlePayload[], chartId: string): void {
+        this.canvas = this.getHTMLCanvas(chartId);
+        this.context = this.getRenderingContext();
+        this.canvasManager = new ChartManager(this.context, this.canvas, candles.reverse());
+    }
+
+    private getHTMLCanvas(chartId: string): HTMLCanvasElement {
+        return this.document.getElementById(chartId) as HTMLCanvasElement;
+    }
+
+    private getRenderingContext(): CanvasRenderingContext2D {
+        if(!!window.HTMLCanvasElement) {
+            return this.canvas.getContext('2d');
+        }
+
+        throw new Error('Canvas is not supported');
+    }
+
+    private fetchCandles(endpoint: string): Promise<Response> {
+        return fetch(endpoint);
     }
 }

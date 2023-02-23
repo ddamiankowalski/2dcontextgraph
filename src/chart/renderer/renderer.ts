@@ -1,23 +1,30 @@
-import { ChartDimensions } from '../chart-dimensions';
+import { Dimensions } from '../dimensions';
+import { Candle } from '../elements/candle';
 import { Element } from '../elements/element'
 export class Renderer {
     constructor(
         context: CanvasRenderingContext2D,
-        dimensions: ChartDimensions
+        dimensions: Dimensions
     ) {
         this.context = context;
         this.dimensions = dimensions;
     }
 
     private context: CanvasRenderingContext2D;
-    private dimensions: ChartDimensions;
+    private dimensions: Dimensions;
 
     public draw(elementSet: Set<Element[]>): void {
+        this.clearView();
+
         elementSet.forEach(renderElement => {
             renderElement.forEach(el => {
                 this.render(el);
             })
         })
+    }
+
+    private clearView(): void {
+        this.context.clearRect(0, 0, this.dimensions.getWidth(), this.dimensions.getHeight());
     }
 
     private render(element: Element): void {

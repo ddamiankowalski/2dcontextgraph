@@ -1,7 +1,7 @@
 import { Element } from "./element";
 import { I2DCoords, IRenderProperties } from '../../interfaces/renderelement';
 import { LineRenderer } from '../renderer/line-renderer';
-import { ChartDimensions } from "../chart-dimensions";
+import { Dimensions } from "../dimensions";
 
 export class Line extends Element {
     constructor(coords: I2DCoords, properties: IRenderProperties) {
@@ -12,7 +12,7 @@ export class Line extends Element {
 
     private static renderer: LineRenderer;
 
-    public render(element: Line, context: CanvasRenderingContext2D, dimensions: ChartDimensions): void {
+    public render(element: Line, context: CanvasRenderingContext2D, dimensions: Dimensions): void {
         Line.renderer.draw(element, dimensions, context, this.getProperties());
     }
 

@@ -1,73 +1,76 @@
 import { ElementCollector } from './elements/element-collector';
-import { ChartDimensions } from './chart-dimensions';
-import { ChartPosition } from './chart-position';
+import { Dimensions } from './dimensions';
+import { View } from './view';
 import { Candle } from './elements/candle'; 
-import { ChartTime } from './chart-time';
-import { Candlestick } from '../interfaces/candlestick';
+import { Time } from './time';
+import { CandlePayload } from '../interfaces/candlestick';
 import { Renderer } from './renderer/renderer';
 import { Element } from './elements/element';
-import { MathUtils } from './math-utils';
 
 export class ChartManager {
-    constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, candlesData: Candlestick[]) {
-        this.initializeCanvasAndContext(context, canvas, candlesData);
-        this.addCanvasListeners();
-        this.scrollSpeed = 10;
-        this.canvas.style.backgroundColor = "#191f2c";
-    }
+    private context: CanvasRenderingContext2D;
+    private canvas: HTMLCanvasElement;
 
-    private dimensions: ChartDimensions;
-    private position: ChartPosition;
-    private time: ChartTime;
+    private dimensions: Dimensions;
+    private view: View;
+    private time: Time;
     private renderer: Renderer;
-    private math: MathUtils = new MathUtils(); 
+    private candles: CandlePayload[];
+    private lastRender?: number;
 
-    private candleData: Candlestick[];
-
-    private initializeCanvasAndContext(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, candlesData: Candlestick[]): void {
+    constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, candles: CandlePayload[]) {
         this.context = context;
         this.canvas = canvas;
-        this.dimensions = new ChartDimensions(this.canvas, 75, 40);
-        this.position = new ChartPosition(350, 200, .5);
-        this.time = new ChartTime();
-        this.renderer = new Renderer(this.context, this.dimensions);
-        this.candleData = candlesData;
 
-        if(!this.candlesCalculated) {
-            Candle.findMaxLowInData(candlesData);
-            this.candlesCalculated = true;
-        }
+        this.setCanvasDimensions();
+        this.setView();
+        this.setTime();
+        this.setRenderer();
+        this.setCandles(candles);
+        this.addCanvasListeners();
+        this.canvas.style.backgroundColor = "#191f2c";
+
+        this.frameLoop();
     }
 
-    private context: CanvasRenderingContext2D | undefined;
-    private canvas: HTMLCanvasElement | undefined;
+    private setCanvasDimensions(): void {
+        const [ horizontalMargin, verticalMargin ] = [ 75, 40 ];
+        this.dimensions = new Dimensions(this.canvas, horizontalMargin, verticalMargin);
+    }
+
+    private setView(): void {
+        const maxColInterval = 150;
+        this.view = new View(maxColInterval);
+    }
+
+    private setTime(): void {
+        this.time = new Time();
+    }
+
+    private setRenderer(): void {
+        this.renderer = new Renderer(this.context, this.dimensions);
+    }
+
+    private setCandles(candles: CandlePayload[]): void {
+        Candle.findMaxLowInData(candles);
+        this.candles = candles;
+    }
     
     private mouseDown: boolean;
 
-    private candlesCalculated: boolean = false;
-
-    private scrollSpeed: number;
-
-    private lastRender?: number;
-
-    public draw(time?: number): void {
+    private frameLoop(time?: number): void {
         if(!this.lastRender || time - this.lastRender >= 16) {
             this.lastRender = time;
-            this.clearView();
+            Candle.resetHighLow();
             const elements = this.getRenderingElements();
             this.renderElements(elements);
             this.drawValueLines();
         }
-        window.requestAnimationFrame(this.draw.bind(this));
-    }
-
-    private clearView(): void {
-        Candle.resetHighLow();
-        this.context.clearRect(0, 0, this.dimensions.getWidth(), this.dimensions.getHeight());
+        window.requestAnimationFrame(this.frameLoop.bind(this));
     }
 
     private getRenderingElements(): Set<Element[]> {
-        return new ElementCollector(this.time, this.dimensions, this.position, this.candleData, this.context).getElements();
+        return new ElementCollector(this.time, this.dimensions, this.view, this.candles, this.context).getElements();
     }
 
     private renderElements(elements: Set<Element[]>): void {
@@ -75,7 +78,6 @@ export class ChartManager {
     }
 
 
-    private static prevY: number | null;
     /**
      * MOVE THAT TO A RENDERING ELEMENT
      */
@@ -151,32 +153,32 @@ export class ChartManager {
         const graphWidth = this.dimensions.getWidth();
         // wheel event
         this.canvas.addEventListener('wheel', (event: WheelEvent) => {
-            const zoomOffsetSyncValue = (graphWidth + this.position.viewOffset - this.dimensions.getHorizontalMargin() - event.offsetX) / this.position.colsDistance * this.scrollSpeed;
+            const zoomOffsetSyncValue = (graphWidth + this.view.getViewOffset() - this.dimensions.getHorizontalMargin() - event.offsetX) / this.view.getColInterval() * this.view.getScrollSpeed();
 
-            if(event.deltaY > 0 && (this.position.colsDistance - this.scrollSpeed > this.position.maxColsDistance || !this.time.checkIfMaxTimeSpan())) {
-                this.position.colsDistance = this.position.colsDistance - this.scrollSpeed;
-                this.position.viewOffset = this.position.viewOffset - zoomOffsetSyncValue;
+            if(event.deltaY > 0 && (this.view.getColInterval() - this.view.getScrollSpeed() > this.view.getMaxColInterval() || !this.time.checkIfMaxTimeSpan())) {
+                this.view.setColInterval(this.view.getColInterval() - this.view.getScrollSpeed())
+                this.view.setViewOffset(this.view.getViewOffset() - zoomOffsetSyncValue);
 
-                this.position.zoom = this.position.zoom - this.scrollSpeed * .02;
-            } else if(event.deltaY < 0 && (!this.time.checkIfMinTimeSpan() || this.position.colsDistance + this.scrollSpeed < this.position.maxColsDistance * 2)) {
-                this.position.colsDistance = this.position.colsDistance + this.scrollSpeed;
-                this.position.viewOffset = this.position.viewOffset + zoomOffsetSyncValue;
+                this.view.setZoom(this.view.getZoom() - this.view.getScrollSpeed() * .02);
+            } else if(event.deltaY < 0 && (!this.time.checkIfMinTimeSpan() || this.view.getColInterval() + this.view.getScrollSpeed() < this.view.getMaxColInterval() * 2)) {
+                this.view.setColInterval(this.view.getColInterval() + this.view.getScrollSpeed());
+                this.view.setViewOffset(this.view.getViewOffset() + zoomOffsetSyncValue);
 
-                this.position.zoom = this.position.zoom + this.scrollSpeed * .02;
+                this.view.setZoom(this.view.getZoom() + this.view.getScrollSpeed() * .02);
             }
 
-            if(this.position.colsDistance <= this.position.maxColsDistance) {
+            if(this.view.getColInterval() <= this.view.getMaxColInterval()) {
                 if(this.time.checkIfMaxTimeSpan()) {
                     return;
                 }
-                this.position.colsDistance = this.position.maxColsDistance * this.time.getPrevMaxDistanceRatio() - this.scrollSpeed;
-                this.position.viewOffset = this.position.viewOffset - zoomOffsetSyncValue / this.time.getPrevMaxDistanceRatio();
+                this.view.setColInterval(this.view.getMaxColInterval() * this.time.getPrevMaxDistanceRatio() - this.view.getScrollSpeed());
+                this.view.setViewOffset(this.view.getViewOffset() - zoomOffsetSyncValue / this.time.getPrevMaxDistanceRatio());
 
                 this.time.enlargeTimeSpan();
 
-            } else if(this.position.colsDistance >= this.position.maxColsDistance * this.time.getCurrentMaxDistanceRatio()) {
-                this.position.colsDistance = this.position.maxColsDistance + this.scrollSpeed;
-                this.position.viewOffset = this.position.viewOffset + zoomOffsetSyncValue * this.time.getCurrentMaxDistanceRatio();
+            } else if(this.view.getColInterval() >= this.view.getMaxColInterval() * this.time.getCurrentMaxDistanceRatio()) {
+                this.view.setColInterval(this.view.getMaxColInterval() + this.view.getScrollSpeed());
+                this.view.setViewOffset(this.view.getViewOffset() + zoomOffsetSyncValue * this.time.getCurrentMaxDistanceRatio());
 
                 this.time.reduceTimeSpan();
 
@@ -198,15 +200,15 @@ export class ChartManager {
         })
 
         this.canvas.addEventListener('mousemove', (event: MouseEvent) => {
-            if(this.position.viewOffset + event.movementX > 0 && this.mouseDown) {
-                this.position.viewOffset = this.position.viewOffset + event.movementX;
+            if(this.view.getViewOffset() + event.movementX > 0 && this.mouseDown) {
+                this.view.setViewOffset(this.view.getViewOffset() + event.movementX);
             }
         })
     }
 
     private blockViewOffset(): void {
-        if(this.position.viewOffset <= 0) {
-            this.position.viewOffset = 0;
+        if(this.view.getViewOffset() <= 0) {
+            this.view.setViewOffset(0);
         }
     }
 }

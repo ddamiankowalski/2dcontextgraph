@@ -1,4 +1,4 @@
-export class ChartTime {
+export class Time {
     constructor() {
         this.initializeTimeMap();
     }
@@ -39,9 +39,8 @@ export class ChartTime {
     }
 
     public enlargeTimeSpan(): void {
-            this.currentTimeSpan = this.currentTimeSpan * this.getPrevMaxDistanceRatio();
-            this.currentIntervalStep--;
-
+        this.currentTimeSpan = this.currentTimeSpan * this.getPrevMaxDistanceRatio();
+        this.currentIntervalStep--;
     }
 
     public reduceTimeSpan(): void {

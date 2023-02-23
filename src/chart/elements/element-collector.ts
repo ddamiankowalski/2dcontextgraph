@@ -1,22 +1,22 @@
-import { ChartTime } from '../chart-time';
-import { ChartDimensions } from '../chart-dimensions';
-import { ChartPosition } from '../chart-position';
-import { Candlestick } from '../../interfaces/candlestick';
+import { Time } from '../time';
+import { Dimensions } from '../dimensions';
+import { View } from '../view';
+import { CandlePayload } from '../../interfaces/candlestick';
 import { Candle } from './candle';
 import { Line } from './line';
 import { Element } from './element';
 
 export class ElementCollector {
     constructor(
-        time: ChartTime,
-        dimensions: ChartDimensions,
-        position: ChartPosition,
-        candleData: Candlestick[],
+        time: Time,
+        dimensions: Dimensions,
+        view: View,
+        candleData: CandlePayload[],
         context: CanvasRenderingContext2D
     ) {
         this.time = time;
         this.dimensions = dimensions;
-        this.position = position;
+        this.view = view;
         this.candleData = candleData;
         this.context = context;
         this.setElements();
@@ -27,10 +27,10 @@ export class ElementCollector {
      */
     private renderingElementsSet: Set<Element[]> = new Set();
 
-    private time: ChartTime;
-    private dimensions: ChartDimensions;
-    private position: ChartPosition;
-    private candleData: Candlestick[];
+    private time: Time;
+    private dimensions: Dimensions;
+    private view: View;
+    private candleData: CandlePayload[];
     
     private context: CanvasRenderingContext2D;
 
@@ -46,12 +46,12 @@ export class ElementCollector {
         const { width: canvasWidth, height: canvasHeight } = this.dimensions.getDimensions();
         let currentColumn = 0;
 
-        for(let xDrawingOffset = canvasWidth; xDrawingOffset + this.position.viewOffset > 0; xDrawingOffset = xDrawingOffset - this.position.colsDistance) { 
-            const xDrawingPosition = xDrawingOffset + this.position.viewOffset - this.dimensions.getHorizontalMargin();
+        for(let xDrawingOffset = canvasWidth; xDrawingOffset + this.view.getViewOffset() > 0; xDrawingOffset = xDrawingOffset - this.view.getColInterval()) { 
+            const xDrawingPosition = xDrawingOffset + this.view.getViewOffset() - this.dimensions.getHorizontalMargin();
             const [ yStartDrawingPosition, yEndDrawingPosition ] = [ 0, canvasHeight - this.dimensions.getVerticalMargin() ];
             currentColumn++;          
 
-            if(xDrawingPosition > 0 && xDrawingPosition < canvasWidth + this.position.colsDistance) {
+            if(xDrawingPosition > 0 && xDrawingPosition < canvasWidth + this.view.getColInterval()) {
                 this.addCandlesInInterval(xDrawingPosition, this.candleData, currentColumn, canvasWidth);
                 this.addMainColumnLine(xDrawingPosition, yStartDrawingPosition, yEndDrawingPosition);
                 this.addSubColumnLines(xDrawingPosition, yStartDrawingPosition, yEndDrawingPosition);      
@@ -62,13 +62,15 @@ export class ElementCollector {
         this.renderingElementsSet.add(this.subColumnLines);
         this.renderingElementsSet.add(this.mainColumnLines);
         this.renderingElementsSet.add(this.candles);
+
+        console.log(currentColumn)
     }
 
     private addMainColumnLine(xStart: number, yStart: number, yEnd: number): void {
         this.mainColumnLines.push(new Line({ xStart, xEnd: xStart, yStart, yEnd }, { width: .4 }));
     }
 
-    private addCandlesInInterval(xMainColumnDrawingPosition: number, candlesData: Candlestick[], currentColumn: number, graphWidth: number): void {
+    private addCandlesInInterval(xMainColumnDrawingPosition: number, candlesData: CandlePayload[], currentColumn: number, graphWidth: number): void {
         const distanceBetweenCandles = this.getIntervalCandleDistance();
 
         for(let candle = 0; candle < this.time.candlesInInterval(); candle++) {
@@ -78,7 +80,7 @@ export class ElementCollector {
     }
 
     private getIntervalCandleDistance(): number {
-        return this.position.colsDistance / this.time.candlesInInterval();
+        return this.view.getColInterval() / this.time.candlesInInterval();
     }
 
     private addCandleIfInView(
@@ -86,14 +88,14 @@ export class ElementCollector {
         candleNumInInterval: number, 
         distanceBetweenCandles: number, 
         graphWidth: number,
-        currentCandleToRender: Candlestick
+        currentCandleToRender: CandlePayload
     ): void {
         if(
             xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles > 0 && 
             xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles < graphWidth - this.dimensions.getHorizontalMargin() + 10
         ) {
             const candleXRenderPosition = xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles;
-            this.candles.push(new Candle({ xStart: candleXRenderPosition }, { width: 1 }, currentCandleToRender, this.position.zoom))
+            this.candles.push(new Candle({ xStart: candleXRenderPosition }, { width: 1 }, currentCandleToRender, this.view.getZoom()))
         }
     }
 
@@ -104,7 +106,7 @@ export class ElementCollector {
         if(candlesInInterval >= 30) {
             candlesInInterval = candlesInInterval / 5;
         }
-        const gap = this.position.colsDistance / candlesInInterval;
+        const gap = this.view.getColInterval() / candlesInInterval;
 
         for(let currentSubLine = 0; currentSubLine < candlesInInterval; currentSubLine++) {
             const xStart = drawingOffset - gap;
@@ -113,7 +115,7 @@ export class ElementCollector {
         }
     }
 
-    private drawTimeStamps(xDrawingPosition: number, columnOffset: number, candlesData: Candlestick[]): void {
+    private drawTimeStamps(xDrawingPosition: number, columnOffset: number, candlesData: CandlePayload[]): void {
         if(xDrawingPosition <= this.dimensions.getWidth() - this.dimensions.getHorizontalMargin() + 10) {
             const yDrawingPosition = this.dimensions.getHeight() - this.dimensions.getVerticalMargin() + 23;
             this.context.font = "9px Barlow";
