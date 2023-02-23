@@ -2,6 +2,7 @@
   "devDependencies": {
     "@webpack-cli/generators": "^3.0.1",
     "css-loader": "^6.7.3",
+    "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
     "prettier": "^2.8.3",
     "sass": "^1.57.1",
@@ -29,6 +30,7 @@
     "clone-deep": "^4.0.1",
     "colorette": "^2.0.19",
     "commander": "^2.20.3",
+    "concurrently": "^7.6.0",
     "cross-spawn": "^7.0.3",
     "electron-to-chromium": "^1.4.295",
     "enhanced-resolve": "^5.12.0",

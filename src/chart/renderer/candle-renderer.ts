@@ -21,11 +21,10 @@ export class CandleRenderer {
             const yDrawingEnd = this.interpolate(graphHeight, candle.getYEnd(), maxLowCandle, maxHighCandle);
     
             context.beginPath();
-            context.moveTo(candle.getXStart(), yDrawingEnd);
-            context.lineTo(candle.getXStart(), yDrawingStart);
-            context.strokeStyle = candle.getColor();
-            context.lineWidth = 1 * candle.zoom + 1;
+            context.roundRect(candle.getXStart() - (1 * candle.zoom + 1) / 2, yDrawingEnd, 1 * candle.zoom + 1, yDrawingStart - yDrawingEnd, 1)
+            context.fillStyle = candle.getColor();
             context.stroke();
+            context.fill();
         }
     }
 

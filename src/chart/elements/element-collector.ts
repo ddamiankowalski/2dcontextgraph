@@ -65,7 +65,7 @@ export class ElementCollector {
     }
 
     private addMainColumnLine(xStart: number, yStart: number, yEnd: number): void {
-        this.mainColumnLines.push(new Line({ xStart, xEnd: xStart, yStart, yEnd }, { width: 1 }));
+        this.mainColumnLines.push(new Line({ xStart, xEnd: xStart, yStart, yEnd }, { width: .4 }));
     }
 
     private addCandlesInInterval(xMainColumnDrawingPosition: number, candlesData: Candlestick[], currentColumn: number, graphWidth: number): void {
@@ -99,13 +99,14 @@ export class ElementCollector {
 
     private addSubColumnLines(xStart: number, yStart: number, yEnd: number): void {
         let drawingOffset = xStart;
-        let columnQuantity = this.time.candlesInInterval();
-        if(columnQuantity >= 10) {
-            columnQuantity = columnQuantity / 5;
-        }
-        const gap = this.position.colsDistance / columnQuantity;
+        let candlesInInterval = this.time.candlesInInterval();
 
-        for(let currentSubLine = 0; currentSubLine < columnQuantity; currentSubLine++) {
+        if(candlesInInterval >= 30) {
+            candlesInInterval = candlesInInterval / 5;
+        }
+        const gap = this.position.colsDistance / candlesInInterval;
+
+        for(let currentSubLine = 0; currentSubLine < candlesInInterval; currentSubLine++) {
             const xStart = drawingOffset - gap;
             this.subColumnLines.push(new Line({ xStart, xEnd: xStart, yStart, yEnd }, { width: .1 }));
             drawingOffset = drawingOffset - gap;
@@ -114,8 +115,8 @@ export class ElementCollector {
 
     private drawTimeStamps(xDrawingPosition: number, columnOffset: number, candlesData: Candlestick[]): void {
         if(xDrawingPosition <= this.dimensions.getWidth() - this.dimensions.getHorizontalMargin() + 10) {
-            const yDrawingPosition = this.dimensions.getHeight() - this.dimensions.getVerticalMargin() + 26;
-            this.context.font = "8px sans-serif";
+            const yDrawingPosition = this.dimensions.getHeight() - this.dimensions.getVerticalMargin() + 23;
+            this.context.font = "9px Barlow";
             this.context.fillStyle = '#A9A9A9';
     
             // the time should technically start with the first candle from a set of candles from backend, and should be updated each time a candle arrives.

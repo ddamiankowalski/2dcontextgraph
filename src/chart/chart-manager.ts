@@ -11,7 +11,7 @@ export class ChartManager {
     constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, candlesData: Candlestick[]) {
         this.initializeCanvasAndContext(context, canvas, candlesData);
         this.addCanvasListeners();
-        this.scrollSpeed = 15;
+        this.scrollSpeed = 10;
         this.canvas.style.backgroundColor = "#191f2c";
     }
 
@@ -26,7 +26,7 @@ export class ChartManager {
         this.context = context;
         this.canvas = canvas;
         this.dimensions = new ChartDimensions(this.canvas, 75, 40);
-        this.position = new ChartPosition(350, 300, 1);
+        this.position = new ChartPosition(350, 200, .5);
         this.time = new ChartTime();
         this.renderer = new Renderer(this.context, this.dimensions);
         this.candleData = candlesData;
@@ -81,13 +81,13 @@ export class ChartManager {
         const { height } = this.dimensions.getDimensions();
         const [ currentMax, currentLow ] = Candle.getHighLow();
 
-        let currentYZoom = 1;
+        let currentYZoom = 5;
 
         while((Math.floor(currentMax) - Math.floor(currentLow)) / currentYZoom >= 10) {
-            currentYZoom++;
+            currentYZoom = currentYZoom * 2;
         }
 
-        for(let horizontalLineOffset = Math.floor(currentMax); horizontalLineOffset >= currentLow; horizontalLineOffset = horizontalLineOffset - .1) {
+        for(let horizontalLineOffset = Math.floor(currentMax); horizontalLineOffset >= currentLow; horizontalLineOffset = horizontalLineOffset - .5) {
             if(horizontalLineOffset <= currentMax && horizontalLineOffset >= currentLow) {
 
                 if(Number(horizontalLineOffset.toFixed(2)) % currentYZoom === 0) {
@@ -101,7 +101,7 @@ export class ChartManager {
                     this.context.lineWidth = .1;
                     this.context.stroke();
     
-                    this.context.font = "10px sans-serif";
+                    this.context.font = "10px Barlow";
                     this.context.fillStyle = '#A9A9A9';
                     this.context.fillText(horizontalLineOffset.toFixed(2), this.dimensions.getWidth() - 55, interpolation + 6);
                 }
@@ -155,12 +155,12 @@ export class ChartManager {
                 this.position.colsDistance = this.position.colsDistance - this.scrollSpeed;
                 this.position.viewOffset = this.position.viewOffset - zoomOffsetSyncValue;
 
-                this.position.zoom = this.position.zoom - .15;
-            } else if(event.deltaY < 0 && (!this.time.checkIfMinTimeSpan() || this.position.colsDistance + this.scrollSpeed !== this.position.maxColsDistance * 2)) {
+                this.position.zoom = this.position.zoom - this.scrollSpeed * .02;
+            } else if(event.deltaY < 0 && (!this.time.checkIfMinTimeSpan() || this.position.colsDistance + this.scrollSpeed < this.position.maxColsDistance * 2)) {
                 this.position.colsDistance = this.position.colsDistance + this.scrollSpeed;
                 this.position.viewOffset = this.position.viewOffset + zoomOffsetSyncValue;
 
-                this.position.zoom = this.position.zoom + .15;
+                this.position.zoom = this.position.zoom + this.scrollSpeed * .02;
             }
 
             if(this.position.colsDistance <= this.position.maxColsDistance) {
