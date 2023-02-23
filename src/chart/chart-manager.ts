@@ -81,7 +81,7 @@ export class ChartManager {
         const { height } = this.dimensions.getDimensions();
         const [ currentMax, currentLow ] = Candle.getHighLow();
 
-        let currentYZoom = 5;
+        let currentYZoom = 2;
 
         while((Math.floor(currentMax) - Math.floor(currentLow)) / currentYZoom >= 10) {
             currentYZoom = currentYZoom * 2;
