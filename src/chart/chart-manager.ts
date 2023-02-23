@@ -91,6 +91,10 @@ export class ChartManager {
             currentYZoom = currentYZoom * 2;
         }
 
+        while((Math.floor(currentMax) - Math.floor(currentLow)) / currentYZoom <= 5) {
+            currentYZoom = currentYZoom / 2;
+        }
+
         for(let horizontalLineOffset = Math.floor(currentMax); horizontalLineOffset >= currentLow; horizontalLineOffset = horizontalLineOffset - .5) {
             if(horizontalLineOffset <= currentMax && horizontalLineOffset >= currentLow) {
 
