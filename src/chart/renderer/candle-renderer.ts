@@ -21,7 +21,7 @@ export class CandleRenderer {
             const yDrawingEnd = this.interpolate(graphHeight, candle.getYEnd(), maxLowCandle, maxHighCandle);
     
             context.beginPath();
-            context.roundRect(candle.getXStart() - (1 * candle.zoom + 1) / 2, yDrawingEnd, 1 * candle.zoom + 1, yDrawingStart - yDrawingEnd, 1)
+            context.roundRect(candle.getXStart() - (1 * candle.zoom) / 2, yDrawingEnd, 1 * candle.zoom, yDrawingStart - yDrawingEnd, 1)
             context.fillStyle = candle.getColor();
             context.stroke();
             context.fill();

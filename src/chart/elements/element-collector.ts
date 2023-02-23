@@ -62,8 +62,6 @@ export class ElementCollector {
         this.renderingElementsSet.add(this.subColumnLines);
         this.renderingElementsSet.add(this.mainColumnLines);
         this.renderingElementsSet.add(this.candles);
-
-        console.log(currentColumn)
     }
 
     private addMainColumnLine(xStart: number, yStart: number, yEnd: number): void {

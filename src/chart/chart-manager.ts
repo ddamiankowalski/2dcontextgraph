@@ -6,6 +6,12 @@ import { Time } from './time';
 import { CandlePayload } from '../interfaces/candlestick';
 import { Renderer } from './renderer/renderer';
 import { Element } from './elements/element';
+import { EventManager } from './events/event-manager';
+import { Wheel } from './events/wheel';
+import { Mouseout } from './events/mouseout';
+import { Mousedown } from './events/mousedown';
+import { Mouseup } from './events/mouseup';
+import { Mousemove } from './events/mousemove';
 
 export class ChartManager {
     private context: CanvasRenderingContext2D;
@@ -15,6 +21,7 @@ export class ChartManager {
     private view: View;
     private time: Time;
     private renderer: Renderer;
+    private eventManager: EventManager;
     private candles: CandlePayload[];
     private lastRender?: number;
 
@@ -55,8 +62,15 @@ export class ChartManager {
         Candle.findMaxLowInData(candles);
         this.candles = candles;
     }
-    
-    private mouseDown: boolean;
+
+    private addCanvasListeners(): void {
+        this.eventManager = new EventManager(this.canvas, this.dimensions, this.view, this.time);
+        this.eventManager.listen(new Wheel());
+        this.eventManager.listen(new Mouseout());
+        this.eventManager.listen(new Mousedown());
+        this.eventManager.listen(new Mouseup());
+        this.eventManager.listen(new Mousemove());
+    }
 
     private frameLoop(time?: number): void {
         if(!this.lastRender || time - this.lastRender >= 16) {
@@ -129,90 +143,6 @@ export class ChartManager {
             return chartHeight / 2 + diff;
         } else {
             return interpolation;
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private addCanvasListeners(): void {
-        const graphWidth = this.dimensions.getWidth();
-        // wheel event
-        this.canvas.addEventListener('wheel', (event: WheelEvent) => {
-            const zoomOffsetSyncValue = (graphWidth + this.view.getViewOffset() - this.dimensions.getHorizontalMargin() - event.offsetX) / this.view.getColInterval() * this.view.getScrollSpeed();
-
-            if(event.deltaY > 0 && (this.view.getColInterval() - this.view.getScrollSpeed() > this.view.getMaxColInterval() || !this.time.checkIfMaxTimeSpan())) {
-                this.view.setColInterval(this.view.getColInterval() - this.view.getScrollSpeed())
-                this.view.setViewOffset(this.view.getViewOffset() - zoomOffsetSyncValue);
-
-                this.view.setZoom(this.view.getZoom() - this.view.getScrollSpeed() * .02);
-            } else if(event.deltaY < 0 && (!this.time.checkIfMinTimeSpan() || this.view.getColInterval() + this.view.getScrollSpeed() < this.view.getMaxColInterval() * 2)) {
-                this.view.setColInterval(this.view.getColInterval() + this.view.getScrollSpeed());
-                this.view.setViewOffset(this.view.getViewOffset() + zoomOffsetSyncValue);
-
-                this.view.setZoom(this.view.getZoom() + this.view.getScrollSpeed() * .02);
-            }
-
-            if(this.view.getColInterval() <= this.view.getMaxColInterval()) {
-                if(this.time.checkIfMaxTimeSpan()) {
-                    return;
-                }
-                this.view.setColInterval(this.view.getMaxColInterval() * this.time.getPrevMaxDistanceRatio() - this.view.getScrollSpeed());
-                this.view.setViewOffset(this.view.getViewOffset() - zoomOffsetSyncValue / this.time.getPrevMaxDistanceRatio());
-
-                this.time.enlargeTimeSpan();
-
-            } else if(this.view.getColInterval() >= this.view.getMaxColInterval() * this.time.getCurrentMaxDistanceRatio()) {
-                this.view.setColInterval(this.view.getMaxColInterval() + this.view.getScrollSpeed());
-                this.view.setViewOffset(this.view.getViewOffset() + zoomOffsetSyncValue * this.time.getCurrentMaxDistanceRatio());
-
-                this.time.reduceTimeSpan();
-
-            }
-
-            this.blockViewOffset();
-        })
-
-        this.canvas.addEventListener('mouseout', (event: MouseEvent) => {
-            this.mouseDown = false;
-        });
-
-        this.canvas.addEventListener('mousedown', (event: MouseEvent) => {
-            this.mouseDown = true;
-        })
-
-        this.canvas.addEventListener('mouseup', (event: MouseEvent) => {
-            this.mouseDown = false;
-        })
-
-        this.canvas.addEventListener('mousemove', (event: MouseEvent) => {
-            if(this.view.getViewOffset() + event.movementX > 0 && this.mouseDown) {
-                this.view.setViewOffset(this.view.getViewOffset() + event.movementX);
-            }
-        })
-    }
-
-    private blockViewOffset(): void {
-        if(this.view.getViewOffset() <= 0) {
-            this.view.setViewOffset(0);
         }
     }
 }
