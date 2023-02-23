@@ -6,6 +6,7 @@ import { ChartTime } from './chart-time';
 import { Candlestick } from '../interfaces/candlestick';
 import { Renderer } from './renderer/renderer';
 import { Element } from './elements/element';
+import { MathUtils } from './math-utils';
 
 export class ChartManager {
     constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, candlesData: Candlestick[]) {
@@ -19,6 +20,7 @@ export class ChartManager {
     private position: ChartPosition;
     private time: ChartTime;
     private renderer: Renderer;
+    private math: MathUtils = new MathUtils(); 
 
     private candleData: Candlestick[];
 
