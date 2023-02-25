@@ -3,6 +3,8 @@ import { Animation } from './animation';
 export class AnimationsManager { 
     constructor() {}
 
+    public static test = true;
+
     private static currentTimeStamp: number;
     private static animationStack: Animation[] = [];
 
@@ -20,8 +22,6 @@ export class AnimationsManager {
 
     public static startAnimation(msDuration: number, startValues: number[], callback: (value: any) => void): void {
         this.animationStack.push(new Animation(msDuration, startValues, callback));
-
-        console.log('how many animations are running', this.animationStack.length)
     }
 
     public static update(): void {
@@ -33,5 +33,9 @@ export class AnimationsManager {
 
     public static updateStack(): void {
         this.animationStack = this.animationStack.filter(animation => !animation.isFinished);
+    }
+
+    public static clearAll(): void {
+        this.animationStack = [];
     }
 }
