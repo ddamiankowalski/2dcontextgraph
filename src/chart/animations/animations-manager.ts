@@ -3,7 +3,7 @@ import { Animation } from './animation';
 export class AnimationsManager { 
     constructor() {}
 
-    private static currentRenderBlock = true;
+    public static currentRenderBlock = false;
     private static currentTimeStamp: number;
     private static animationStack: Animation[] = [];
 
@@ -37,8 +37,7 @@ export class AnimationsManager {
         this.animationStack = this.animationStack.filter(animation => !animation.isFinished);
     }
 
-    public static clearAll(): void {
+    public static setBlock(): void {
         this.currentRenderBlock = true;
-        this.animationStack = [];
     }
 }

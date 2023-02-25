@@ -12,7 +12,7 @@ export class View {
     private maxColInterval: number;
     private viewOffset: number;
     private zoom: number;
-    private scrollSpeed: number = 10;
+    private scrollSpeed: number = 1;
     private animations: AnimationsManager;
 
     public getColInterval(): number {

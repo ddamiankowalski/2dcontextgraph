@@ -18,18 +18,19 @@ export class Wheel implements ChartEvent {
                 300, 
                 [scrollSpeed, zoomOffsetSyncValue, scrollSpeed], 
                 (...arg: any[]) => {
+                    const [ values ] = arg;
+                    const [ colInterval, viewOffset, scrollSpeed ] = values;
+
                     if((view.getColInterval() - scrollSpeed > view.getMaxColInterval() || !time.checkIfMaxTimeSpan())) {
-                        const [ values ] = arg;
-                        const [ colInterval, viewOffset, scrollSpeed ] = values;
 
                         if(view.getColInterval() + colInterval <= view.getMaxColInterval()) {
                             if(time.checkIfMaxTimeSpan()) {
                                 return;
                             }
                             view.setColInterval(view.getMaxColInterval() * time.getPrevMaxDistanceRatio() - view.getScrollSpeed());
-                            view.setViewOffset(view.getViewOffset() - zoomOffsetSyncValue / time.getPrevMaxDistanceRatio() * colInterval);
+                            view.setViewOffset(view.getViewOffset() - zoomOffsetSyncValue / time.getPrevMaxDistanceRatio() * scrollSpeed - viewOffset);
                             time.enlargeTimeSpan();
-                            AnimationsManager.clearAll();
+                            console.log(AnimationsManager.getAnimationStack())
                         } else {
                             view.setColInterval(view.getColInterval() - colInterval);
                             view.setViewOffset(view.getViewOffset() - viewOffset);
@@ -47,20 +48,19 @@ export class Wheel implements ChartEvent {
                 300, 
                 [scrollSpeed, zoomOffsetSyncValue, scrollSpeed], 
                 (...arg: any[]) => {
-                    if((!time.checkIfMinTimeSpan() || view.getColInterval() + scrollSpeed < view.getMaxColInterval() * 2)) {
-                        const [ values ] = arg;
-                        const [ colInterval, viewOffset, scrollSpeed ] = values;
+                    const [ values ] = arg;
+                    const [ colInterval, viewOffset, scrollSpeed ] = values;
 
-                        if(view.getColInterval() + colInterval >= view.getMaxColInterval() * time.getCurrentMaxDistanceRatio()) {
-                            view.setColInterval(view.getMaxColInterval() + view.getScrollSpeed());
-                            view.setViewOffset(view.getViewOffset() + zoomOffsetSyncValue * time.getCurrentMaxDistanceRatio());
-                            time.reduceTimeSpan();
-                            AnimationsManager.clearAll();
-                        } else {
-                            view.setColInterval(view.getColInterval() + colInterval);
-                            view.setViewOffset(view.getViewOffset() + viewOffset);
-                            view.setZoom(view.getZoom() + scrollSpeed * .02);
-                        }
+                    if(view.getColInterval() + colInterval >= view.getMaxColInterval() * time.getCurrentMaxDistanceRatio()) {
+                        view.setColInterval(view.getMaxColInterval() + view.getScrollSpeed());
+                        view.setViewOffset(view.getViewOffset() + zoomOffsetSyncValue * time.getCurrentMaxDistanceRatio());
+                        time.reduceTimeSpan();
+                    }
+
+                    if((!time.checkIfMinTimeSpan() || view.getColInterval() + scrollSpeed < view.getMaxColInterval() * 2)) {
+                        view.setViewOffset(view.getViewOffset() + viewOffset);
+                        view.setColInterval(view.getColInterval() + colInterval);
+                        view.setZoom(view.getZoom() + scrollSpeed * .02);
                     }
             
                     if(view.getViewOffset() <= 0) {
