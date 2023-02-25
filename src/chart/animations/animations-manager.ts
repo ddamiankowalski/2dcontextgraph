@@ -8,7 +8,10 @@ export class AnimationsManager {
 
     public static setCurrentTimeStamp(time: number): void { 
         this.currentTimeStamp = time;
-        console.log(time);
+    }
+
+    public static getCurrentTimeStamp(): number {
+        return this.currentTimeStamp;
     }
 
     public startAnimation(timeStamp: number, msDuration: number, startVal: number, endVal: number): void {
