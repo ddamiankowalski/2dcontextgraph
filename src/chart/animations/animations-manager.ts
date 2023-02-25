@@ -3,8 +3,7 @@ import { Animation } from './animation';
 export class AnimationsManager { 
     constructor() {}
 
-    public static test = true;
-
+    private static currentRenderBlock = true;
     private static currentTimeStamp: number;
     private static animationStack: Animation[] = [];
 
@@ -27,8 +26,11 @@ export class AnimationsManager {
     public static update(): void {
         AnimationsManager.updateStack();
         this.animationStack.forEach(animation => {
-            animation.updateAnimationPositions();
+            if(!this.currentRenderBlock) {
+                animation.updateAnimationPositions();
+            }
         });
+        this.currentRenderBlock = false;
     }
 
     public static updateStack(): void {
@@ -36,6 +38,7 @@ export class AnimationsManager {
     }
 
     public static clearAll(): void {
+        this.currentRenderBlock = true;
         this.animationStack = [];
     }
 }

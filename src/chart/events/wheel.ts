@@ -22,20 +22,19 @@ export class Wheel implements ChartEvent {
                         const [ values ] = arg;
                         const [ colInterval, viewOffset, scrollSpeed ] = values;
 
-                        view.setColInterval(view.getColInterval() - colInterval);
-                        view.setViewOffset(view.getViewOffset() - viewOffset);
-                        view.setZoom(view.getZoom() - scrollSpeed * .02);
-                    }
-
-                    if(view.getColInterval() <= view.getMaxColInterval()) {
-                        if(time.checkIfMaxTimeSpan()) {
-                            return;
+                        if(view.getColInterval() + colInterval <= view.getMaxColInterval()) {
+                            if(time.checkIfMaxTimeSpan()) {
+                                return;
+                            }
+                            view.setColInterval(view.getMaxColInterval() * time.getPrevMaxDistanceRatio() - view.getScrollSpeed());
+                            view.setViewOffset(view.getViewOffset() - zoomOffsetSyncValue / time.getPrevMaxDistanceRatio() * colInterval);
+                            time.enlargeTimeSpan();
+                            AnimationsManager.clearAll();
+                        } else {
+                            view.setColInterval(view.getColInterval() - colInterval);
+                            view.setViewOffset(view.getViewOffset() - viewOffset);
+                            view.setZoom(view.getZoom() - scrollSpeed * .02);
                         }
-                        
-                        view.setColInterval(view.getMaxColInterval() * time.getPrevMaxDistanceRatio() - view.getScrollSpeed());
-                        view.setViewOffset(view.getViewOffset() - zoomOffsetSyncValue / time.getPrevMaxDistanceRatio());
-            
-                        time.enlargeTimeSpan();
                     }
             
                     if(view.getViewOffset() <= 0) {
@@ -44,10 +43,6 @@ export class Wheel implements ChartEvent {
                 }, 
             );
         } else if(event.deltaY < 0) {
-            if(!AnimationsManager.test) {
-                return;
-            }
-
             AnimationsManager.startAnimation(
                 300, 
                 [scrollSpeed, zoomOffsetSyncValue, scrollSpeed], 
@@ -60,14 +55,7 @@ export class Wheel implements ChartEvent {
                             view.setColInterval(view.getMaxColInterval() + view.getScrollSpeed());
                             view.setViewOffset(view.getViewOffset() + zoomOffsetSyncValue * time.getCurrentMaxDistanceRatio());
                             time.reduceTimeSpan();
-
-                            AnimationsManager.test = false;
-                        } 
-                        
-                        if(!AnimationsManager.test) {
-                            // console.log('oopsie')
-                            // view.setColInterval(view.getColInterval() + colInterval);
-                            // view.setZoom(view.getZoom() + scrollSpeed * .02);
+                            AnimationsManager.clearAll();
                         } else {
                             view.setColInterval(view.getColInterval() + colInterval);
                             view.setViewOffset(view.getViewOffset() + viewOffset);
@@ -80,12 +68,6 @@ export class Wheel implements ChartEvent {
                     }
                 }, 
             );
-
-            if(view.getColInterval() >= view.getMaxColInterval() * time.getCurrentMaxDistanceRatio()) {
-                view.setColInterval(view.getMaxColInterval() + view.getScrollSpeed());
-                view.setViewOffset(view.getViewOffset() + zoomOffsetSyncValue * time.getCurrentMaxDistanceRatio());
-                time.reduceTimeSpan();
-            }
         }
     }
 }
