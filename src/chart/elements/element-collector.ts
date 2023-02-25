@@ -101,7 +101,6 @@ export class ElementCollector {
     }
 
     private addSubColumnLines(xStart: number, yStart: number, yEnd: number): void {
-        debugger
         let drawingOffset = xStart;
         let candlesInInterval = this.time.candlesInInterval();
 
@@ -124,9 +123,17 @@ export class ElementCollector {
             this.text.push(new Text({ xStart: xStart - 10, yStart: yDrawingPosition }, {}, `${date.getHours()}:${date.getMinutes()}`));
 
             let distanceBetweenCandle = this.view.getColInterval() / this.time.candlesInInterval();
+            let prevY = xStart
 
             for(let i = 0; i < this.time.candlesInInterval(); i++) {
-                this.text.push(new Text({ xStart: xStart - 10 - (distanceBetweenCandle + distanceBetweenCandle * i), yStart: yDrawingPosition }, {}, `i`));
+                const drawingX = xStart - 10 - (distanceBetweenCandle + distanceBetweenCandle * i);
+                
+                if(!prevY || prevY - drawingX > 40 && xStart - drawingX < this.view.getColInterval() - 10) {
+                    const date = new Date(Date.parse(candlesData[0].time));
+                    date.setMinutes(date.getMinutes() - this.time.candlesInInterval() * (columnOffset - 1) - i - 1);
+                    this.text.push(new Text({ xStart: drawingX, yStart: yDrawingPosition }, {}, `${date.getHours()}:${date.getMinutes()}`));
+                    prevY = drawingX;
+                }
             }
     }
 }
