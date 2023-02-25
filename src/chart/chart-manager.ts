@@ -12,6 +12,8 @@ import { Mouseout } from './events/mouseout';
 import { Mousedown } from './events/mousedown';
 import { Mouseup } from './events/mouseup';
 import { Mousemove } from './events/mousemove';
+import { MathUtils } from './math-utils';
+import { AnimationsManager } from './animations/animations-manager';
 
 export class ChartManager {
     private context: CanvasRenderingContext2D;
@@ -24,6 +26,7 @@ export class ChartManager {
     private eventManager: EventManager;
     private candles: CandlePayload[];
     private lastRender?: number;
+    private animations: AnimationsManager;
 
     constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, candles: CandlePayload[]) {
         this.context = context;
@@ -36,6 +39,8 @@ export class ChartManager {
         this.setCandles(candles);
         this.addCanvasListeners();
         this.canvas.style.backgroundColor = "#191f2c";
+
+        this.animations = new AnimationsManager();
 
         this.frameLoop();
     }
@@ -79,6 +84,9 @@ export class ChartManager {
             const elements = this.getRenderingElements();
             this.renderElements(elements);
             this.drawValueLines();
+
+            //this.animations.startAnimation(time, 300);
+            AnimationsManager.setCurrentTimeStamp(time);
         }
         window.requestAnimationFrame(this.frameLoop.bind(this));
     }
@@ -99,22 +107,24 @@ export class ChartManager {
         const { height } = this.dimensions.getDimensions();
         const [ currentMax, currentLow ] = Candle.getHighLow();
 
-        let currentYZoom = 2;
+        let currentYZoom = 1;
 
         while((Math.floor(currentMax) - Math.floor(currentLow)) / currentYZoom >= 10) {
             currentYZoom = currentYZoom * 2;
         }
 
-        while((Math.floor(currentMax) - Math.floor(currentLow)) / currentYZoom <= 5) {
+        while((Math.floor(currentMax) - Math.floor(currentLow)) / currentYZoom <= 6) {
             currentYZoom = currentYZoom / 2;
         }
+
+        currentYZoom = Math.round(currentYZoom);
 
         for(let horizontalLineOffset = Math.floor(currentMax); horizontalLineOffset >= currentLow; horizontalLineOffset = horizontalLineOffset - .5) {
             if(horizontalLineOffset <= currentMax && horizontalLineOffset >= currentLow) {
 
                 if(Number(horizontalLineOffset.toFixed(2)) % currentYZoom === 0) {
 
-                    const interpolation = this.interpolate(height - this.dimensions.getVerticalMargin(), horizontalLineOffset, currentLow, currentMax);
+                    const interpolation = MathUtils.interpolate(height - this.dimensions.getVerticalMargin(), horizontalLineOffset, currentLow, currentMax);
 
                     this.context.beginPath();
                     this.context.moveTo(0, interpolation);
@@ -128,21 +138,6 @@ export class ChartManager {
                     this.context.fillText(horizontalLineOffset.toFixed(2), this.dimensions.getWidth() - 55, interpolation + 6);
                 }
             }
-        }
-    }
-
-
-
-    private interpolate(chartHeight: number, yToDraw: number, maxLowCandle: number, maxHighCandle: number): number {
-        const interpolation = ((chartHeight) * (yToDraw - maxLowCandle)) / (maxHighCandle - maxLowCandle);
-        if(interpolation > chartHeight / 2) {
-            let diff = Math.abs(interpolation - chartHeight / 2);
-            return chartHeight / 2 - diff;
-        } else if (interpolation < chartHeight / 2) {
-            let diff = Math.abs(interpolation - chartHeight / 2);
-            return chartHeight / 2 + diff;
-        } else {
-            return interpolation;
         }
     }
 }

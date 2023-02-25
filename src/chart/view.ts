@@ -42,6 +42,7 @@ export class View {
 
     public setZoom(value: number) {
         this.zoom = value;
+        console.log(this.zoom)
     }
 
     public getScrollSpeed(): number {

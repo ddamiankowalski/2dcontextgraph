@@ -39,6 +39,7 @@ export class ElementCollector {
     private mainColumnLines: Line[] = [];
     private subColumnLines: Line[] = [];
     private text: Text[] = [];
+    private horizontalLines: Line[] = [];
 
     public getElements(): Set<Element[]> {
         return this.renderingElementsSet;
@@ -61,8 +62,11 @@ export class ElementCollector {
             }
         }
 
+        this.addHorizontalLines();
+
         this.renderingElementsSet.add(this.subColumnLines);
         this.renderingElementsSet.add(this.mainColumnLines);
+        this.renderingElementsSet.add(this.horizontalLines);
         this.renderingElementsSet.add(this.candles);
         this.renderingElementsSet.add(this.text);
     }
@@ -135,5 +139,9 @@ export class ElementCollector {
                     prevY = drawingX;
                 }
             }
+    }
+
+    private addHorizontalLines(): void {
+        
     }
 }
