@@ -40,8 +40,6 @@ export class ChartManager {
         this.addCanvasListeners();
         this.canvas.style.backgroundColor = "#191f2c";
 
-        this.animations = new AnimationsManager();
-
         this.frameLoop();
     }
 
@@ -85,7 +83,6 @@ export class ChartManager {
             this.renderElements(elements);
             this.drawValueLines();
 
-            //this.animations.startAnimation(time, 300);
             AnimationsManager.setCurrentTimeStamp(time);
         }
         window.requestAnimationFrame(this.frameLoop.bind(this));
@@ -96,6 +93,7 @@ export class ChartManager {
     }
 
     private renderElements(elements: Set<Element[]>): void {
+        AnimationsManager.update();
         this.renderer.draw(elements);
     }
 

@@ -1,10 +1,10 @@
+import { Animation } from './animation';
+
 export class AnimationsManager { 
     constructor() {}
 
     private static currentTimeStamp: number;
-
-    private startTimeStamp: number;
-    private endTimeStamp: number;
+    private static animationStack: Animation[] = [];
 
     public static setCurrentTimeStamp(time: number): void { 
         this.currentTimeStamp = time;
@@ -14,22 +14,24 @@ export class AnimationsManager {
         return this.currentTimeStamp;
     }
 
-    public startAnimation(timeStamp: number, msDuration: number, startVal: number, endVal: number): void {
-        if(!this.startTimeStamp) {
-            this.startTimeStamp = timeStamp;
-            this.endTimeStamp = timeStamp + msDuration;
-        }
-
-        if(timeStamp - this.startTimeStamp <= 300) {
-            const progress = (timeStamp - this.startTimeStamp) / msDuration;
-
-            const val = this.easeInOutQuint(progress);
-
-            console.log(startVal + (endVal - startVal) * val);
-        }
+    public static getAnimationStack(): Animation[] {
+        return this.animationStack;
     }
 
-    private easeInOutQuint(x: number): number {
-        return x < 0.5 ? 16 * x * x * x * x * x : 1 - Math.pow(-2 * x + 2, 5) / 2;
+    public static startAnimation(msDuration: number, startValues: number[], callback: (value: any) => void): void {
+        this.animationStack.push(new Animation(msDuration, startValues, callback));
+
+        console.log('how many animations are running', this.animationStack.length)
+    }
+
+    public static update(): void {
+        AnimationsManager.updateStack();
+        this.animationStack.forEach(animation => {
+            animation.updateAnimationPositions();
+        });
+    }
+
+    public static updateStack(): void {
+        this.animationStack = this.animationStack.filter(animation => !animation.isFinished);
     }
 }

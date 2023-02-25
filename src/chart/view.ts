@@ -6,7 +6,6 @@ export class View {
         this.maxColInterval = maxColInterval;
         this.viewOffset = 0;
         this.zoom = .1;
-        this.animations = new AnimationsManager();
     }
 
     private colInterval: number;
@@ -46,11 +45,9 @@ export class View {
 
     public setZoom(value: number) {
         this.zoom = value;
-        console.log(this.zoom)
     }
 
     public getScrollSpeed(): number {
-        this.animations.startAnimation(AnimationsManager.getCurrentTimeStamp(), 300, 20, 300);
         return this.scrollSpeed;
     }
 }
