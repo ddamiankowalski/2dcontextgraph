@@ -5,6 +5,7 @@ import { CandlePayload } from '../../interfaces/candlestick';
 import { Candle } from './candle';
 import { Line } from './line';
 import { Element } from './element';
+import { Text } from './text';
 
 export class ElementCollector {
     constructor(
@@ -37,6 +38,7 @@ export class ElementCollector {
     private candles: Candle[] = [];
     private mainColumnLines: Line[] = [];
     private subColumnLines: Line[] = [];
+    private text: Text[] = [];
 
     public getElements(): Set<Element[]> {
         return this.renderingElementsSet;
@@ -55,13 +57,14 @@ export class ElementCollector {
                 this.addCandlesInInterval(xDrawingPosition, this.candleData, currentColumn, canvasWidth);
                 this.addMainColumnLine(xDrawingPosition, yStartDrawingPosition, yEndDrawingPosition);
                 this.addSubColumnLines(xDrawingPosition, yStartDrawingPosition, yEndDrawingPosition);      
-                this.drawTimeStamps(xDrawingPosition, currentColumn, this.candleData);
+                this.addTimeStamps(xDrawingPosition, currentColumn, this.candleData);
             }
         }
 
         this.renderingElementsSet.add(this.subColumnLines);
         this.renderingElementsSet.add(this.mainColumnLines);
         this.renderingElementsSet.add(this.candles);
+        this.renderingElementsSet.add(this.text);
     }
 
     private addMainColumnLine(xStart: number, yStart: number, yEnd: number): void {
@@ -98,6 +101,7 @@ export class ElementCollector {
     }
 
     private addSubColumnLines(xStart: number, yStart: number, yEnd: number): void {
+        debugger
         let drawingOffset = xStart;
         let candlesInInterval = this.time.candlesInInterval();
 
@@ -113,16 +117,16 @@ export class ElementCollector {
         }
     }
 
-    private drawTimeStamps(xDrawingPosition: number, columnOffset: number, candlesData: CandlePayload[]): void {
-        if(xDrawingPosition <= this.dimensions.getWidth() - this.dimensions.getHorizontalMargin() + 10) {
+    private addTimeStamps(xStart: number, columnOffset: number, candlesData: CandlePayload[]): void {
             const yDrawingPosition = this.dimensions.getHeight() - this.dimensions.getVerticalMargin() + 23;
-            this.context.font = "9px Barlow";
-            this.context.fillStyle = '#A9A9A9';
-    
-            // the time should technically start with the first candle from a set of candles from backend, and should be updated each time a candle arrives.
             const date = new Date(Date.parse(candlesData[0].time));
             date.setMinutes(date.getMinutes() - this.time.candlesInInterval() * (columnOffset - 1));
-            this.context.fillText(`${date.getHours()}:${date.getMinutes()}`, xDrawingPosition - 10, yDrawingPosition);
-        }
+            this.text.push(new Text({ xStart: xStart - 10, yStart: yDrawingPosition }, {}, `${date.getHours()}:${date.getMinutes()}`));
+
+            let distanceBetweenCandle = this.view.getColInterval() / this.time.candlesInInterval();
+
+            for(let i = 0; i < this.time.candlesInInterval(); i++) {
+                this.text.push(new Text({ xStart: xStart - 10 - (distanceBetweenCandle + distanceBetweenCandle * i), yStart: yDrawingPosition }, {}, `i`));
+            }
     }
 }
