@@ -54,7 +54,7 @@ export class ElementCollector {
             const [ yStartDrawingPosition, yEndDrawingPosition ] = [ 0, canvasHeight - this.dimensions.getVerticalMargin() ];
             currentColumn++;          
 
-            if(xDrawingPosition > 0 && xDrawingPosition < canvasWidth + this.view.getColInterval()) {
+            if(xDrawingPosition > 0 && xDrawingPosition < canvasWidth + this.view.getColInterval() * 2) {
                 this.addCandlesInInterval(xDrawingPosition, this.candleData, currentColumn, canvasWidth);
                 this.addMainColumnLine(xDrawingPosition, yStartDrawingPosition, yEndDrawingPosition);
                 this.addSubColumnLines(xDrawingPosition, yStartDrawingPosition, yEndDrawingPosition);      
@@ -72,7 +72,10 @@ export class ElementCollector {
     }
 
     private addMainColumnLine(xStart: number, yStart: number, yEnd: number): void {
-        this.mainColumnLines.push(new Line({ xStart, xEnd: xStart, yStart, yEnd }, { width: .4 }));
+        for(let x = 0; x < this.view.getColIntervalStep() * 2; x++) {
+            const renderXPosition = xStart - this.view.getMainColumnInterval() * x;
+            this.mainColumnLines.push(new Line({ xStart: renderXPosition, xEnd: renderXPosition, yStart, yEnd }, { width: .4 }));
+        }
     }
 
     private addCandlesInInterval(xMainColumnDrawingPosition: number, candlesData: CandlePayload[], currentColumn: number, graphWidth: number): void {

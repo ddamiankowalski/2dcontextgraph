@@ -1,6 +1,6 @@
 export class View {
     constructor(colIntervalThreshold: number) {
-        this.colInterval = colIntervalThreshold - 20;
+        this.colInterval = colIntervalThreshold;
         this.colIntervalThreshold = colIntervalThreshold;
         this.viewOffset = 0;
         this.zoom = .1;
@@ -11,16 +11,31 @@ export class View {
     private viewOffset: number;
     private zoom: number;
     private scrollSpeed: number = 25;
-    private colIntervalStep: number = 0;
+    private colIntervalStep: number = 1;
+
+    private colDistRatioConfig: number[] = [2, 2, 3];
 
     public getColInterval(): number {
         return this.colInterval;
     }
 
-    public addColInterval(x: number) {
-        this.colInterval += x;
+    public getMainColumnInterval(): number {
+        return this.colInterval / this.colIntervalStep;
+    }
 
-        console.log(this.colIntervalStep);
+    public getColIntervalStep(): number {
+        return this.colIntervalStep;
+    }
+
+    public addColInterval(x: number) {
+        if(this.maxZoomOut(x)) {
+            this.colInterval = 150;
+            return;
+        }
+
+        this.colInterval += x;
+        console.log(this.colInterval / this.colIntervalThreshold)
+        this.colIntervalStep = Math.floor(this.colInterval / this.colIntervalThreshold) || 1;
     }
 
     public getViewOffset(): number {
@@ -32,6 +47,11 @@ export class View {
     }
 
     public addViewOffset(x: number) {
+        if(this.maxZoomOut(x)) {
+            this.colInterval = 150;
+            return;
+        }
+
         this.viewOffset += x;
     }
 
@@ -44,10 +64,19 @@ export class View {
     }
 
     public addZoom(value: number) {
+        if(this.maxZoomOut(value)) {
+            this.colInterval = 150;
+            return;
+        }
+
         this.zoom += value;
     }
 
     public getScrollSpeed(): number {
         return this.scrollSpeed;
+    }
+
+    private maxZoomOut(x: number): boolean {
+        return this.colIntervalStep === 1 && this.colInterval <= 150 && x < 0;
     }
 }
