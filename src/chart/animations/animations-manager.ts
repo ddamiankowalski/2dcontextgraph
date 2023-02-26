@@ -37,6 +37,10 @@ export class AnimationsManager {
         this.animationStack = this.animationStack.filter(animation => !animation.isFinished);
     }
 
+    public static clearStack(): void {
+        this.animationStack = [];
+    }
+
     public static setBlock(): void {
         this.currentRenderBlock = true;
     }

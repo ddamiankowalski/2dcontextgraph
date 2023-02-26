@@ -28,9 +28,9 @@ export class Wheel implements ChartEvent {
                                 return;
                             }
                             view.setColInterval(view.getMaxColInterval() * time.getPrevMaxDistanceRatio() - view.getScrollSpeed());
-                            view.setViewOffset(view.getViewOffset() - zoomOffsetSyncValue / time.getPrevMaxDistanceRatio() * scrollSpeed - viewOffset);
+                            view.setViewOffset(view.getViewOffset() - zoomOffsetSyncValue / time.getPrevMaxDistanceRatio() * scrollSpeed);
                             time.enlargeTimeSpan();
-                            console.log(AnimationsManager.getAnimationStack())
+                            //AnimationsManager.clearStack();
                         } else {
                             view.setColInterval(view.getColInterval() - colInterval);
                             view.setViewOffset(view.getViewOffset() - viewOffset);
@@ -44,28 +44,36 @@ export class Wheel implements ChartEvent {
                 }, 
             );
         } else if(event.deltaY < 0) {
+            if(view.getColInterval() + scrollSpeed >= view.getMaxColInterval() * time.getCurrentMaxDistanceRatio()) {
+                view.setColInterval(view.getMaxColInterval() + view.getScrollSpeed());
+                view.setViewOffset(view.getViewOffset() + zoomOffsetSyncValue * time.getCurrentMaxDistanceRatio() + scrollSpeed);
+                time.reduceTimeSpan();
+                //AnimationsManager.clearStack();
+                return
+            }
             AnimationsManager.startAnimation(
                 300, 
                 [scrollSpeed, zoomOffsetSyncValue, scrollSpeed], 
                 (...arg: any[]) => {
                     const [ values ] = arg;
-                    const [ colInterval, viewOffset, scrollSpeed ] = values;
+                    const [ colIntervalStep, viewOffsetStep, scrollSpeedStep ] = values;
 
-                    if(view.getColInterval() + colInterval >= view.getMaxColInterval() * time.getCurrentMaxDistanceRatio()) {
+                    if(view.getColInterval() + colIntervalStep >= view.getMaxColInterval() * time.getCurrentMaxDistanceRatio()) {
                         view.setColInterval(view.getMaxColInterval() + view.getScrollSpeed());
-                        view.setViewOffset(view.getViewOffset() + zoomOffsetSyncValue * time.getCurrentMaxDistanceRatio());
+                        view.setViewOffset(view.getViewOffset() + zoomOffsetSyncValue * time.getCurrentMaxDistanceRatio() + scrollSpeed);
                         time.reduceTimeSpan();
-                    }
-
-                    if((!time.checkIfMinTimeSpan() || view.getColInterval() + scrollSpeed < view.getMaxColInterval() * 2)) {
-                        view.setViewOffset(view.getViewOffset() + viewOffset);
-                        view.setColInterval(view.getColInterval() + colInterval);
-                        view.setZoom(view.getZoom() + scrollSpeed * .02);
-                    }
-            
-                    if(view.getViewOffset() <= 0) {
-                        view.setViewOffset(0);
-                    }
+                        //AnimationsManager.clearStack();
+                    } 
+                        if((!time.checkIfMinTimeSpan() || view.getColInterval() + scrollSpeed < view.getMaxColInterval() * 2)) {
+                            view.setViewOffset(view.getViewOffset() + viewOffsetStep);
+                            view.setColInterval(view.getColInterval() + colIntervalStep);
+                            view.setZoom(view.getZoom() + scrollSpeedStep * .02);
+                        }
+                
+                        if(view.getViewOffset() <= 0) {
+                            view.setViewOffset(0);
+                        }
+                    
                 }, 
             );
         }
