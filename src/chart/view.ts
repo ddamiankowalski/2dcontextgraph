@@ -1,14 +1,13 @@
 export class View {
-    constructor(maxColInterval: number) {
-        this.colInterval = maxColInterval - 20;
-        this.maxColInterval = maxColInterval;
+    constructor(colIntervalThreshold: number) {
+        this.colInterval = colIntervalThreshold - 20;
+        this.colIntervalThreshold = colIntervalThreshold;
         this.viewOffset = 0;
         this.zoom = .1;
     }
 
     private colInterval: number;
-    private maxColInterval: number;
-    private minColInterval: number = 0;
+    private colIntervalThreshold: number;
     private viewOffset: number;
     private zoom: number;
     private scrollSpeed: number = 25;
@@ -21,21 +20,7 @@ export class View {
     public addColInterval(x: number) {
         this.colInterval += x;
 
-        // if(x < 0 && Math.round(this.colInterval) < this.maxColInterval) {
-        //     this.colIntervalStep--;
-        // } else if(x > 0 && Math.round(this.colInterval) > this.maxColInterval) {
-        //     this.colIntervalStep++;
-        // }
-
         console.log(this.colIntervalStep);
-    }
-
-    public getMaxColInterval(): number {
-        return this.maxColInterval;
-    }
-
-    public setMaxColInterval(x: number) {
-        this.maxColInterval = x;
     }
 
     public getViewOffset(): number {

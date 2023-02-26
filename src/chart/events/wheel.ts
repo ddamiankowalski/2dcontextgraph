@@ -6,20 +6,18 @@ import { View } from '../view';
 
 export class Wheel implements ChartEvent {
     eventName: string = 'wheel';
-
-    private static currentWheelZoom: number = 0;
     
     private static calculate(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, time: Time, event: WheelEvent, wheelValue?: number) {
         const graphWidth = dimensions.getWidth();
         const scrollSpeed = wheelValue ?? view.getScrollSpeed();
         const zoomOffsetSyncValue = (graphWidth + view.getViewOffset() - dimensions.getHorizontalMargin() - event.offsetX) / view.getColInterval() * scrollSpeed;
 
-        if(event.deltaY > 0 && (view.getColInterval() - scrollSpeed >= view.getMaxColInterval() || !time.checkIfMaxTimeSpan())) {
+        if(event.deltaY > 0) {
             view.addColInterval(scrollSpeed)
             view.addViewOffset(zoomOffsetSyncValue);
 
             view.addZoom(scrollSpeed / 100);
-        } else if(event.deltaY < 0 && (!time.checkIfMinTimeSpan() || view.getColInterval() + scrollSpeed <= view.getMaxColInterval() * 2)) {
+        } else if(event.deltaY < 0) {
             view.addColInterval(scrollSpeed);
             view.addViewOffset(zoomOffsetSyncValue);
 
