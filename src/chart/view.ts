@@ -1,30 +1,30 @@
 export class View {
     constructor(colIntervalThreshold: number) {
         this.colInterval = colIntervalThreshold;
-        this.colIntervalThreshold = colIntervalThreshold;
         this.viewOffset = 0;
         this.zoom = .1;
     }
 
     private colInterval: number;
-    private colIntervalThreshold: number;
     private viewOffset: number;
     private zoom: number;
     private scrollSpeed: number = 25;
     private colIntervalStep: number = 1;
 
-    private colDistRatioConfig: number[] = [2, 2, 3];
+    private colDistThresholds: number[] = [300, 600, 3000];
+    private colDistRatio: number[] = [1, 2, 4];
 
     public getColInterval(): number {
         return this.colInterval;
     }
 
     public getMainColumnInterval(): number {
-        return this.colInterval / this.colIntervalStep;
+        return this.colInterval / this.colDistRatio[this.colIntervalStep - 1];
     }
 
     public getColIntervalStep(): number {
-        return this.colIntervalStep;
+        console.log(this.colIntervalStep)
+        return this.colDistRatio[this.colIntervalStep];
     }
 
     public addColInterval(x: number) {
@@ -34,8 +34,18 @@ export class View {
         }
 
         this.colInterval += x;
-        console.log(this.colInterval / this.colIntervalThreshold)
-        this.colIntervalStep = Math.floor(this.colInterval / this.colIntervalThreshold) || 1;
+        this.updateStep();
+    }
+
+    private updateStep(): void {
+        let result = 1;
+        this.colDistThresholds.forEach(threshold => {
+            if(this.colInterval > threshold) {
+                result++;
+            }  
+        })
+
+        this.colIntervalStep = result;
     }
 
     public getViewOffset(): number {

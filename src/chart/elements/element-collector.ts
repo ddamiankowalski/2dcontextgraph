@@ -72,7 +72,7 @@ export class ElementCollector {
     }
 
     private addMainColumnLine(xStart: number, yStart: number, yEnd: number): void {
-        for(let x = 0; x < this.view.getColIntervalStep() * 2; x++) {
+        for(let x = 0; x < this.view.getColIntervalStep(); x++) {
             const renderXPosition = xStart - this.view.getMainColumnInterval() * x;
             this.mainColumnLines.push(new Line({ xStart: renderXPosition, xEnd: renderXPosition, yStart, yEnd }, { width: .4 }));
         }
