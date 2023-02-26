@@ -14,11 +14,6 @@ export class Animation {
     private msDuration: number;
     private startValues: number[];
     private setValCallback: (...arg: any[]) => void;
-    private animationType?: string;
-
-    public getAnimationType(): string {
-        return this.animationType;
-    }
 
     public updateAnimationPositions(): void {
         const currentTime = AnimationsManager.getCurrentTimeStamp();
@@ -26,6 +21,7 @@ export class Animation {
         if(currentTime - this.animationStartTime <= this.msDuration) {
             const timeProgress = this.getTimeProgress(currentTime);
             const ease = this.easeInOutQuint(timeProgress);
+            console.log(this.startValues)
 
             const resultValues = this.startValues.map(v => v * ease / 10);
             this.setValCallback(resultValues);

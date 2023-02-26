@@ -11,12 +11,12 @@ export class Wheel implements ChartEvent {
         const graphWidth = dimensions.getWidth();
 
         const zoomOffsetSyncValue = (graphWidth + view.getViewOffset() - dimensions.getHorizontalMargin() - event.offsetX) / view.getColInterval() * view.getScrollSpeed();
-        const scrollSpeed = view.getScrollSpeed();
+        const scrollSpeeds = view.getScrollSpeed();
 
         if(event.deltaY > 0) {
             AnimationsManager.startAnimation(
                 300, 
-                [scrollSpeed, zoomOffsetSyncValue, scrollSpeed], 
+                [scrollSpeeds, zoomOffsetSyncValue, scrollSpeeds], 
                 (...arg: any[]) => {
                     const [ values ] = arg;
                     const [ colInterval, viewOffset, scrollSpeed ] = values;
@@ -44,27 +44,20 @@ export class Wheel implements ChartEvent {
                 }, 
             );
         } else if(event.deltaY < 0) {
-            if(view.getColInterval() + scrollSpeed >= view.getMaxColInterval() * time.getCurrentMaxDistanceRatio()) {
-                view.setColInterval(view.getMaxColInterval() + view.getScrollSpeed());
-                view.setViewOffset(view.getViewOffset() + zoomOffsetSyncValue * time.getCurrentMaxDistanceRatio() + scrollSpeed);
-                time.reduceTimeSpan();
-                //AnimationsManager.clearStack();
-                return
-            }
             AnimationsManager.startAnimation(
                 300, 
-                [scrollSpeed, zoomOffsetSyncValue, scrollSpeed], 
+                [scrollSpeeds, zoomOffsetSyncValue, scrollSpeeds], 
                 (...arg: any[]) => {
                     const [ values ] = arg;
                     const [ colIntervalStep, viewOffsetStep, scrollSpeedStep ] = values;
 
                     if(view.getColInterval() + colIntervalStep >= view.getMaxColInterval() * time.getCurrentMaxDistanceRatio()) {
                         view.setColInterval(view.getMaxColInterval() + view.getScrollSpeed());
-                        view.setViewOffset(view.getViewOffset() + zoomOffsetSyncValue * time.getCurrentMaxDistanceRatio() + scrollSpeed);
+                        view.setViewOffset(view.getViewOffset() + zoomOffsetSyncValue * time.getCurrentMaxDistanceRatio() + scrollSpeedStep);
                         time.reduceTimeSpan();
                         //AnimationsManager.clearStack();
                     } 
-                        if((!time.checkIfMinTimeSpan() || view.getColInterval() + scrollSpeed < view.getMaxColInterval() * 2)) {
+                        if((!time.checkIfMinTimeSpan() || view.getColInterval() + scrollSpeedStep < view.getMaxColInterval() * 2)) {
                             view.setViewOffset(view.getViewOffset() + viewOffsetStep);
                             view.setColInterval(view.getColInterval() + colIntervalStep);
                             view.setZoom(view.getZoom() + scrollSpeedStep * .02);
