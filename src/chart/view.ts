@@ -1,8 +1,6 @@
-import { AnimationsManager } from "./animations/animations-manager";
-
 export class View {
     constructor(maxColInterval: number) {
-        this.colInterval = maxColInterval;
+        this.colInterval = maxColInterval - 20;
         this.maxColInterval = maxColInterval;
         this.viewOffset = 0;
         this.zoom = .1;
@@ -10,21 +8,26 @@ export class View {
 
     private colInterval: number;
     private maxColInterval: number;
+    private minColInterval: number = 0;
     private viewOffset: number;
     private zoom: number;
     private scrollSpeed: number = 25;
-    private animations: AnimationsManager;
+    private colIntervalStep: number = 0;
 
     public getColInterval(): number {
         return this.colInterval;
     }
 
-    public setColInterval(x: number) {
-        this.colInterval = x;
-    }
-
     public addColInterval(x: number) {
         this.colInterval += x;
+
+        // if(x < 0 && Math.round(this.colInterval) < this.maxColInterval) {
+        //     this.colIntervalStep--;
+        // } else if(x > 0 && Math.round(this.colInterval) > this.maxColInterval) {
+        //     this.colIntervalStep++;
+        // }
+
+        console.log(this.colIntervalStep);
     }
 
     public getMaxColInterval(): number {

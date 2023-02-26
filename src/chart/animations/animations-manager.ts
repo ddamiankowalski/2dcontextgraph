@@ -23,8 +23,6 @@ export class AnimationsManager {
         if(!this.checkDuplicates(type)) {
             this.animationStack.push(new Animation(type, msDuration, startValues, endValues, callback));        
         }
-
-        console.log(this.animationStack.length);
     }
 
     private static checkDuplicates(type: string): boolean {
@@ -33,9 +31,7 @@ export class AnimationsManager {
         if(!duplicates.length) {
             return false;
         }
-
-        this.animationStack = [];
-        console.log(duplicates)
+        return false;
     }
 
     public static update(): void {
