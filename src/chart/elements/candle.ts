@@ -75,8 +75,6 @@ export class Candle extends Element {
                 this.maxLow = candle.low;
             }
         })
-
-        console.log(this.maxLow, this.maxHigh, 'Max low and max high values');
     }
 
     public static getMaxLowInData(): number[] {

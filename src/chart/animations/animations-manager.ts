@@ -19,8 +19,19 @@ export class AnimationsManager {
         return this.animationStack;
     }
 
-    public static startAnimation(msDuration: number, startValues: number[], callback: (value: any) => void): void {
-        this.animationStack.push(new Animation(msDuration, startValues, callback));
+    public static startAnimation(type: string, msDuration: number, startValues: number[], endValues: number[], callback: (value: any) => void): void {
+        if(!this.checkDuplicates(type)) {
+            this.animationStack.push(new Animation(type, msDuration, startValues, endValues, callback));        
+        }
+    }
+
+    private static checkDuplicates(type: string): boolean {
+        const duplicates = this.animationStack.filter(animation => animation.type === type);
+
+        if(!duplicates.length) {
+            return false;
+        }
+
     }
 
     public static update(): void {

@@ -94,6 +94,8 @@ export class ChartManager {
 
     private renderElements(elements: Set<Element[]>): void {
         AnimationsManager.update();
+        const a = new Wheel();
+        a.call(this.canvas, this.dimensions, this.view, this.time);
         this.renderer.draw(elements);
     }
 
