@@ -23,6 +23,10 @@ export class View {
         this.colInterval = x;
     }
 
+    public addColInterval(x: number) {
+        this.colInterval += x;
+    }
+
     public getMaxColInterval(): number {
         return this.maxColInterval;
     }
@@ -49,6 +53,10 @@ export class View {
 
     public setZoom(value: number) {
         this.zoom = value;
+    }
+
+    public addZoom(value: number) {
+        this.zoom += value;
     }
 
     public getScrollSpeed(): number {

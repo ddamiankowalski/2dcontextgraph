@@ -19,6 +19,8 @@ export class EventManager {
     public static mouseDown: boolean = false;
 
     public listen(event: ChartEvent): void {
-        this.canvas.addEventListener(event.eventName, event.callback.bind(this, this.canvas, this.dimensions, this.view, this.time));
+        this.canvas.addEventListener(event.eventName, (canvasEvent: Event) => {
+            event.callback.call(this, this.canvas, this.dimensions, this.view, this.time, canvasEvent);
+        });
     }
 }
