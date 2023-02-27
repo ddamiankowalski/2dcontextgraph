@@ -11,11 +11,20 @@ export class View {
     private scrollSpeed: number = 25;
     private colIntervalStep: number = 1;
 
-    private colDistThresholds: number[] = [300, 600, 3000];
-    private colDistRatio: number[] = [1, 2, 4];
+    private colDistThresholds: number[] = [300, 600, 1800];
+    private colDistRatio: number[] = [1, 2, 4, 12];
+    private candlesInInterval: number[] = [ 60, 30, 15, 5 ];
 
     public getColInterval(): number {
         return this.colInterval;
+    }
+
+    public getCandlesInInterval(): number {
+        return this.candlesInInterval[this.colIntervalStep - 1];
+    }
+
+    public getColIntervalStepp(): number {
+        return this.colIntervalStep;
     }
 
     public getMainColumnInterval(): number {
@@ -23,8 +32,7 @@ export class View {
     }
 
     public getColIntervalStep(): number {
-        console.log(this.colIntervalStep)
-        return this.colDistRatio[this.colIntervalStep];
+        return this.colDistRatio[this.colIntervalStep - 1];
     }
 
     public addColInterval(x: number) {

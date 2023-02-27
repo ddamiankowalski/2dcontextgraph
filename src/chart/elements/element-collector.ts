@@ -57,7 +57,6 @@ export class ElementCollector {
             if(xDrawingPosition > 0 && xDrawingPosition < canvasWidth + this.view.getColInterval() * 2) {
                 this.addCandlesInInterval(xDrawingPosition, this.candleData, currentColumn, canvasWidth);
                 this.addMainColumnLine(xDrawingPosition, yStartDrawingPosition, yEndDrawingPosition);
-                this.addSubColumnLines(xDrawingPosition, yStartDrawingPosition, yEndDrawingPosition);      
                 this.addTimeStamps(xDrawingPosition, currentColumn, this.candleData);
             }
         }
@@ -75,6 +74,7 @@ export class ElementCollector {
         for(let x = 0; x < this.view.getColIntervalStep(); x++) {
             const renderXPosition = xStart - this.view.getMainColumnInterval() * x;
             this.mainColumnLines.push(new Line({ xStart: renderXPosition, xEnd: renderXPosition, yStart, yEnd }, { width: .4 }));
+            this.addSubColumnLines(renderXPosition, yStart, yEnd);      
         }
     }
 
@@ -109,12 +109,9 @@ export class ElementCollector {
 
     private addSubColumnLines(xStart: number, yStart: number, yEnd: number): void {
         let drawingOffset = xStart;
-        let candlesInInterval = this.time.candlesInInterval();
+        let candlesInInterval = this.view.getCandlesInInterval();
 
-        if(candlesInInterval >= 30) {
-            candlesInInterval = candlesInInterval / 5;
-        }
-        const gap = this.view.getColInterval() / candlesInInterval;
+        const gap = this.view.getColInterval() / 60;
 
         for(let currentSubLine = 0; currentSubLine < candlesInInterval; currentSubLine++) {
             const xStart = drawingOffset - gap;

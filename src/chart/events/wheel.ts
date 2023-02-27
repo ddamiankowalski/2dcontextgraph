@@ -30,9 +30,11 @@ export class Wheel implements ChartEvent {
     }
 
     public callback(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, time: Time, wheelEvent: any): void {
+        const deltaYValue = (wheelEvent.deltaY > 0 ? 1 : -1) * view.getColIntervalStepp();
+
         const event = {
             offsetX: wheelEvent.offsetX,
-            deltaY: wheelEvent.deltaY > 0 ? 1 : -1
+            deltaY: deltaYValue
         }
 
         AnimationsManager.startAnimation(
