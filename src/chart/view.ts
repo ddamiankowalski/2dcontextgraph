@@ -1,6 +1,7 @@
 export class View {
-    constructor(colIntervalThreshold: number) {
-        this.colInterval = colIntervalThreshold;
+    constructor(colIntervalInit: number) {
+        this.colInterval = colIntervalInit;
+        this.zoomOutMax = colIntervalInit;
         this.viewOffset = 0;
         this.zoom = .1;
     }
@@ -10,10 +11,19 @@ export class View {
     private zoom: number;
     private scrollSpeed: number = 25;
     private colIntervalStep: number = 1;
+    private zoomOutMax: number;
 
     private colDistThresholds: number[] = [300, 600, 1800];
     private colDistRatio: number[] = [1, 2, 4, 12];
     private candlesInInterval: number[] = [ 60, 30, 15, 5 ];
+
+    public isZoomOutMax(): boolean {
+        return Math.floor(this.colInterval) <= this.zoomOutMax;
+    }
+
+    public isZoomInMax(): boolean {
+        return Math.floor(this.colInterval) >= 2000;
+    }
 
     public getColInterval(): number {
         return this.colInterval;
