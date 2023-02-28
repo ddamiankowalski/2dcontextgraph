@@ -1,5 +1,4 @@
 import { Dimensions } from '../dimensions';
-import { Candle } from '../elements/candle';
 import { Element } from '../elements/element'
 export class Renderer {
     constructor(

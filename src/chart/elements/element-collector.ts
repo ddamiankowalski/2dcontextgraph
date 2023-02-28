@@ -6,6 +6,7 @@ import { Candle } from './candle';
 import { Line } from './line';
 import { Element } from './element';
 import { Text } from './text';
+import { MathUtils } from '../math-utils';
 
 export class ElementCollector {
     constructor(
@@ -139,6 +140,29 @@ export class ElementCollector {
     }
 
     private addHorizontalLines(): void {
-        
+        const { height } = this.dimensions.getDimensions();
+        const [ currentMax, currentLow ] = Candle.getHighLow();
+
+        let currentYZoom = 1;
+
+        while((Math.floor(currentMax) - Math.floor(currentLow)) / currentYZoom >= 10) {
+            currentYZoom = currentYZoom * 2;
+        }
+
+        while((Math.floor(currentMax) - Math.floor(currentLow)) / currentYZoom <= 6) {
+            currentYZoom = currentYZoom / 2;
+        }
+
+        for(let horizontalLineOffset = Math.floor(currentMax); horizontalLineOffset >= currentLow; horizontalLineOffset = horizontalLineOffset - .5) {
+            if(horizontalLineOffset <= currentMax && horizontalLineOffset >= currentLow) {
+
+                if(Number(horizontalLineOffset.toFixed(2)) % currentYZoom === 0) {
+                    const interpolation = MathUtils.interpolate(height - this.dimensions.getVerticalMargin(), horizontalLineOffset, currentLow, currentMax);
+                    const xEnd = this.dimensions.getWidth() - this.dimensions.getHorizontalMargin();
+                    this.horizontalLines.push(new Line({ xStart: 0, xEnd, yStart: interpolation, yEnd: interpolation }, { width: .1 }));
+                    this.text.push(new Text({ xStart: this.dimensions.getWidth() - 55, yStart: interpolation + 6 }, {}, `${horizontalLineOffset.toFixed(2)}`));
+                }
+            }
+        }
     }
 }

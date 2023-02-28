@@ -123,17 +123,10 @@ export class ChartManager {
                 if(Number(horizontalLineOffset.toFixed(2)) % currentYZoom === 0) {
 
                     const interpolation = MathUtils.interpolate(height - this.dimensions.getVerticalMargin(), horizontalLineOffset, currentLow, currentMax);
-
-                    this.context.beginPath();
-                    this.context.moveTo(0, interpolation);
-                    this.context.lineTo(this.dimensions.getWidth() - this.dimensions.getHorizontalMargin(), interpolation);
-                    this.context.strokeStyle = '#A9A9A9';
-                    this.context.lineWidth = .1;
-                    this.context.stroke();
     
                     this.context.font = "10px Barlow";
                     this.context.fillStyle = '#A9A9A9';
-                    this.context.fillText(horizontalLineOffset.toFixed(2), this.dimensions.getWidth() - 55, interpolation + 6);
+                    //this.context.fillText(horizontalLineOffset.toFixed(2), this.dimensions.getWidth() - 55, interpolation + 6);
                 }
             }
         }
