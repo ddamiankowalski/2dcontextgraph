@@ -20,18 +20,14 @@ export class AnimationsManager {
     }
 
     public static startAnimation(type: string, msDuration: number, startValues: number[], endValues: number[], callback: (value: any) => void): void {
-        if(!this.checkDuplicates(type)) {
-            this.animationStack.push(new Animation(type, msDuration, startValues, endValues, callback));        
-        }
+        this.checkDuplicates(type)
+        this.animationStack.push(new Animation(type, msDuration, startValues, endValues, callback));        
     }
 
-    private static checkDuplicates(type: string): boolean {
+    private static checkDuplicates(type: string): void {
         const duplicates = this.animationStack.filter(animation => animation.type === type);
 
-        if(!duplicates.length) {
-            return false;
-        }
-        return false;
+        // do something with the duplicates in the future;
     }
 
     public static update(): void {
