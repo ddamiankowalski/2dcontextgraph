@@ -12,31 +12,16 @@ export class Wheel implements ChartEvent {
         const scrollSpeed = wheelValue ?? view.getScrollSpeed();
         const zoomOffsetSyncValue = (graphWidth + view.getViewOffset() - dimensions.getHorizontalMargin() - event.offsetX) / view.getColInterval() * scrollSpeed;
 
-        // if(view.getColInterval() <= view.getMaxColInterval()) {
-        //     if(time.checkIfMaxTimeSpan()) {
-        //         return;
-        //     }
-        //     view.setColInterval(view.getMaxColInterval() * time.getPrevMaxDistanceRatio() - scrollSpeed);
-        //     view.setViewOffset(view.getViewOffset() - zoomOffsetSyncValue / time.getPrevMaxDistanceRatio());
-
-        //     time.enlargeTimeSpan();
-        // } else if(view.getColInterval() >= view.getMaxColInterval() * time.getCurrentMaxDistanceRatio()) {
-        //     view.setColInterval(view.getMaxColInterval() + scrollSpeed);
-        //     view.setViewOffset(view.getViewOffset() + zoomOffsetSyncValue * time.getCurrentMaxDistanceRatio());
-
-        //     time.reduceTimeSpan();
-        // }
-
-        if(event.deltaY > 0 && (view.getColInterval() - scrollSpeed >= view.getMaxColInterval() || !time.checkIfMaxTimeSpan())) {
+        if(event.deltaY > 0 && !view.isZoomOutMax()) {
+            console.log('zooming out', view.isZoomOutMax())
             view.addColInterval(scrollSpeed)
             view.addViewOffset(zoomOffsetSyncValue);
 
-            view.addZoom(scrollSpeed * .02);
-        } else if(event.deltaY < 0 && (!time.checkIfMinTimeSpan() || view.getColInterval() + scrollSpeed <= view.getMaxColInterval() * 2)) {
+            view.addZoom(scrollSpeed / 100);
+        } else if(event.deltaY < 0 && !view.isZoomInMax()) {
             view.addColInterval(scrollSpeed);
             view.addViewOffset(zoomOffsetSyncValue);
-
-            view.addZoom(scrollSpeed * .02);
+            view.addZoom(scrollSpeed / 100);
         }
 
         if(view.getViewOffset() <= 0) {
@@ -45,19 +30,19 @@ export class Wheel implements ChartEvent {
     }
 
     public callback(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, time: Time, wheelEvent: any): void {
+        const deltaYValue = (wheelEvent.deltaY > 0 && wheelEvent.deltaY !== 0 ? 1 : -1) * view.getColIntervalStepp();
+
         const event = {
             offsetX: wheelEvent.offsetX,
-            deltaY: wheelEvent.deltaY > 0 ? 3 : -3
+            deltaY: deltaYValue
         }
 
         AnimationsManager.startAnimation(
             'wheel',
-            350,
+            400,
             [0],
             [event.deltaY],
             (easedValues) => {
-
-                console.log(easedValues)
                 const [ wheelValue ] = easedValues; 
                 Wheel.calculate(canvas, dimensions, view, time, event as WheelEvent, -wheelValue)
             }
