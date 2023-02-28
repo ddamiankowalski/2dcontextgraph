@@ -108,15 +108,12 @@ export class ElementCollector {
     }
 
     private addSubColumnLines(xStart: number, yStart: number, yEnd: number): void {
-        let drawingOffset = xStart;
-        let candlesInInterval = this.view.getCandlesInInterval();
 
-        const gap = this.view.getColInterval() / 60;
+        const gap = this.view.getMainColumnInterval() / 15;
 
-        for(let currentSubLine = 0; currentSubLine < candlesInInterval; currentSubLine++) {
-            const xStart = drawingOffset - gap;
-            this.subColumnLines.push(new Line({ xStart, xEnd: xStart, yStart, yEnd }, { width: .1 }));
-            drawingOffset = drawingOffset - gap;
+        for(let currentSubLine = 0; currentSubLine < 15; currentSubLine++) {
+            const xRenderingStart = xStart - gap * currentSubLine;
+            this.subColumnLines.push(new Line({ xStart: xRenderingStart, xEnd: xRenderingStart, yStart, yEnd }, { width: .1 }));
         }
     }
 

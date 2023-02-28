@@ -13,10 +13,8 @@ export class Wheel implements ChartEvent {
         const zoomOffsetSyncValue = (graphWidth + view.getViewOffset() - dimensions.getHorizontalMargin() - event.offsetX) / view.getColInterval() * scrollSpeed;
 
         if(event.deltaY > 0 && !view.isZoomOutMax()) {
-            console.log('zooming out', view.isZoomOutMax())
             view.addColInterval(scrollSpeed)
             view.addViewOffset(zoomOffsetSyncValue);
-
             view.addZoom(scrollSpeed / 100);
         } else if(event.deltaY < 0 && !view.isZoomInMax()) {
             view.addColInterval(scrollSpeed);
@@ -30,7 +28,7 @@ export class Wheel implements ChartEvent {
     }
 
     public callback(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, time: Time, wheelEvent: any): void {
-        const deltaYValue = (wheelEvent.deltaY > 0 && wheelEvent.deltaY !== 0 ? 1 : -1) * view.getColIntervalStepp();
+        const deltaYValue = (wheelEvent.deltaY > 0 && wheelEvent.deltaY !== 0 ? 1 : -1) * view.getColIntervalStepp() / 5;
 
         const event = {
             offsetX: wheelEvent.offsetX,
