@@ -15,7 +15,7 @@ export class View {
 
     private static colDistThresholds: number[] = [300, 600, 1800];
     private static colDistRatio: number[] = [1, 2, 4, 12];
-    private static candlesInInterval: number[] = [ 60, 30, 15, 5 ];
+    private static candlesInInterval: number[] = [60, 30, 15, 5];
 
     public static isZoomOutMax(): boolean {
         return Math.floor(this.colInterval) <= this.zoomOutMax;

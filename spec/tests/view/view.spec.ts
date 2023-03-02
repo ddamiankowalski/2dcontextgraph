@@ -9,4 +9,8 @@ describe("View suite that checks functionality of view module", function() {
     it("creates a new instance of View checks colInterval equal to initial value", function() {
         expect(View.getColInterval()).toEqual(150);
     });
+
+
+    it("adds value to colInterval and displays the right value", () => {
+    });
 });

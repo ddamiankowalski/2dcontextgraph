@@ -20,14 +20,11 @@ var View = (function () {
     View.getCandlesInInterval = function () {
         return this.candlesInInterval[this.colIntervalStep - 1];
     };
-    View.getColIntervalStepp = function () {
+    View.getColIntervalStep = function () {
         return this.colIntervalStep;
     };
     View.getMainColumnInterval = function () {
         return this.colInterval / this.colDistRatio[this.colIntervalStep - 1];
-    };
-    View.getColIntervalStep = function () {
-        return this.colDistRatio[this.colIntervalStep - 1];
     };
     View.addColInterval = function (x) {
         if (this.maxZoomOut(x)) {
