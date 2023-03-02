@@ -33,16 +33,12 @@ export class View {
         return this.candlesInInterval[this.colIntervalStep - 1];
     }
 
-    public static getColIntervalStepp(): number {
+    public static getColIntervalStep(): number {
         return this.colIntervalStep;
     }
 
     public static getMainColumnInterval(): number {
         return this.colInterval / this.colDistRatio[this.colIntervalStep - 1];
-    }
-
-    public static getColIntervalStep(): number {
-        return this.colDistRatio[this.colIntervalStep - 1];
     }
 
     public static addColInterval(x: number) {

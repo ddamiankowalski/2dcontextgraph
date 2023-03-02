@@ -3,38 +3,33 @@ exports.__esModule = true;
 exports.View = void 0;
 var View = (function () {
     function View(colIntervalInit) {
-        this.scrollSpeed = 25;
-        this.colIntervalStep = 1;
-        this.colDistThresholds = [300, 600, 1800];
-        this.colDistRatio = [1, 2, 4, 12];
-        this.candlesInInterval = [60, 30, 15, 5];
-        this.colInterval = colIntervalInit;
-        this.zoomOutMax = colIntervalInit;
-        this.viewOffset = 0;
-        this.zoom = .1;
+        View.colInterval = colIntervalInit;
+        View.zoomOutMax = colIntervalInit;
+        View.viewOffset = 0;
+        View.zoom = .1;
     }
-    View.prototype.isZoomOutMax = function () {
+    View.isZoomOutMax = function () {
         return Math.floor(this.colInterval) <= this.zoomOutMax;
     };
-    View.prototype.isZoomInMax = function () {
+    View.isZoomInMax = function () {
         return Math.floor(this.colInterval) >= 2000;
     };
-    View.prototype.getColInterval = function () {
+    View.getColInterval = function () {
         return this.colInterval;
     };
-    View.prototype.getCandlesInInterval = function () {
+    View.getCandlesInInterval = function () {
         return this.candlesInInterval[this.colIntervalStep - 1];
     };
-    View.prototype.getColIntervalStepp = function () {
+    View.getColIntervalStepp = function () {
         return this.colIntervalStep;
     };
-    View.prototype.getMainColumnInterval = function () {
+    View.getMainColumnInterval = function () {
         return this.colInterval / this.colDistRatio[this.colIntervalStep - 1];
     };
-    View.prototype.getColIntervalStep = function () {
+    View.getColIntervalStep = function () {
         return this.colDistRatio[this.colIntervalStep - 1];
     };
-    View.prototype.addColInterval = function (x) {
+    View.addColInterval = function (x) {
         if (this.maxZoomOut(x)) {
             this.colInterval = 150;
             return;
@@ -42,7 +37,7 @@ var View = (function () {
         this.colInterval += x;
         this.updateStep();
     };
-    View.prototype.updateStep = function () {
+    View.updateStep = function () {
         var _this = this;
         var result = 1;
         this.colDistThresholds.forEach(function (threshold) {
@@ -52,38 +47,43 @@ var View = (function () {
         });
         this.colIntervalStep = result;
     };
-    View.prototype.getViewOffset = function () {
+    View.getViewOffset = function () {
         return this.viewOffset;
     };
-    View.prototype.setViewOffset = function (x) {
+    View.setViewOffset = function (x) {
         this.viewOffset = x;
     };
-    View.prototype.addViewOffset = function (x) {
+    View.addViewOffset = function (x) {
         if (this.maxZoomOut(x)) {
             this.colInterval = 150;
             return;
         }
         this.viewOffset += x;
     };
-    View.prototype.getZoom = function () {
+    View.getZoom = function () {
         return this.zoom;
     };
-    View.prototype.setZoom = function (value) {
+    View.setZoom = function (value) {
         this.zoom = value;
     };
-    View.prototype.addZoom = function (value) {
+    View.addZoom = function (value) {
         if (this.maxZoomOut(value)) {
             this.colInterval = 150;
             return;
         }
         this.zoom += value;
     };
-    View.prototype.getScrollSpeed = function () {
+    View.getScrollSpeed = function () {
         return this.scrollSpeed;
     };
-    View.prototype.maxZoomOut = function (x) {
+    View.maxZoomOut = function (x) {
         return this.colIntervalStep === 1 && this.colInterval <= 150 && x < 0;
     };
+    View.scrollSpeed = 25;
+    View.colIntervalStep = 1;
+    View.colDistThresholds = [300, 600, 1800];
+    View.colDistRatio = [1, 2, 4, 12];
+    View.candlesInInterval = [60, 30, 15, 5];
     return View;
 }());
 exports.View = View;

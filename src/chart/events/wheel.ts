@@ -6,29 +6,9 @@ import { View } from '../view';
 
 export class Wheel implements ChartEvent {
     eventName: string = 'wheel';
-    
-    private static calculate(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, time: Time, event: WheelEvent, wheelValue?: number) {
-        const graphWidth = dimensions.getWidth();
-        const scrollSpeed = wheelValue ?? view.getScrollSpeed();
-        const zoomOffsetSyncValue = (graphWidth + view.getViewOffset() - dimensions.getHorizontalMargin() - event.offsetX) / view.getColInterval() * scrollSpeed;
-
-        if(event.deltaY > 0 && !view.isZoomOutMax()) {
-            view.addColInterval(scrollSpeed)
-            view.addViewOffset(zoomOffsetSyncValue);
-            view.addZoom(scrollSpeed / 100);
-        } else if(event.deltaY < 0 && !view.isZoomInMax()) {
-            view.addColInterval(scrollSpeed);
-            view.addViewOffset(zoomOffsetSyncValue);
-            view.addZoom(scrollSpeed / 100);
-        }
-
-        if(view.getViewOffset() <= 0) {
-            view.setViewOffset(0);
-        }
-    }
 
     public callback(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, time: Time, wheelEvent: any): void {
-        const deltaYValue = (wheelEvent.deltaY > 0 && wheelEvent.deltaY !== 0 ? 1 : -1) * view.getColIntervalStepp() / 5;
+        const deltaYValue = (wheelEvent.deltaY > 0 && wheelEvent.deltaY !== 0 ? 1 : -1) * View.getColIntervalStep() / 5;
 
         const event = {
             offsetX: wheelEvent.offsetX,
@@ -45,5 +25,29 @@ export class Wheel implements ChartEvent {
                 Wheel.calculate(canvas, dimensions, view, time, event as WheelEvent, -wheelValue)
             }
         );
+    }
+    
+    private static calculate(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, time: Time, event: WheelEvent, wheelValue?: number) {
+        const graphWidth = dimensions.getWidth();
+        const scrollSpeed = wheelValue ?? View.getScrollSpeed();
+        const zoomOffsetSyncValue = this.calculateOffsetSync(graphWidth, dimensions, event, scrollSpeed);
+        this.executeZoom(scrollSpeed, zoomOffsetSyncValue);
+        this.updateOffsetOverflow();
+    }
+
+    private static calculateOffsetSync(graphWidth: number, dimensions: Dimensions, event: WheelEvent, scrollSpeed: number): number {
+        return (graphWidth + View.getViewOffset() - dimensions.getHorizontalMargin() - event.offsetX) / View.getColInterval() * scrollSpeed;
+    }
+
+    private static executeZoom(scrollSpeed: number, zoomOffsetSyncValue: number): void {
+        View.addColInterval(scrollSpeed);
+        View.addViewOffset(zoomOffsetSyncValue);
+        View.addZoom(scrollSpeed / 100);
+    }
+
+    private static updateOffsetOverflow(): void {
+        if(View.getViewOffset() <= 0) {
+            View.setViewOffset(0);
+        }
     }
 }

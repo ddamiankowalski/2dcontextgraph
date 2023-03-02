@@ -50,12 +50,12 @@ export class ElementCollector {
         const { width: canvasWidth, height: canvasHeight } = this.dimensions.getDimensions();
         let currentColumn = 0;
 
-        for(let xDrawingOffset = canvasWidth; xDrawingOffset + this.view.getViewOffset() > 0; xDrawingOffset = xDrawingOffset - this.view.getColInterval()) { 
-            const xDrawingPosition = xDrawingOffset + this.view.getViewOffset() - this.dimensions.getHorizontalMargin();
+        for(let xDrawingOffset = canvasWidth; xDrawingOffset + View.getViewOffset() > 0; xDrawingOffset = xDrawingOffset - View.getColInterval()) { 
+            const xDrawingPosition = xDrawingOffset + View.getViewOffset() - this.dimensions.getHorizontalMargin();
             const [ yStartDrawingPosition, yEndDrawingPosition ] = [ 0, canvasHeight - this.dimensions.getVerticalMargin() ];
             currentColumn++;          
 
-            if(xDrawingPosition > 0 && xDrawingPosition < canvasWidth + this.view.getColInterval() * 2) {
+            if(xDrawingPosition > 0 && xDrawingPosition < canvasWidth + View.getColInterval() * 2) {
                 this.addCandlesInInterval(xDrawingPosition, this.candleData, currentColumn, canvasWidth);
                 this.addMainColumnLine(xDrawingPosition, yStartDrawingPosition, yEndDrawingPosition);
                 this.addTimeStamps(xDrawingPosition, currentColumn, this.candleData);
@@ -72,8 +72,8 @@ export class ElementCollector {
     }
 
     private addMainColumnLine(xStart: number, yStart: number, yEnd: number): void {
-        for(let x = 0; x < this.view.getColIntervalStep(); x++) {
-            const renderXPosition = xStart - this.view.getMainColumnInterval() * x;
+        for(let x = 0; x < View.getColIntervalStep(); x++) {
+            const renderXPosition = xStart - View.getMainColumnInterval() * x;
             this.mainColumnLines.push(new Line({ xStart: renderXPosition, xEnd: renderXPosition, yStart, yEnd }, { width: .4 }));
             this.addSubColumnLines(renderXPosition, yStart, yEnd);      
         }
@@ -89,7 +89,7 @@ export class ElementCollector {
     }
 
     private getIntervalCandleDistance(): number {
-        return this.view.getColInterval() / this.time.candlesInInterval();
+        return View.getColInterval() / this.time.candlesInInterval();
     }
 
     private addCandleIfInView(
@@ -104,13 +104,13 @@ export class ElementCollector {
             xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles < graphWidth - this.dimensions.getHorizontalMargin() + 10
         ) {
             const candleXRenderPosition = xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles;
-            this.candles.push(new Candle({ xStart: candleXRenderPosition }, { width: 1 }, currentCandleToRender, this.view.getZoom()))
+            this.candles.push(new Candle({ xStart: candleXRenderPosition }, { width: 1 }, currentCandleToRender, View.getZoom()))
         }
     }
 
     private addSubColumnLines(xStart: number, yStart: number, yEnd: number): void {
 
-        const gap = this.view.getMainColumnInterval() / 15;
+        const gap = View.getMainColumnInterval() / 15;
 
         for(let currentSubLine = 0; currentSubLine < 15; currentSubLine++) {
             const xRenderingStart = xStart - gap * currentSubLine;
@@ -124,13 +124,13 @@ export class ElementCollector {
             date.setMinutes(date.getMinutes() - this.time.candlesInInterval() * (columnOffset - 1));
             this.text.push(new Text({ xStart: xStart - 10, yStart: yDrawingPosition }, {}, `${date.getHours()}:${date.getMinutes()}`));
 
-            let distanceBetweenCandle = this.view.getColInterval() / this.time.candlesInInterval();
+            let distanceBetweenCandle = View.getColInterval() / this.time.candlesInInterval();
             let prevY = xStart
 
             for(let i = 0; i < this.time.candlesInInterval(); i++) {
                 const drawingX = xStart - 10 - (distanceBetweenCandle + distanceBetweenCandle * i);
                 
-                if(!prevY || prevY - drawingX > 40 && xStart - drawingX < this.view.getColInterval() - 10) {
+                if(!prevY || prevY - drawingX > 40 && xStart - drawingX < View.getColInterval() - 10) {
                     const date = new Date(Date.parse(candlesData[0].time));
                     date.setMinutes(date.getMinutes() - this.time.candlesInInterval() * (columnOffset - 1) - i - 1);
                     this.text.push(new Text({ xStart: drawingX, yStart: yDrawingPosition }, {}, `${date.getHours()}:${date.getMinutes()}`));
