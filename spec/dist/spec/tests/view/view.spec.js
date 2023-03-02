@@ -14,6 +14,9 @@ describe("View suite that checks functionality of view module", function () {
         expect(view_1.View.getColInterval()).toEqual(200);
         view_1.View.addColInterval(-10);
         expect(view_1.View.getColInterval()).toEqual(190);
+        view_1.View.addColInterval(-190);
+        view_1.View.addColInterval(0);
+        expect(view_1.View.getColInterval()).toEqual(0);
     });
 });
 //# sourceMappingURL=view.spec.js.map
