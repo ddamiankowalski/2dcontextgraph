@@ -1,21 +1,14 @@
 {
-  "srcDir": "src",
-  "srcFiles": [
-    "**/*.ts"
-  ],
-  "specDir": "spec",
-  "specFiles": [
+  "spec_dir": "spec/dist",
+  "spec_files": [
     "**/*[sS]pec.js"
   ],
   "helpers": [
-    "helpers/**/*.ts"
+    "helpers/**/*.js"
   ],
   "env": {
     "stopSpecOnExpectationFailure": false,
     "stopOnSpecFailure": false,
     "random": true
-  },
-  "browser": {
-    "name": "chrome"
   }
 }
