@@ -6,6 +6,10 @@ export class View {
         this.zoom = .1;
     }
 
+    public static initialize(): void {
+        
+    }
+
     private colInterval: number;
     private viewOffset: number;
     private zoom: number;
