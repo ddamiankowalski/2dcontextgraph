@@ -1,24 +1,25 @@
 export class View {
     constructor(colIntervalInit: number) {
         View.colInterval = colIntervalInit;
-        View.zoomOutMax = colIntervalInit;
+        View.minColInterval = colIntervalInit;
         View.viewOffset = 0;
         View.zoom = .1;
+        View.colIntervalStep = 1;
     }
 
     private static colInterval: number;
     private static viewOffset: number;
     private static zoom: number;
-    private static scrollSpeed: number = 25;
-    private static colIntervalStep: number = 1;
-    private static zoomOutMax: number;
+    private static colIntervalStep: number;
+    private static minColInterval: number;
+    private static maxColInterval: number;
 
     private static colDistThresholds: number[] = [300, 600, 1800];
     private static colDistRatio: number[] = [1, 2, 4, 12];
     private static candlesInInterval: number[] = [60, 30, 15, 5];
 
     public static isZoomOutMax(): boolean {
-        return Math.floor(this.colInterval) <= this.zoomOutMax;
+        return Math.floor(this.colInterval) <= this.minColInterval;
     }
 
     public static isZoomInMax(): boolean {
@@ -94,10 +95,6 @@ export class View {
         }
 
         this.zoom += value;
-    }
-
-    public static getScrollSpeed(): number {
-        return this.scrollSpeed;
     }
 
     private static maxZoomOut(x: number): boolean {

@@ -12,5 +12,10 @@ describe("View suite that checks functionality of view module", function() {
 
 
     it("adds value to colInterval and displays the right value", () => {
+        View.addColInterval(50);
+        expect(View.getColInterval()).toEqual(200);
+
+        View.addColInterval(-10);
+        expect(View.getColInterval()).toEqual(190);
     });
 });

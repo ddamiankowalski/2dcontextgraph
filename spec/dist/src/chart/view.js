@@ -4,12 +4,13 @@ exports.View = void 0;
 var View = (function () {
     function View(colIntervalInit) {
         View.colInterval = colIntervalInit;
-        View.zoomOutMax = colIntervalInit;
+        View.minColInterval = colIntervalInit;
         View.viewOffset = 0;
         View.zoom = .1;
+        View.colIntervalStep = 1;
     }
     View.isZoomOutMax = function () {
-        return Math.floor(this.colInterval) <= this.zoomOutMax;
+        return Math.floor(this.colInterval) <= this.minColInterval;
     };
     View.isZoomInMax = function () {
         return Math.floor(this.colInterval) >= 2000;
@@ -70,14 +71,9 @@ var View = (function () {
         }
         this.zoom += value;
     };
-    View.getScrollSpeed = function () {
-        return this.scrollSpeed;
-    };
     View.maxZoomOut = function (x) {
         return this.colIntervalStep === 1 && this.colInterval <= 150 && x < 0;
     };
-    View.scrollSpeed = 25;
-    View.colIntervalStep = 1;
     View.colDistThresholds = [300, 600, 1800];
     View.colDistRatio = [1, 2, 4, 12];
     View.candlesInInterval = [60, 30, 15, 5];

@@ -29,7 +29,7 @@ export class Wheel implements ChartEvent {
     
     private static calculate(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, time: Time, event: WheelEvent, wheelValue?: number) {
         const graphWidth = dimensions.getWidth();
-        const scrollSpeed = wheelValue ?? View.getScrollSpeed();
+        const scrollSpeed = wheelValue;
         const zoomOffsetSyncValue = this.calculateOffsetSync(graphWidth, dimensions, event, scrollSpeed);
         this.executeZoom(scrollSpeed, zoomOffsetSyncValue);
         this.updateOffsetOverflow();
