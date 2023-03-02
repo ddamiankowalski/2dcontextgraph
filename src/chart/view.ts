@@ -1,51 +1,47 @@
 export class View {
     constructor(colIntervalInit: number) {
-        this.colInterval = colIntervalInit;
-        this.zoomOutMax = colIntervalInit;
-        this.viewOffset = 0;
-        this.zoom = .1;
+        View.colInterval = colIntervalInit;
+        View.zoomOutMax = colIntervalInit;
+        View.viewOffset = 0;
+        View.zoom = .1;
     }
 
-    private colInterval: number;
-    private viewOffset: number;
-    private zoom: number;
-    private scrollSpeed: number = 25;
-    private colIntervalStep: number = 1;
-    private zoomOutMax: number;
+    private static colInterval: number;
+    private static viewOffset: number;
+    private static zoom: number;
+    private static scrollSpeed: number = 25;
+    private static colIntervalStep: number = 1;
+    private static zoomOutMax: number;
 
-    private colDistThresholds: number[] = [300, 600, 1800];
-    private colDistRatio: number[] = [1, 2, 4, 12];
-    private candlesInInterval: number[] = [ 60, 30, 15, 5 ];
+    private static colDistThresholds: number[] = [300, 600, 1800];
+    private static colDistRatio: number[] = [1, 2, 4, 12];
+    private static candlesInInterval: number[] = [60, 30, 15, 5];
 
-    public isZoomOutMax(): boolean {
+    public static isZoomOutMax(): boolean {
         return Math.floor(this.colInterval) <= this.zoomOutMax;
     }
 
-    public isZoomInMax(): boolean {
+    public static isZoomInMax(): boolean {
         return Math.floor(this.colInterval) >= 2000;
     }
 
-    public getColInterval(): number {
+    public static getColInterval(): number {
         return this.colInterval;
     }
 
-    public getCandlesInInterval(): number {
+    public static getCandlesInInterval(): number {
         return this.candlesInInterval[this.colIntervalStep - 1];
     }
 
-    public getColIntervalStepp(): number {
+    public static getColIntervalStep(): number {
         return this.colIntervalStep;
     }
 
-    public getMainColumnInterval(): number {
+    public static getMainColumnInterval(): number {
         return this.colInterval / this.colDistRatio[this.colIntervalStep - 1];
     }
 
-    public getColIntervalStep(): number {
-        return this.colDistRatio[this.colIntervalStep - 1];
-    }
-
-    public addColInterval(x: number) {
+    public static addColInterval(x: number) {
         if(this.maxZoomOut(x)) {
             this.colInterval = 150;
             return;
@@ -55,7 +51,7 @@ export class View {
         this.updateStep();
     }
 
-    private updateStep(): void {
+    private static updateStep(): void {
         let result = 1;
         this.colDistThresholds.forEach(threshold => {
             if(this.colInterval > threshold) {
@@ -66,15 +62,15 @@ export class View {
         this.colIntervalStep = result;
     }
 
-    public getViewOffset(): number {
+    public static getViewOffset(): number {
         return this.viewOffset;
     }
 
-    public setViewOffset(x: number) {
+    public static setViewOffset(x: number) {
         this.viewOffset = x;
     }
 
-    public addViewOffset(x: number) {
+    public static addViewOffset(x: number) {
         if(this.maxZoomOut(x)) {
             this.colInterval = 150;
             return;
@@ -83,15 +79,15 @@ export class View {
         this.viewOffset += x;
     }
 
-    public getZoom(): number {
+    public static getZoom(): number {
         return this.zoom;
     }
 
-    public setZoom(value: number) {
+    public static setZoom(value: number) {
         this.zoom = value;
     }
 
-    public addZoom(value: number) {
+    public static addZoom(value: number) {
         if(this.maxZoomOut(value)) {
             this.colInterval = 150;
             return;
@@ -100,11 +96,11 @@ export class View {
         this.zoom += value;
     }
 
-    public getScrollSpeed(): number {
+    public static getScrollSpeed(): number {
         return this.scrollSpeed;
     }
 
-    private maxZoomOut(x: number): boolean {
+    private static maxZoomOut(x: number): boolean {
         return this.colIntervalStep === 1 && this.colInterval <= 150 && x < 0;
     }
 }
