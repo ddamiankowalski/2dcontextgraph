@@ -1,13 +1,12 @@
 import { ChartEvent } from '../../interfaces/event';
 import { AnimationsManager } from '../animations/animations-manager';
 import { Dimensions } from '../dimensions';
-import { Time } from '../time';
 import { View } from '../view';
 
 export class Wheel implements ChartEvent {
     eventName: string = 'wheel';
 
-    public callback(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, time: Time, wheelEvent: any): void {
+    public callback(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, wheelEvent: any): void {
         const deltaYValue = (wheelEvent.deltaY > 0 && wheelEvent.deltaY !== 0 ? 1 : -1) * view.getColIntervalStep() / 5;
 
         const event = {
@@ -22,12 +21,12 @@ export class Wheel implements ChartEvent {
             [event.deltaY],
             (easedValues) => {
                 const [ wheelValue ] = easedValues; 
-                Wheel.calculate(canvas, dimensions, view, time, event as WheelEvent, -wheelValue)
+                Wheel.calculate(canvas, dimensions, view, event as WheelEvent, -wheelValue)
             }
         );
     }
     
-    private static calculate(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, time: Time, event: WheelEvent, wheelValue?: number) {
+    private static calculate(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, event: WheelEvent, wheelValue?: number) {
         const graphWidth = dimensions.getWidth();
         const scrollSpeed = wheelValue;
         const zoomOffsetSyncValue = this.calculateOffsetSync(graphWidth, dimensions, event, scrollSpeed, view);
