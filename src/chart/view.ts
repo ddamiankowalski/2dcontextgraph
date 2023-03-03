@@ -1,48 +1,48 @@
 export class View {
     constructor(colIntervalInit: number) {
-        View.colInterval = colIntervalInit;
-        View.minColInterval = colIntervalInit;
-        View.viewOffset = 0;
-        View.zoom = .1;
-        View.colIntervalStep = 1;
+        this.colInterval = colIntervalInit;
+        this.minColInterval = colIntervalInit;
+        this.viewOffset = 0;
+        this.zoom = .1;
+        this.colIntervalStep = 1;
     }
 
-    private static colInterval: number;
-    private static viewOffset: number;
-    private static zoom: number;
-    private static colIntervalStep: number;
-    private static minColInterval: number;
-    private static maxColInterval: number;
+    private colInterval: number;
+    private viewOffset: number;
+    private zoom: number;
+    private colIntervalStep: number;
+    private minColInterval: number;
+    private maxColInterval: number;
 
-    private static colDistThresholds: number[] = [300, 600, 1800];
-    private static colDistRatio: number[] = [1, 2, 4, 12];
-    private static candlesInInterval: number[] = [60, 30, 15, 5];
+    private colDistThresholds: number[] = [300, 600, 1800];
+    private colDistRatio: number[] = [1, 2, 4, 12];
+    private candlesInInterval: number[] = [60, 30, 15, 5];
 
-    public static isZoomOutMax(): boolean {
+    public isZoomOutMax(): boolean {
         return Math.floor(this.colInterval) <= this.minColInterval;
     }
 
-    public static isZoomInMax(): boolean {
+    public isZoomInMax(): boolean {
         return Math.floor(this.colInterval) >= 2000;
     }
 
-    public static getColInterval(): number {
+    public getColInterval(): number {
         return this.colInterval;
     }
 
-    public static getCandlesInInterval(): number {
+    public getCandlesInInterval(): number {
         return this.candlesInInterval[this.colIntervalStep - 1];
     }
 
-    public static getColIntervalStep(): number {
+    public getColIntervalStep(): number {
         return this.colIntervalStep;
     }
 
-    public static getMainColumnInterval(): number {
+    public getMainColumnInterval(): number {
         return this.colInterval / this.colDistRatio[this.colIntervalStep - 1];
     }
 
-    public static addColInterval(x: number) {
+    public addColInterval(x: number) {
         if(this.maxZoomOut(x)) {
             this.colInterval = 150;
             return;
@@ -52,7 +52,7 @@ export class View {
         this.updateStep();
     }
 
-    private static updateStep(): void {
+    private updateStep(): void {
         let result = 1;
         this.colDistThresholds.forEach(threshold => {
             if(this.colInterval > threshold) {
@@ -63,15 +63,15 @@ export class View {
         this.colIntervalStep = result;
     }
 
-    public static getViewOffset(): number {
+    public getViewOffset(): number {
         return this.viewOffset;
     }
 
-    public static setViewOffset(x: number) {
+    public setViewOffset(x: number) {
         this.viewOffset = x;
     }
 
-    public static addViewOffset(x: number) {
+    public addViewOffset(x: number) {
         if(this.maxZoomOut(x)) {
             this.colInterval = 150;
             return;
@@ -80,15 +80,15 @@ export class View {
         this.viewOffset += x;
     }
 
-    public static getZoom(): number {
+    public getZoom(): number {
         return this.zoom;
     }
 
-    public static setZoom(value: number) {
+    public setZoom(value: number) {
         this.zoom = value;
     }
 
-    public static addZoom(value: number) {
+    public addZoom(value: number) {
         if(this.maxZoomOut(value)) {
             this.colInterval = 150;
             return;
@@ -97,7 +97,7 @@ export class View {
         this.zoom += value;
     }
 
-    private static maxZoomOut(x: number): boolean {
+    private maxZoomOut(x: number): boolean {
         return this.colIntervalStep === 1 && this.colInterval <= 150 && x < 0;
     }
 }

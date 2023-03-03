@@ -8,7 +8,7 @@ export class Wheel implements ChartEvent {
     eventName: string = 'wheel';
 
     public callback(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, time: Time, wheelEvent: any): void {
-        const deltaYValue = (wheelEvent.deltaY > 0 && wheelEvent.deltaY !== 0 ? 1 : -1) * View.getColIntervalStep() / 5;
+        const deltaYValue = (wheelEvent.deltaY > 0 && wheelEvent.deltaY !== 0 ? 1 : -1) * view.getColIntervalStep() / 5;
 
         const event = {
             offsetX: wheelEvent.offsetX,
@@ -30,24 +30,24 @@ export class Wheel implements ChartEvent {
     private static calculate(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, time: Time, event: WheelEvent, wheelValue?: number) {
         const graphWidth = dimensions.getWidth();
         const scrollSpeed = wheelValue;
-        const zoomOffsetSyncValue = this.calculateOffsetSync(graphWidth, dimensions, event, scrollSpeed);
-        this.executeZoom(scrollSpeed, zoomOffsetSyncValue);
-        this.updateOffsetOverflow();
+        const zoomOffsetSyncValue = this.calculateOffsetSync(graphWidth, dimensions, event, scrollSpeed, view);
+        this.executeZoom(scrollSpeed, zoomOffsetSyncValue, view);
+        this.updateOffsetOverflow(view);
     }
 
-    private static calculateOffsetSync(graphWidth: number, dimensions: Dimensions, event: WheelEvent, scrollSpeed: number): number {
-        return (graphWidth + View.getViewOffset() - dimensions.getHorizontalMargin() - event.offsetX) / View.getColInterval() * scrollSpeed;
+    private static calculateOffsetSync(graphWidth: number, dimensions: Dimensions, event: WheelEvent, scrollSpeed: number, view: View): number {
+        return (graphWidth + view.getViewOffset() - dimensions.getHorizontalMargin() - event.offsetX) / view.getColInterval() * scrollSpeed;
     }
 
-    private static executeZoom(scrollSpeed: number, zoomOffsetSyncValue: number): void {
-        View.addColInterval(scrollSpeed);
-        View.addViewOffset(zoomOffsetSyncValue);
-        View.addZoom(scrollSpeed / 100);
+    private static executeZoom(scrollSpeed: number, zoomOffsetSyncValue: number, view: View): void {
+        view.addColInterval(scrollSpeed);
+        view.addViewOffset(zoomOffsetSyncValue);
+        view.addZoom(scrollSpeed / 100);
     }
 
-    private static updateOffsetOverflow(): void {
-        if(View.getViewOffset() <= 0) {
-            View.setViewOffset(0);
+    private static updateOffsetOverflow(view: View): void {
+        if(view.getViewOffset() <= 0) {
+            view.setViewOffset(0);
         }
     }
 }
