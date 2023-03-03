@@ -7,19 +7,19 @@ describe("View suite that checks functionality of view module", function() {
     });
     
     it("creates a new instance of View checks colInterval equal to initial value", function() {
-        expect(View.getColInterval()).toEqual(150);
+        expect(view.getColInterval()).toEqual(150);
     });
 
 
     it("adds value to colInterval and displays the right value", () => {
-        View.addColInterval(50);
-        expect(View.getColInterval()).toEqual(200);
+        view.addColInterval(50);
+        expect(view.getColInterval()).toEqual(200);
 
-        View.addColInterval(-10);
-        expect(View.getColInterval()).toEqual(190);
+        view.addColInterval(-10);
+        expect(view.getColInterval()).toEqual(190);
 
-        View.addColInterval(-190);
-        View.addColInterval(0);
-        expect(View.getColInterval()).toEqual(0);
+        view.addColInterval(-190);
+        view.addColInterval(0);
+        expect(view.getColInterval()).toEqual(0);
     });
 });
