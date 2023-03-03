@@ -2,21 +2,30 @@ export class View {
     constructor(colIntervalInit: number) {
         this.colInterval = colIntervalInit;
         this.minColInterval = colIntervalInit;
+        this.maxColInterval = colIntervalInit;
         this.viewOffset = 0;
-        this.zoom = .1;
-        this.colIntervalStep = 1;
     }
 
     private colInterval: number;
     private viewOffset: number;
-    private zoom: number;
-    private colIntervalStep: number;
     private minColInterval: number;
     private maxColInterval: number;
 
     private colDistThresholds: number[] = [300, 600, 1800];
     private colDistRatio: number[] = [1, 2, 4, 12];
     private candlesInInterval: number[] = [60, 30, 15, 5];
+
+    public addColInterval(x: number) {
+        if(this.maxZoomOut(x)) {
+            this.colInterval = this.minColInterval;
+            return;
+        }
+        this.colInterval += x;
+    }
+
+    private maxZoomOut(x: number): boolean {
+        return this.colInterval + x <= this.minColInterval && x < 0;
+    }
 
     public isZoomOutMax(): boolean {
         return Math.floor(this.colInterval) <= this.minColInterval;
@@ -31,37 +40,27 @@ export class View {
     }
 
     public getCandlesInInterval(): number {
-        return this.candlesInInterval[this.colIntervalStep - 1];
+        return 1
     }
 
     public getColIntervalStep(): number {
-        return this.colIntervalStep;
+        return 1
     }
 
     public getMainColumnInterval(): number {
-        return this.colInterval / this.colDistRatio[this.colIntervalStep - 1];
+        return 1
     }
 
-    public addColInterval(x: number) {
-        if(this.maxZoomOut(x)) {
-            this.colInterval = 150;
-            return;
-        }
+    // private updateStep(): void {
+    //     let result = 1;
+    //     this.colDistThresholds.forEach(threshold => {
+    //         if(this.colInterval > threshold) {
+    //             result++;
+    //         }  
+    //     })
 
-        this.colInterval += x;
-        this.updateStep();
-    }
-
-    private updateStep(): void {
-        let result = 1;
-        this.colDistThresholds.forEach(threshold => {
-            if(this.colInterval > threshold) {
-                result++;
-            }  
-        })
-
-        this.colIntervalStep = result;
-    }
+    //     this.colIntervalStep = result;
+    // }
 
     public getViewOffset(): number {
         return this.viewOffset;
@@ -81,11 +80,12 @@ export class View {
     }
 
     public getZoom(): number {
-        return this.zoom;
+        return 1;
+        //return this.zoom;
     }
 
     public setZoom(value: number) {
-        this.zoom = value;
+        //this.zoom = value;
     }
 
     public addZoom(value: number) {
@@ -94,10 +94,6 @@ export class View {
             return;
         }
 
-        this.zoom += value;
-    }
-
-    private maxZoomOut(x: number): boolean {
-        return this.colIntervalStep === 1 && this.colInterval <= 150 && x < 0;
+        //this.zoom += value;
     }
 }
