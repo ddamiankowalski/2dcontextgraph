@@ -31,8 +31,7 @@ export class Wheel implements ChartEvent {
         const scrollSpeed = wheelValue;
         const zoomOffsetSyncValue = this.calculateOffsetSync(graphWidth, dimensions, event, scrollSpeed, view);
         
-        if(!view.maxZoomOut(scrollSpeed)) {
-            console.log(scrollSpeed)
+        if(zoomOffsetSyncValue !== 0) {
             this.executeZoom(scrollSpeed, zoomOffsetSyncValue, view);
             this.updateOffsetOverflow(view);
         }

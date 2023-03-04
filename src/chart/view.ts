@@ -53,6 +53,8 @@ export class View {
         if(this.intervalStep !== 0 && this.colInterval <= this.colIntervalRatios[this.intervalStep]) {
             this.intervalStep--;
         }
+
+        console.log(this.intervalStep)
     }
 
     public getColInterval(): number {
@@ -63,16 +65,13 @@ export class View {
         return this.viewOffset;
     }
 
-    public setViewOffset(x: number) {
+    public setViewOffset(x: number): void {
         this.viewOffset = x;
     }
 
     public addViewOffset(x: number) {
-        if(this.maxZoomOut(x)) {
-            this.colInterval = 150;
-            return;
+        if(this.colInterval !== this.getMinColInterval()) {
+            this.viewOffset += x;
         }
-
-        this.viewOffset += x;
     }
 }
