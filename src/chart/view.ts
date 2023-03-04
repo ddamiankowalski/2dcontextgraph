@@ -50,12 +50,12 @@ export class View {
         return this.colIntervalRatios[this.colIntervalRatios.length - 1];
     }
 
-    public maxZoomOut(x: number): boolean {
-        return this.colInterval + x <= this.getMinColInterval() && x < 0;
+    public maxZoomOut(x: number = 0): boolean {
+        return this.colInterval + x <= this.getMinColInterval() && x <= 0;
     }
 
-    public maxZoomIn(x: number): boolean {
-        return this.colInterval + x >= this.getMaxColInterval()  && x > 0;
+    public maxZoomIn(x: number = 0): boolean {
+        return this.colInterval + x >= this.getMaxColInterval()  && x >= 0;
     }
 
     private updateIntervalStep(): void {

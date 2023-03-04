@@ -12,12 +12,10 @@ export class ElementCollector {
         dimensions: Dimensions,
         view: View,
         candleData: CandlePayload[],
-        context: CanvasRenderingContext2D
     ) {
         this.dimensions = dimensions;
         this.view = view;
         this.candleData = candleData;
-        this.context = context;
         this.setElements();
     }
 
@@ -29,9 +27,6 @@ export class ElementCollector {
     private dimensions: Dimensions;
     private view: View;
     private candleData: CandlePayload[];
-    
-    private context: CanvasRenderingContext2D;
-
     private candles: Candle[] = [];
     private mainColumnLines: Line[] = [];
     private subColumnLines: Line[] = [];
@@ -98,16 +93,7 @@ export class ElementCollector {
         ) {
             const candleXRenderPosition = xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles;
             this.candles.push(new Candle({ xStart: candleXRenderPosition }, { width: 1 }, currentCandleToRender, 1))
-        }
-    }
-
-    private addSubColumnLines(xStart: number, yStart: number, yEnd: number): void {
-
-        const gap = 1 / 15;
-
-        for(let currentSubLine = 0; currentSubLine < 15; currentSubLine++) {
-            const xRenderingStart = xStart - gap * currentSubLine;
-            this.subColumnLines.push(new Line({ xStart: xRenderingStart, xEnd: xRenderingStart, yStart, yEnd }, { width: .1 }));
+            this.subColumnLines.push(new Line({ xStart: candleXRenderPosition, xEnd: candleXRenderPosition, yStart: 0, yEnd: this.dimensions.getHeight() - this.dimensions.getVerticalMargin() }, { width: .4 }));
         }
     }
 

@@ -89,7 +89,7 @@ export class ChartManager {
     }
 
     private getRenderingElements(): Set<Element[]> {
-        return new ElementCollector(this.dimensions, this.view, this.candles, this.context).getElements();
+        return new ElementCollector(this.dimensions, this.view, this.candles).getElements();
     }
 
     private renderElements(elements: Set<Element[]>): void {
