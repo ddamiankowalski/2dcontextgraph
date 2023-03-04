@@ -7,7 +7,7 @@ export class Wheel implements ChartEvent {
     eventName: string = 'wheel';
 
     public callback(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, wheelEvent: any): void {
-        const deltaYValue = (wheelEvent.deltaY > 0 && wheelEvent.deltaY !== 0 ? 1 : -1) * view.getColIntervalStep() / 5;
+        const deltaYValue = (wheelEvent.deltaY > 0 && wheelEvent.deltaY !== 0 ? 1 : -1);
 
         const event = {
             offsetX: wheelEvent.offsetX,
@@ -30,8 +30,12 @@ export class Wheel implements ChartEvent {
         const graphWidth = dimensions.getWidth();
         const scrollSpeed = wheelValue;
         const zoomOffsetSyncValue = this.calculateOffsetSync(graphWidth, dimensions, event, scrollSpeed, view);
-        this.executeZoom(scrollSpeed, zoomOffsetSyncValue, view);
-        this.updateOffsetOverflow(view);
+        
+        if(!view.maxZoomOut(scrollSpeed)) {
+            console.log(scrollSpeed)
+            this.executeZoom(scrollSpeed, zoomOffsetSyncValue, view);
+            this.updateOffsetOverflow(view);
+        }
     }
 
     private static calculateOffsetSync(graphWidth: number, dimensions: Dimensions, event: WheelEvent, scrollSpeed: number, view: View): number {
@@ -41,7 +45,6 @@ export class Wheel implements ChartEvent {
     private static executeZoom(scrollSpeed: number, zoomOffsetSyncValue: number, view: View): void {
         view.addColInterval(scrollSpeed);
         view.addViewOffset(zoomOffsetSyncValue);
-        view.addZoom(scrollSpeed / 100);
     }
 
     private static updateOffsetOverflow(view: View): void {

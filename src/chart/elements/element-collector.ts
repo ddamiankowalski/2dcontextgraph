@@ -68,11 +68,8 @@ export class ElementCollector {
     }
 
     private addMainColumnLine(xStart: number, yStart: number, yEnd: number): void {
-        for(let x = 0; x < this.view.getColIntervalStep(); x++) {
-            const renderXPosition = xStart - this.view.getMainColumnInterval() * x;
-            this.mainColumnLines.push(new Line({ xStart: renderXPosition, xEnd: renderXPosition, yStart, yEnd }, { width: .4 }));
-            this.addSubColumnLines(renderXPosition, yStart, yEnd);      
-        }
+        const renderXPosition = xStart;
+        this.mainColumnLines.push(new Line({ xStart: renderXPosition, xEnd: renderXPosition, yStart, yEnd }, { width: .4 }));
     }
 
     private addCandlesInInterval(xMainColumnDrawingPosition: number, candlesData: CandlePayload[], currentColumn: number, graphWidth: number): void {
@@ -100,13 +97,13 @@ export class ElementCollector {
             xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles < graphWidth - this.dimensions.getHorizontalMargin() + 10
         ) {
             const candleXRenderPosition = xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles;
-            this.candles.push(new Candle({ xStart: candleXRenderPosition }, { width: 1 }, currentCandleToRender, this.view.getZoom()))
+            this.candles.push(new Candle({ xStart: candleXRenderPosition }, { width: 1 }, currentCandleToRender, 1))
         }
     }
 
     private addSubColumnLines(xStart: number, yStart: number, yEnd: number): void {
 
-        const gap = this.view.getMainColumnInterval() / 15;
+        const gap = 1 / 15;
 
         for(let currentSubLine = 0; currentSubLine < 15; currentSubLine++) {
             const xRenderingStart = xStart - gap * currentSubLine;

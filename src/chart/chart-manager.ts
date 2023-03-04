@@ -12,6 +12,7 @@ import { Mousedown } from './events/mousedown';
 import { Mouseup } from './events/mouseup';
 import { Mousemove } from './events/mousemove';
 import { AnimationsManager } from './animations/animations-manager';
+import { IViewConfig } from '../interfaces/view.interface';
 
 export class ChartManager {
     private context: CanvasRenderingContext2D;
@@ -45,8 +46,15 @@ export class ChartManager {
     }
 
     private setView(): void {
-        const maxColInterval = 150;
-        this.view = new View(maxColInterval);
+        const viewConfig: IViewConfig = {
+            intervalName: 'M1',
+            intervalCandles: 60,
+            intervalStep: 0,
+            intervalColInit: 150,
+            intervalColRatios: [150, 300, 600],
+            viewOffset: 0
+        }
+        this.view = new View(viewConfig);
     }
 
     private setRenderer(): void {

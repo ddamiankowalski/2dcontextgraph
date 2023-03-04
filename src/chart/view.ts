@@ -1,66 +1,63 @@
+import { IViewConfig } from '../interfaces/view.interface';
+
 export class View {
-    constructor(colIntervalInit: number) {
-        this.colInterval = colIntervalInit;
-        this.minColInterval = colIntervalInit;
-        this.maxColInterval = colIntervalInit;
-        this.viewOffset = 0;
+    constructor(viewConfig: IViewConfig) {
+        const { 
+            intervalColInit, 
+            intervalColRatios, 
+            viewOffset, 
+            intervalStep, 
+            intervalCandles 
+        } = viewConfig;
+
+        this.colInterval = intervalColInit;
+        this.viewOffset = viewOffset;
+        this.colIntervalRatios = intervalColRatios;
+        this.intervalStep = intervalStep;
+        this.intervalCandles = intervalCandles;
     }
 
     private colInterval: number;
     private viewOffset: number;
-    private minColInterval: number;
-    private maxColInterval: number;
-
-    private colDistThresholds: number[] = [300, 600, 1800];
-    private colDistRatio: number[] = [1, 2, 4, 12];
-    private candlesInInterval: number[] = [60, 30, 15, 5];
+    private colIntervalRatios: number[];
+    private intervalStep: number;
+    private intervalCandles: number;
 
     public addColInterval(x: number) {
         if(this.maxZoomOut(x)) {
-            this.colInterval = this.minColInterval;
+            this.colInterval = this.getMinColInterval();
             return;
         }
+
         this.colInterval += x;
+        this.updateIntervalStep();
     }
 
-    private maxZoomOut(x: number): boolean {
-        return this.colInterval + x <= this.minColInterval && x < 0;
+    private getMinColInterval(): number {
+        return this.colIntervalRatios[0];
     }
 
-    public isZoomOutMax(): boolean {
-        return Math.floor(this.colInterval) <= this.minColInterval;
+    private getMaxColInterval(): number {
+        return this.colIntervalRatios[this.colIntervalRatios.length - 1];
     }
 
-    public isZoomInMax(): boolean {
-        return Math.floor(this.colInterval) >= 2000;
+    public maxZoomOut(x: number): boolean {
+        return this.colInterval + x <= this.getMinColInterval() && x < 0;
+    }
+
+    private updateIntervalStep(): void {
+        if(this.intervalStep !== (this.colIntervalRatios.length - 1) && this.colInterval >= this.colIntervalRatios[this.intervalStep + 1]) {
+            this.intervalStep++;
+        } 
+
+        if(this.intervalStep !== 0 && this.colInterval <= this.colIntervalRatios[this.intervalStep]) {
+            this.intervalStep--;
+        }
     }
 
     public getColInterval(): number {
         return this.colInterval;
     }
-
-    public getCandlesInInterval(): number {
-        return 1
-    }
-
-    public getColIntervalStep(): number {
-        return 1
-    }
-
-    public getMainColumnInterval(): number {
-        return 1
-    }
-
-    // private updateStep(): void {
-    //     let result = 1;
-    //     this.colDistThresholds.forEach(threshold => {
-    //         if(this.colInterval > threshold) {
-    //             result++;
-    //         }  
-    //     })
-
-    //     this.colIntervalStep = result;
-    // }
 
     public getViewOffset(): number {
         return this.viewOffset;
@@ -77,23 +74,5 @@ export class View {
         }
 
         this.viewOffset += x;
-    }
-
-    public getZoom(): number {
-        return 1;
-        //return this.zoom;
-    }
-
-    public setZoom(value: number) {
-        //this.zoom = value;
-    }
-
-    public addZoom(value: number) {
-        if(this.maxZoomOut(value)) {
-            this.colInterval = 150;
-            return;
-        }
-
-        //this.zoom += value;
     }
 }
