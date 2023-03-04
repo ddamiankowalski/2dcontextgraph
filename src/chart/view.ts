@@ -29,6 +29,11 @@ export class View {
             return;
         }
 
+        if(this.maxZoomIn(x)) {
+            this.colInterval = this.getMaxColInterval();
+            return;
+        }
+
         this.colInterval += x;
         this.updateIntervalStep();
     }
@@ -47,6 +52,10 @@ export class View {
 
     public maxZoomOut(x: number): boolean {
         return this.colInterval + x <= this.getMinColInterval() && x < 0;
+    }
+
+    public maxZoomIn(x: number): boolean {
+        return this.colInterval + x >= this.getMaxColInterval()  && x > 0;
     }
 
     private updateIntervalStep(): void {
@@ -79,7 +88,7 @@ export class View {
     }
 
     public addViewOffset(x: number) {
-        if(this.colInterval !== this.getMinColInterval()) {
+        if(this.colInterval !== this.getMinColInterval() && this.colInterval !== this.getMaxColInterval()) {
             this.viewOffset += x;
         }
     }

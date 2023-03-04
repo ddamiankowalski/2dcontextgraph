@@ -34,6 +34,9 @@ describe("View suite that checks functionality of view module", function() {
 
         view.addColInterval(21.5);
         expect(view.getColInterval()).toEqual(171.5);
+
+        view.addColInterval(100000);
+        expect(view.getColInterval()).toEqual(1200);
     });
 
     it('should initialize with all values equal to IViewConfig', () => {
@@ -46,7 +49,7 @@ describe("View suite that checks functionality of view module", function() {
 
     it('check the correct values for min/maxColInterval', () => {
         expect(view['getMinColInterval']()).toEqual(150);
-        expect(view['getMaxColInterval']()).toEqual(600);
+        expect(view['getMaxColInterval']()).toEqual(1200);
     });
 
     it('interval steps should be updated accordingly', () => {
