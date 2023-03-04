@@ -9,7 +9,7 @@ describe("View suite that checks functionality of view module", function() {
         intervalCandles: 60,
         intervalStep: 0,
         intervalColInit: 150,
-        intervalColRatios: [150, 300, 600],
+        intervalColRatios: [150, 300, 600, 1200],
         viewOffset: 0
     }
 

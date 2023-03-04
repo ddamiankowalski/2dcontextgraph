@@ -51,7 +51,7 @@ export class ChartManager {
             intervalCandles: 60,
             intervalStep: 0,
             intervalColInit: 150,
-            intervalColRatios: [150, 300, 600],
+            intervalColRatios: [150, 300, 600, 1200],
             viewOffset: 0
         }
         this.view = new View(viewConfig);
@@ -85,6 +85,7 @@ export class ChartManager {
             AnimationsManager.setCurrentTimeStamp(time);
         }
         window.requestAnimationFrame(this.frameLoop.bind(this));
+        console.log(this.view.getIntervalStep());
     }
 
     private getRenderingElements(): Set<Element[]> {

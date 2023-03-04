@@ -37,6 +37,10 @@ export class View {
         return this.colIntervalRatios[0];
     }
 
+    public getIntervalStep(): number {
+        return this.intervalStep;
+    }
+
     private getMaxColInterval(): number {
         return this.colIntervalRatios[this.colIntervalRatios.length - 1];
     }
@@ -46,15 +50,20 @@ export class View {
     }
 
     private updateIntervalStep(): void {
+        this.checkIfNextStep();
+        this.checkIfPrevStep();
+    }
+
+    private checkIfNextStep(): void {
         if(this.intervalStep !== (this.colIntervalRatios.length - 1) && this.colInterval >= this.colIntervalRatios[this.intervalStep + 1]) {
             this.intervalStep++;
         } 
+    }
 
-        if(this.intervalStep !== 0 && this.colInterval <= this.colIntervalRatios[this.intervalStep]) {
+    private checkIfPrevStep(): void {
+        if(this.intervalStep !== 0 && this.colInterval < this.colIntervalRatios[this.intervalStep]) {
             this.intervalStep--;
         }
-
-        console.log(this.intervalStep)
     }
 
     public getColInterval(): number {
