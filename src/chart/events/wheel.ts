@@ -20,8 +20,6 @@ export class Wheel implements ChartEvent {
             [0],
             [event.deltaY],
             (easedValues) => {
-                console.log(event.deltaY, );
-
                 if(
                     (-event.deltaY && view.maxZoomIn(-event.deltaY)) || (-event.deltaY && view.maxZoomOut(-event.deltaY))
                 ) {

@@ -27,7 +27,7 @@ export class Renderer {
     }
 
     private render(element: Element): void {
-        if(element.getXStart() <= this.dimensions.getWidth() - this.dimensions.getHorizontalMargin() + 10) {
+        if(element.getXStart() <= this.dimensions.getWidth()) {
             element.render(element, this.context, this.dimensions);
         }
     }

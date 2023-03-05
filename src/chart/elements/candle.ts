@@ -8,15 +8,14 @@ export class Candle extends Element {
     constructor(
         coords: I2DCoords, 
         properties: IRenderProperties, 
-        candle: CandlePayload, 
-        zoom: number
+        candle: CandlePayload
     ) {
         super(coords, properties);
         this.setCurrentHighLow(candle);
         Candle.initializeRenderer();
         this.setColor(candle);
 
-        this.zoom = zoom;
+        this.width = properties.width;
         this.yEnd = candle.open;
         this.yStart = candle.close;
         this.yHigh = candle.high;
@@ -34,7 +33,7 @@ export class Candle extends Element {
 
     private color?: string;
     
-    public zoom: number;
+    public width: number;
     public yHigh: number;
     public yLow: number;
     private time: string;

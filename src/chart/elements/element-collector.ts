@@ -47,14 +47,13 @@ export class ElementCollector {
                 this.addTimeStamps(xDrawingPosition, currentColumn, this.candleData);
             }
         }
-
         this.addHorizontalLines();
 
+        this.renderingElementsSet.add(this.text);
         this.renderingElementsSet.add(this.subColumnLines);
         this.renderingElementsSet.add(this.mainColumnLines);
         this.renderingElementsSet.add(this.horizontalLines);
         this.renderingElementsSet.add(this.candles);
-        this.renderingElementsSet.add(this.text);
     }
 
     private addCandlesInInterval(xMainColumnDrawingPosition: number, candlesData: CandlePayload[], currentColumn: number, graphWidth: number): void {
@@ -83,7 +82,7 @@ export class ElementCollector {
             xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles < graphWidth - this.dimensions.getHorizontalMargin() + 10
         ) {
             const candleXRenderPosition = xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles;
-            this.candles.push(new Candle({ xStart: candleXRenderPosition }, { width: 1 }, currentCandleToRender, 1));
+            this.candles.push(new Candle({ xStart: candleXRenderPosition }, { width: this.view.getColInterval() / 100 }, currentCandleToRender));
 
             const mainColumnDivider = this.view.getDivider();
             const mainColumnLineInterval = this.view.getIntervalCandles() / mainColumnDivider;
@@ -138,9 +137,9 @@ export class ElementCollector {
 
                 if(Number(horizontalLineOffset.toFixed(2)) % currentYZoom === 0) {
                     const interpolation = MathUtils.interpolate(height - this.dimensions.getVerticalMargin(), horizontalLineOffset, currentLow, currentMax);
-                    const xEnd = this.dimensions.getWidth() - this.dimensions.getHorizontalMargin();
-                    this.horizontalLines.push(new Line({ xStart: 0, xEnd, yStart: interpolation, yEnd: interpolation }, { width: .1 }));
-                    this.text.push(new Text({ xStart: this.dimensions.getWidth() - 55, yStart: interpolation + 6 }, {}, `${horizontalLineOffset.toFixed(2)}`));
+                    const xEnd = this.dimensions.getWidth();
+                    this.horizontalLines.push(new Line({ xStart: 0, xEnd: this.dimensions.getWidth() - 60, yStart: interpolation, yEnd: interpolation }, { width: .1 }));
+                    this.text.push(new Text({ xStart: this.dimensions.getWidth() - 50, yStart: interpolation + 6 }, {}, `${horizontalLineOffset.toFixed(2)}`));
                 }
             }
         }
