@@ -88,12 +88,12 @@ export class ElementCollector {
             const mainColumnDivider = this.view.getDivider();
             const mainColumnLineInterval = this.view.getIntervalCandles() / mainColumnDivider;
             
-            if(candleNumInInterval % (10 / mainColumnDivider) === 0) {
+            if(candleNumInInterval % this.view.getSubColRatio() === 0) {
                 this.subColumnLines.push(new Line({ xStart: candleXRenderPosition, xEnd: candleXRenderPosition, yStart: 0, yEnd: this.dimensions.getHeight() - this.dimensions.getVerticalMargin() }, { width: .1 }));
             }
 
             if(candleNumInInterval % mainColumnLineInterval === 0) {
-                this.subColumnLines.push(new Line({ xStart: candleXRenderPosition, xEnd: candleXRenderPosition, yStart: 0, yEnd: this.dimensions.getHeight() - this.dimensions.getVerticalMargin() }, { width: .3 }));
+                this.mainColumnLines.push(new Line({ xStart: candleXRenderPosition, xEnd: candleXRenderPosition, yStart: 0, yEnd: this.dimensions.getHeight() - this.dimensions.getVerticalMargin() }, { width: .3 }));
             }
         }
     }

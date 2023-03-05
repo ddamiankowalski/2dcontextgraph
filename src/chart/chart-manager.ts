@@ -52,6 +52,7 @@ export class ChartManager {
             intervalStep: 0,
             intervalColInit: 150,
             intervalColRatios: [150, 300, 600, 1200],
+            intervalSubColRatios: [10, 5, 1, 1],
             viewOffset: 0
         }
         this.view = new View(viewConfig);

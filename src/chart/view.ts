@@ -7,7 +7,8 @@ export class View {
             intervalColRatios, 
             viewOffset, 
             intervalStep, 
-            intervalCandles 
+            intervalCandles,
+            intervalSubColRatios
         } = viewConfig;
 
         this.colInterval = intervalColInit;
@@ -15,11 +16,13 @@ export class View {
         this.colIntervalRatios = intervalColRatios;
         this.intervalStep = intervalStep;
         this.intervalCandles = intervalCandles;
+        this.subColIntervalRatios = intervalSubColRatios;
     }
 
     private colInterval: number;
     private viewOffset: number;
     private colIntervalRatios: number[];
+    private subColIntervalRatios: number[];
     private intervalStep: number;
     private intervalCandles: number;
 
@@ -29,6 +32,10 @@ export class View {
 
     public getDivider(): number {
         return Math.pow(2, this.intervalStep);
+    }
+
+    public getSubColRatio(): number {
+        return this.subColIntervalRatios[this.intervalStep];
     }
 
     public addColInterval(x: number) {

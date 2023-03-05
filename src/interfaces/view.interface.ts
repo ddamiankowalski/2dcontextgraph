@@ -4,5 +4,6 @@ export interface IViewConfig {
     intervalCandles: number;
     intervalColInit: number;
     intervalColRatios: number[];
+    intervalSubColRatios: number[];
     viewOffset: number;
 }
