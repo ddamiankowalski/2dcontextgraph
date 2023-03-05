@@ -137,8 +137,8 @@ export class ElementCollector {
 
                 if(Number(horizontalLineOffset.toFixed(2)) % currentYZoom === 0) {
                     const interpolation = MathUtils.interpolate(height - this.dimensions.getVerticalMargin(), horizontalLineOffset, currentLow, currentMax);
-                    const xEnd = this.dimensions.getWidth();
-                    this.horizontalLines.push(new Line({ xStart: 0, xEnd: this.dimensions.getWidth() - 60, yStart: interpolation, yEnd: interpolation }, { width: .1 }));
+                    const xEnd = this.dimensions.getWidth() - 60;
+                    this.horizontalLines.push(new Line({ xStart: 0, xEnd, yStart: interpolation, yEnd: interpolation }, { width: .1 }));
                     this.text.push(new Text({ xStart: this.dimensions.getWidth() - 50, yStart: interpolation + 6 }, {}, `${horizontalLineOffset.toFixed(2)}`));
                 }
             }
