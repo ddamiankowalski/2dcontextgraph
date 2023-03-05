@@ -23,6 +23,14 @@ export class View {
     private intervalStep: number;
     private intervalCandles: number;
 
+    public getIntervalCandles(): number {
+        return this.intervalCandles;
+    }
+
+    public getDivider(): number {
+        return Math.pow(2, this.intervalStep);
+    }
+
     public addColInterval(x: number) {
         if(this.maxZoomOut(x)) {
             this.colInterval = this.getMinColInterval();

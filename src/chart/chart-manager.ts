@@ -76,16 +76,15 @@ export class ChartManager {
     }
 
     private frameLoop(time?: number): void {
+        AnimationsManager.setCurrentTimeStamp(time);
+
         if(!this.lastRender || time - this.lastRender >= 16) {
             this.lastRender = time;
             Candle.resetHighLow();
             const elements = this.getRenderingElements();
             this.renderElements(elements);
-
-            AnimationsManager.setCurrentTimeStamp(time);
         }
         window.requestAnimationFrame(this.frameLoop.bind(this));
-        console.log(this.view.getIntervalStep());
     }
 
     private getRenderingElements(): Set<Element[]> {

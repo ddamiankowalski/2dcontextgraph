@@ -63,5 +63,9 @@ describe("View suite that checks functionality of view module", function() {
     it('should return true/false if the view is maxed out/ zoomed in', () => {
         expect(view.getColInterval()).toEqual(150);
         expect(view.maxZoomOut()).toBe(true);
+    });
+
+    it('returns the right candles in main interval', () => {
+        expect(view.getIntervalCandles()).toEqual(60);
     })
 });
