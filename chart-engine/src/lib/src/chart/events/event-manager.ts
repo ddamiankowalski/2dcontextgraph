@@ -1,0 +1,23 @@
+import { Dimensions } from '../dimensions';
+import { View } from '../view';
+import { ChartEvent } from '../../interfaces/event';
+
+export class EventManager {
+    private canvas: HTMLCanvasElement;
+    private dimensions: Dimensions;
+    private view: View;
+
+    constructor(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View) {
+        this.canvas = canvas;
+        this.dimensions = dimensions;
+        this.view = view;
+    }
+
+    public static mouseDown: boolean = false;
+
+    public listen(event: ChartEvent): void {
+        this.canvas.addEventListener(event.eventName, (canvasEvent: Event) => {
+            event.callback.call(this, this.canvas, this.dimensions, this.view, canvasEvent);
+        });
+    }
+}
