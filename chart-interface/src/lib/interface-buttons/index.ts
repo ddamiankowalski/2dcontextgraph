@@ -1,0 +1,1 @@
+export * from './interface-base-button/interface-base-button.component';

@@ -17,7 +17,7 @@
           "error",
           {
             "type": "element",
-            "prefix": "angular-charts",
+            "prefix": "ng-candlechart",
             "style": "kebab-case"
           }
         ]

@@ -19,9 +19,9 @@ export class AnimationsManager {
         return this.animationStack;
     }
 
-    public static startAnimation(type: string, msDuration: number, startValues: number[], endValues: number[], callback: (value: any) => void): void {
+    public static startAnimation(type: string, msDuration: number, startValues: number[], endValues: number[], callback: (value: any) => void, easeType: boolean): void {
         this.checkDuplicates(type)
-        this.animationStack.push(new Animation(type, msDuration, startValues, endValues, callback));        
+        this.animationStack.push(new Animation(type, msDuration, startValues, endValues, callback, easeType));        
     }
 
     private static checkDuplicates(type: string): void {

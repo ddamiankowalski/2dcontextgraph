@@ -28,7 +28,8 @@ export class Wheel implements ChartEvent {
 
                 const [ wheelValue ] = easedValues; 
                 Wheel.calculate(canvas, dimensions, view, event as WheelEvent, -wheelValue)
-            }
+            },
+            false
         );
     }
     

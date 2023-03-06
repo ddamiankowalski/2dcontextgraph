@@ -1,1 +1,2 @@
-export * from './lib/chart-interface/chart-interface.component';
+export * from './lib/ng-chart/candle-chart.component';
+export * from './lib/interface-buttons/index';

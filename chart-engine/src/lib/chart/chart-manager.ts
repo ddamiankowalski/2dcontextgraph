@@ -13,8 +13,11 @@ import { Mouseup } from './events/mouseup';
 import { Mousemove } from './events/mousemove';
 import { AnimationsManager } from './animations/animations-manager';
 import { IViewConfig } from '../interfaces/view.interface';
+import { ChartAPIController } from './api/api-controller';
 
 export class ChartManager {
+    public apiController!: ChartAPIController;
+
     private context: CanvasRenderingContext2D;
     private canvas: HTMLCanvasElement;
 
@@ -38,6 +41,12 @@ export class ChartManager {
         this.canvas.style.backgroundColor = "#191f2c";
 
         this.frameLoop(0);
+
+        this.apiController = new ChartAPIController(this.view);
+    }
+
+    public createApiController(): ChartAPIController {
+        return this.apiController;
     }
 
     private setCanvasDimensions(): void {

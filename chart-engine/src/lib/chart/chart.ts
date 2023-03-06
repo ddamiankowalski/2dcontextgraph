@@ -1,41 +1,39 @@
 import { ChartManager } from './chart-manager';
 import { CandlePayload } from '../interfaces/candlestick';
+import { ChartAPIController } from './api/api-controller';
 
 export class Chart {
-    constructor(document: Document, chartId: string) {
-        this.document = document;
+    constructor(canvas: HTMLCanvasElement) {
         this.fetchCandles('http://localhost:3000/candles')
             .then(res => res.json())
-            .then(candles => this.initChart(candles, chartId));
+            .then(candles => this.initChart(candles, canvas));
     }
 
     private canvas!: HTMLCanvasElement;
-    private document: Document;
-    private canvasManager!: ChartManager;
+    private chartManager!: ChartManager;
     private context!: CanvasRenderingContext2D | null;
 
-    private initChart(candles: CandlePayload[], chartId: string): void {
-        this.canvas = this.getHTMLCanvas(chartId);
+    private initChart(candles: CandlePayload[], canvas: HTMLCanvasElement): void {
+        this.canvas = canvas;
         this.context = this.getRenderingContext();
 
         if(this.context) {
-            this.canvasManager = new ChartManager(this.context, this.canvas, candles.reverse());
+            this.chartManager = new ChartManager(this.context, this.canvas, candles.reverse());
         }
-    }
-
-    private getHTMLCanvas(chartId: string): HTMLCanvasElement {
-        return this.document.getElementById(chartId) as HTMLCanvasElement;
     }
 
     private getRenderingContext(): CanvasRenderingContext2D | null {
         if(window.HTMLCanvasElement) {
             return this.canvas.getContext('2d');
         }
-
         throw new Error('Canvas is not supported');
     }
 
     private fetchCandles(endpoint: string): Promise<Response> {
         return fetch(endpoint);
+    }
+
+    public getApiController(): ChartAPIController {
+        return this.chartManager.createApiController();
     }
 }
