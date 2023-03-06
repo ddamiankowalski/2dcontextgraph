@@ -13,7 +13,7 @@ export class EventManager {
         this.view = view;
     }
 
-    public static mouseDown: boolean = false;
+    public static mouseDown = false;
 
     public listen(event: ChartEvent): void {
         this.canvas.addEventListener(event.eventName, (canvasEvent: Event) => {

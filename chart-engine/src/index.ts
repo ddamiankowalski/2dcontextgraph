@@ -1,1 +1,1 @@
-export * from './lib/chart-engine';
+export * from './lib/index';

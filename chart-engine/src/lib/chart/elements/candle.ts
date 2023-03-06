@@ -31,14 +31,14 @@ export class Candle extends Element {
     private static maxHigh: number;
     private static maxLow: number;
 
-    private color?: string;
+    private color!: string;
     
-    public width: number;
+    public width?: number;
     public yHigh: number;
     public yLow: number;
     private time: string;
 
-    public render(element: Candle, context: CanvasRenderingContext2D, dimensions: Dimensions): void {
+    public override render(element: Candle, context: CanvasRenderingContext2D, dimensions: Dimensions): void {
         Candle.renderer.draw(element, dimensions, context);
     }
 
@@ -86,14 +86,20 @@ export class Candle extends Element {
     }
 
     public static getHighLow(): Array<number> {
-        return [ Candle.currentMaxHigh, Candle.currentMaxLow ];
+        return [ Candle.currentMaxHigh ?? 0, Candle.currentMaxLow ?? 0 ];
     }
 
     public static getHigh(): number {
+        if(Candle.currentMaxHigh === undefined) {
+            throw new Error('Could not establish currentMaxHigh for a candle')
+        }
         return Candle.currentMaxHigh;
     }
 
     public static getLow(): number {
+        if(Candle.currentMaxLow === undefined) {
+            throw new Error('Could not establish currentMaxLow for a candle')
+        }
         return Candle.currentMaxLow;
     }
 

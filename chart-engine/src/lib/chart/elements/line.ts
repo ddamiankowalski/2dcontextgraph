@@ -12,7 +12,7 @@ export class Line extends Element {
 
     private static renderer: LineRenderer;
 
-    public render(element: Line, context: CanvasRenderingContext2D, dimensions: Dimensions): void {
+    public override render(element: Line, context: CanvasRenderingContext2D, dimensions: Dimensions): void {
         Line.renderer.draw(element, dimensions, context, this.getProperties());
     }
 

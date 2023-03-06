@@ -3,9 +3,11 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "nx serve",
+    "start": "concurrently npm:watch*",
     "build": "nx build",
-    "test": "nx test"
+    "test": "nx test",
+    "watch:serve": "nx serve",
+    "watch:data": "json-server --watch ./chart-engine/src/lib/data/candles.json"
   },
   "private": true,
   "dependencies": {
@@ -43,6 +45,7 @@
     "@types/node": "16.11.7",
     "@typescript-eslint/eslint-plugin": "^5.36.1",
     "@typescript-eslint/parser": "^5.36.1",
+    "concurrently": "^7.6.0",
     "cypress": "^12.2.0",
     "eslint": "~8.15.0",
     "eslint-config-prettier": "8.1.0",

@@ -18,13 +18,13 @@ export class ChartManager {
     private context: CanvasRenderingContext2D;
     private canvas: HTMLCanvasElement;
 
-    private dimensions: Dimensions;
-    private view: View;
-    private renderer: Renderer;
-    private eventManager: EventManager;
-    private candles: CandlePayload[];
-    private lastRender?: number;
-    private animations: AnimationsManager;
+    private dimensions!: Dimensions;
+    private view!: View;
+    private renderer!: Renderer;
+    private eventManager!: EventManager;
+    private candles!: CandlePayload[];
+    private lastRender!: number;
+    private animations!: AnimationsManager;
 
     constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, candles: CandlePayload[]) {
         this.context = context;
@@ -37,7 +37,7 @@ export class ChartManager {
         this.addCanvasListeners();
         this.canvas.style.backgroundColor = "#191f2c";
 
-        this.frameLoop();
+        this.frameLoop(0);
     }
 
     private setCanvasDimensions(): void {
@@ -76,11 +76,13 @@ export class ChartManager {
         this.eventManager.listen(new Mousemove());
     }
 
-    private frameLoop(time?: number): void {
-        AnimationsManager.setCurrentTimeStamp(time);
+    private frameLoop(time: number | undefined): void {
+        if(time) {
+            AnimationsManager.setCurrentTimeStamp(time);
+        }
 
-        if(!this.lastRender || time - this.lastRender >= 16) {
-            this.lastRender = time;
+        if(!this.lastRender || time && time - this.lastRender >= 16) {
+            this.lastRender = time ?? 0;
             Candle.resetHighLow();
             const elements = this.getRenderingElements();
             this.renderElements(elements);

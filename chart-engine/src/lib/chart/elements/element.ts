@@ -6,10 +6,10 @@ export class Element {
         { xStart, xEnd, yStart, yEnd }: I2DCoords, 
         properties: IRenderProperties,
     ) {
-        this.xStart = xStart;
-        this.xEnd = xEnd ?? xStart;
-        this.yStart = yStart;
-        this.yEnd = yEnd ?? yStart;
+        this.xStart = xStart ?? 0;
+        this.xEnd = xEnd ?? xStart ?? 0;
+        this.yStart = yStart ?? 0;
+        this.yEnd = yEnd ?? yStart ?? 0;
         this.renderProperties = properties;
     }
 

@@ -4,7 +4,7 @@ import { Dimensions } from '../dimensions';
 import { View } from '../view';
 
 export class Wheel implements ChartEvent {
-    eventName: string = 'wheel';
+    eventName = 'wheel';
 
     public callback(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, wheelEvent: any): void {
         const deltaYValue = (wheelEvent.deltaY > 0 && wheelEvent.deltaY !== 0 ? 1 : -1) / 2 * view.getDivider();
@@ -32,7 +32,7 @@ export class Wheel implements ChartEvent {
         );
     }
     
-    private static calculate(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, event: WheelEvent, wheelValue?: number) {
+    private static calculate(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, event: WheelEvent, wheelValue: number) {
         const graphWidth = dimensions.getWidth();
         const scrollSpeed = wheelValue;
         const zoomOffsetSyncValue = this.calculateOffsetSync(graphWidth, dimensions, event, scrollSpeed, view);

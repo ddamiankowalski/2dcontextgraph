@@ -14,11 +14,11 @@ export class Dimensions {
     private verticalMargin: number;
 
     public getWidth(): number {
-        return this.dimensions.width;
+        return this.dimensions.width ?? 0;
     }
 
     public getHeight(): number {
-        return this.dimensions.height;
+        return this.dimensions.height ?? 0;
     }
 
     public getDimensions(): GraphDimensions {

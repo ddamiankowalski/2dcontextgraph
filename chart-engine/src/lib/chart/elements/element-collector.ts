@@ -38,6 +38,10 @@ export class ElementCollector {
         const { width: canvasWidth, height: canvasHeight } = this.dimensions.getDimensions();
         let currentColumn = 0;
 
+        if(!canvasWidth) {
+            return;
+        }
+
         for(let xDrawingOffset = canvasWidth; xDrawingOffset + this.view.getViewOffset() > 0; xDrawingOffset = xDrawingOffset - this.view.getColInterval()) { 
             const xDrawingPosition = xDrawingOffset + this.view.getViewOffset() - this.dimensions.getHorizontalMargin();
             currentColumn++;          
@@ -103,7 +107,7 @@ export class ElementCollector {
             date.setMinutes(date.getMinutes() - this.view.getIntervalCandles() * (columnOffset - 1));
             this.text.push(new Text({ xStart: xStart - 10, yStart: yDrawingPosition }, {}, `${date.getHours()}:${date.getMinutes()}`));
 
-            let distanceBetweenCandle = this.view.getColInterval() / this.view.getIntervalCandles();
+            const distanceBetweenCandle = this.view.getColInterval() / this.view.getIntervalCandles();
             let prevY = xStart
 
             for(let i = 0; i < this.view.getIntervalCandles(); i++) {
@@ -136,7 +140,7 @@ export class ElementCollector {
             if(horizontalLineOffset <= currentMax && horizontalLineOffset >= currentLow) {
 
                 if(Number(horizontalLineOffset.toFixed(2)) % currentYZoom === 0) {
-                    const interpolation = MathUtils.interpolate(height - this.dimensions.getVerticalMargin(), horizontalLineOffset, currentLow, currentMax);
+                    const interpolation = MathUtils.interpolate((height ?? 0) - this.dimensions.getVerticalMargin(), horizontalLineOffset, currentLow, currentMax);
                     const xEnd = this.dimensions.getWidth() - 60;
                     this.horizontalLines.push(new Line({ xStart: 0, xEnd, yStart: interpolation, yEnd: interpolation }, { width: .1 }));
                     this.text.push(new Text({ xStart: this.dimensions.getWidth() - 50, yStart: interpolation + 6 }, {}, `${horizontalLineOffset.toFixed(2)}`));
