@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, Inject, ViewChild } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { Chart } from 'chart-engine/src/index';
+import { Chart } from '@angular-charts/chart-core';
 import { NgCandleChartInterfaceComponent } from '../ng-chart-interface/chart-interface.component';
 import { NgCandleChartAPIService } from './services/candle-chart-api.service';
 
