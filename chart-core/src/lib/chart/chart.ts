@@ -1,8 +1,10 @@
 import { ChartManager } from './chart-manager';
 import { CandlePayload } from '../interfaces/candlestick';
 import { ChartAPIController } from './api/api-controller';
+import { Observable, Subject } from 'rxjs';
 
 export class Chart {
+
     constructor(canvas: HTMLCanvasElement) {
         this.fetchCandles('http://localhost:3000/candles')
             .then(res => res.json())
@@ -13,6 +15,11 @@ export class Chart {
     private canvas!: HTMLCanvasElement;
     private chartManager!: ChartManager;
     private context!: CanvasRenderingContext2D | null;
+    private candlesInitialised$: Subject<CandlePayload[]> = new Subject();
+
+    public observeCandles$(): Observable<CandlePayload[]> {
+        return this.candlesInitialised$.asObservable();
+    }
 
     private initChart(candles: CandlePayload[], canvas: HTMLCanvasElement): void {
         this.canvas = canvas;
@@ -21,6 +28,8 @@ export class Chart {
         if(this.context) {
             this.chartManager = new ChartManager(this.context, this.canvas, candles.reverse());
         }
+
+        this.candlesInitialised$.next(candles);
     }
 
     private getRenderingContext(): CanvasRenderingContext2D | null {

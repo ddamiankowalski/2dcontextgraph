@@ -34,19 +34,7 @@ export class ElementCollector {
         return this.renderingElementsSet;
     }
 
-    private static needsUpdate = true;
-
-    private noUpdate() {
-        return !ElementCollector.needsUpdate;
-    }
-
     private setElements(): void {
-        if(this.noUpdate()) {
-            return;
-        }
-
-        ElementCollector.needsUpdate = false;
-
         const canvasWidth = this.dimensions.getWidth();
         let currentColumn = 0;
 

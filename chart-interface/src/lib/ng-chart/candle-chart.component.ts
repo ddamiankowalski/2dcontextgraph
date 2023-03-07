@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, ElementRef, Inject, ViewChild } from '@angular/core';
-import { CommonModule, DOCUMENT } from '@angular/common';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Inject, NgZone, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Chart } from '@kowalskiddamian/chart-core';
 import { NgCandleChartInterfaceComponent } from '../ng-chart-interface/chart-interface.component';
 import { NgCandleChartAPIService } from './services/candle-chart-api.service';
@@ -7,6 +7,7 @@ import { NgCandleChartAPIService } from './services/candle-chart-api.service';
 @Component({
   selector: 'ng-candlechart',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     NgCandleChartInterfaceComponent
@@ -20,29 +21,25 @@ export class NgCandleChartComponent implements AfterViewInit {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
   private chartEngine?: Chart;
-  private document?: Document;
   private chartId: number;
 
   constructor(
-    @Inject(DOCUMENT) document: Document,
-    public chartAPI: NgCandleChartAPIService
+    public chartAPI: NgCandleChartAPIService,
+    private ngZone: NgZone
   ) {
-    this.document = document;
     this.chartId = NgCandleChartComponent.chartNum++;
   }
 
   public ngAfterViewInit(): void {
     this.chartCanvas.nativeElement.classList.add(`ng-chart-id-${this.chartId}`);
-
-    if(this.document) {
+    this.ngZone.runOutsideAngular(() => {
       this.chartEngine = new Chart(this.chartCanvas.nativeElement);
-      setTimeout(() => {
+      
+      this.chartEngine.observeCandles$().subscribe(() => {
         if(this.chartEngine) {
           this.chartAPI.bindController(this.chartEngine);
         }
-      }, 200);
-    } else {
-      throw new Error('Chart engine could not be initialized');
-    }
+      })
+    });
   }
 }
