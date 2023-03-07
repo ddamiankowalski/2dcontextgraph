@@ -17,8 +17,7 @@
         "inlineStyleLanguage": "scss",
         "assets": ["./src/favicon.ico", "./src/assets"],
         "styles": ["./src/styles.scss"],
-        "scripts": [],
-        "webWorkerTsConfig": "tsconfig.worker.json"
+        "scripts": []
       },
       "configurations": {
         "production": {
@@ -77,8 +76,7 @@
       "outputs": ["{workspaceRoot}/coverage/{projectName}"],
       "options": {
         "jestConfig": "jest.config.app.ts",
-        "passWithNoTests": true,
-        "webWorkerTsConfig": "tsconfig.worker.json"
+        "passWithNoTests": true
       },
       "configurations": {
         "ci": {

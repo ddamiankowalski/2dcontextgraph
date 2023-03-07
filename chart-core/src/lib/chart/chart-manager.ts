@@ -40,7 +40,7 @@ export class ChartManager {
         this.addCanvasListeners();
         this.canvas.style.backgroundColor = "#191f2c";
 
-        this.frameLoop(0);
+        this.requestNextFrame(0);
 
         this.apiController = new ChartAPIController(this.view);
     }
@@ -85,7 +85,7 @@ export class ChartManager {
         this.eventManager.listen(new Mousemove());
     }
 
-    private frameLoop(time: number | undefined): void {
+    private requestNextFrame(time: number | undefined): void {
         if(time) {
             AnimationsManager.setCurrentTimeStamp(time);
         }
@@ -96,7 +96,8 @@ export class ChartManager {
             const elements = this.getRenderingElements();
             this.renderElements(elements);
         }
-        window.requestAnimationFrame(this.frameLoop.bind(this));
+
+        window.requestAnimationFrame(this.requestNextFrame.bind(this));
     }
 
     private getRenderingElements(): Set<Element[]> {

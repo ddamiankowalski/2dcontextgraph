@@ -34,13 +34,21 @@ export class ElementCollector {
         return this.renderingElementsSet;
     }
 
-    private setElements(): void {
-        const { width: canvasWidth, height: canvasHeight } = this.dimensions.getDimensions();
-        let currentColumn = 0;
+    private static needsUpdate = true;
 
-        if(!canvasWidth) {
+    private noUpdate() {
+        return !ElementCollector.needsUpdate;
+    }
+
+    private setElements(): void {
+        if(this.noUpdate()) {
             return;
         }
+
+        ElementCollector.needsUpdate = false;
+
+        const canvasWidth = this.dimensions.getWidth();
+        let currentColumn = 0;
 
         for(let xDrawingOffset = canvasWidth; xDrawingOffset + this.view.getViewOffset() > 0; xDrawingOffset = xDrawingOffset - this.view.getColInterval()) { 
             const xDrawingPosition = xDrawingOffset + this.view.getViewOffset() - this.dimensions.getHorizontalMargin();
