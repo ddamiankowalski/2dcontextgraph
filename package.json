@@ -7,7 +7,7 @@
     "build": "nx build",
     "test": "nx test",
     "watch:serve": "nx serve",
-    "watch:data": "json-server --watch ./chart-engine/src/lib/data/candles.json"
+    "watch:data": "json-server --watch ./chart-core/src/lib/data/candles.json"
   },
   "private": true,
   "dependencies": {

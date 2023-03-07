@@ -9,7 +9,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@angular-charts/chart-engine": ["chart-engine/src/index.ts"]
+      "@angular-charts/chart-core": ["chart-core/src/index.ts"]
     }
   },
   "files": [],
