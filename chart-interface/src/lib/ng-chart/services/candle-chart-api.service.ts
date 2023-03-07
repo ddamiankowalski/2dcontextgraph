@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { Chart } from "@angular-charts/chart-core";
-import { ChartAPIController } from "@angular-charts/chart-core";
+import { Chart } from "@kowalskiddamian/chart-core";
+import { ChartAPIController } from "@kowalskiddamian/chart-core";
 
 @Injectable({
     providedIn: 'root'

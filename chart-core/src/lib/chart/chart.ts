@@ -6,7 +6,8 @@ export class Chart {
     constructor(canvas: HTMLCanvasElement) {
         this.fetchCandles('http://localhost:3000/candles')
             .then(res => res.json())
-            .then(candles => this.initChart(candles, canvas));
+            .then(candles => this.initChart(candles, canvas))
+            .catch(() => this.initChart([], canvas));
     }
 
     private canvas!: HTMLCanvasElement;

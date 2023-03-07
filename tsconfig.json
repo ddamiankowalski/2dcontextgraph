@@ -9,7 +9,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@angular-charts/chart-core": ["chart-core/src/index.ts"]
+      "@kowalskiddamian/chart-core": ["chart-core/src/index.ts"]
     }
   },
   "files": [],

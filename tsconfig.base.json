@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@angular-charts/chart-core": ["chart-core/src/index.ts"],
+      "@kowalskiddamian/chart-core": ["chart-core/src/index.ts"],
       "@kowalskiddamian/ng-candlecharts": ["chart-interface/src/index.ts"]
     }
   },
