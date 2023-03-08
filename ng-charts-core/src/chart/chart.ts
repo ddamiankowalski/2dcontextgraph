@@ -1,14 +1,14 @@
 import { ChartManager } from './chart-manager';
 import { CandlePayload } from '../interfaces/candlestick';
 import { ChartAPIController } from './api/api-controller';
+import { View } from './view';
+import { Dimensions } from './dimensions';
 
 export class Chart {
-
     constructor(canvas: HTMLCanvasElement) {
         this.fetchCandles('http://localhost:3000/candles')
             .then(res => res.json())
             .then(candles => this.initChart(candles, canvas))
-            .catch(() => this.initChart([], canvas));
     }
 
     private canvas!: HTMLCanvasElement;
@@ -25,10 +25,7 @@ export class Chart {
     }
 
     private getRenderingContext(): CanvasRenderingContext2D | null {
-        if(window.HTMLCanvasElement) {
-            return this.canvas.getContext('2d');
-        }
-        throw new Error('Canvas is not supported');
+        return this.canvas.getContext('2d');
     }
 
     private fetchCandles(endpoint: string): Promise<Response> {
@@ -37,5 +34,18 @@ export class Chart {
 
     public getApiController(): ChartAPIController {
         return this.chartManager.createApiController();
+    }
+
+    public getManger(): ChartManager {
+        return this.chartManager;
+    }
+
+    public getView(): View {
+        console.log(this.chartManager.getView())
+        return this.chartManager.getView();
+    }
+
+    public getDimensions(): Dimensions {
+        return this.chartManager.getDimensions();
     }
 }

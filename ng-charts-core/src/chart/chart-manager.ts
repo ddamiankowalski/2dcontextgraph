@@ -38,10 +38,8 @@ export class ChartManager {
         this.setRenderer();
         this.setCandles(candles);
         this.addCanvasListeners();
-        this.canvas.style.backgroundColor = "#191f2c";
 
         this.requestNextFrame(0);
-
         this.apiController = new ChartAPIController(this.view);
     }
 
@@ -97,7 +95,7 @@ export class ChartManager {
             this.renderElements(elements);
         }
 
-        window.requestAnimationFrame(this.requestNextFrame.bind(this));
+        requestAnimationFrame(this.requestNextFrame.bind(this));
     }
 
     private getRenderingElements(): Set<Element[]> {
@@ -107,5 +105,14 @@ export class ChartManager {
     private renderElements(elements: Set<Element[]>): void {
         AnimationsManager.update();
         this.renderer.draw(elements);
+    }
+
+    public getView(): View {
+        console.log(this.view);
+        return this.view;
+    }
+
+    public getDimensions(): Dimensions {
+        return this.dimensions;
     }
 }

@@ -8,7 +8,6 @@ export class Wheel implements ChartEvent {
 
     public callback(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, wheelEvent: any): void {
         const deltaYValue = (wheelEvent.deltaY > 0 && wheelEvent.deltaY !== 0 ? 1 : -1) / 2 * view.getDivider();
-
         const event = {
             offsetX: wheelEvent.offsetX,
             deltaY: deltaYValue
