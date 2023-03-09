@@ -47,7 +47,7 @@ export class Candle extends Element {
     }
 
     private setColor(candle: CandlePayload): void {
-        this.color = candle.open > candle.close ? '#56b786' : '#eb4e5c';
+        this.color = candle.open > candle.close ? '#eb4e5c' : '#56b786';
     }
 
     public getColor(): string {

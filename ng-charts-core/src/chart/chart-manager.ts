@@ -78,11 +78,11 @@ export class ChartManager {
 
     private addCanvasListeners(): void {
         this.eventManager = new EventManager(this.canvas, this.dimensions, this.view);
-        this.eventManager.listen(new Wheel());
-        this.eventManager.listen(new Mouseout());
-        this.eventManager.listen(new Mousedown());
-        this.eventManager.listen(new Mouseup());
-        this.eventManager.listen(new Mousemove());
+        this.eventManager.listen(new Wheel(this.canvas, this.dimensions, this.view));
+        this.eventManager.listen(new Mouseout(this.canvas, this.dimensions, this.view));
+        this.eventManager.listen(new Mousedown(this.canvas, this.dimensions, this.view));
+        this.eventManager.listen(new Mouseup(this.canvas, this.dimensions, this.view));
+        this.eventManager.listen(new Mousemove(this.canvas, this.dimensions, this.view));
     }
 
     private requestNextFrame(time: number | undefined): void {

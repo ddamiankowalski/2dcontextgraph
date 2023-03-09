@@ -6,6 +6,16 @@ import { View } from '../view';
 export class Wheel implements ChartEvent {
     eventName = 'wheel';
 
+    private canvas: HTMLCanvasElement;
+    private dimensions: Dimensions;
+    private view: View;
+
+    constructor(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View) {
+        this.canvas = canvas;
+        this.dimensions = dimensions;
+        this.view = view;
+    }
+
     public callback(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, wheelEvent: any): void {
         const deltaYValue = (wheelEvent.deltaY > 0 && wheelEvent.deltaY !== 0 ? 1 : -1) / 2 * view.getDivider();
 

@@ -17,7 +17,7 @@ export class EventManager {
 
     public listen(event: ChartEvent): void {
         this.canvas.addEventListener(event.eventName, (canvasEvent: Event) => {
-            event.callback.call(this, this.canvas, this.dimensions, this.view, canvasEvent);
+            event.callback(canvasEvent);
         });
     }
 }
