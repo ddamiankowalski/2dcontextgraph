@@ -1,5 +1,5 @@
 {
-  "name": "@kowalskiddamian/chart-core",
+  "name": "ngx-candlecharts-core",
   "version": "0.1.6",
   "description": "NgCharts core project",
   "main": "index.js",
