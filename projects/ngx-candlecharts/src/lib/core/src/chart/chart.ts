@@ -16,6 +16,10 @@ export class Chart {
     private context!: CanvasRenderingContext2D | null;
 
     private initChart(candles: CandlePayload[], canvas: HTMLCanvasElement): void {
+        if(!candles.length) {
+          return;
+        }
+
         this.canvas = canvas;
         this.context = this.getRenderingContext();
 

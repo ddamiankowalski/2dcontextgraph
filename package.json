@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "binterface": "ng build ngx-candlecharts"
+    "binterface": "ng build ngx-candlecharts",
+    "candles": "json-server --watch ./candle-data/candles.json"
   },
   "private": true,
   "dependencies": {
@@ -19,6 +20,7 @@
     "@angular/platform-browser": "^15.0.0",
     "@angular/platform-browser-dynamic": "^15.0.0",
     "@angular/router": "^15.0.0",
+    "json-server": "^0.17.2",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.12.0"
