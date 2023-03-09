@@ -30,7 +30,6 @@ export class ElementCollector {
     private horizontalLines: Line[] = [];
 
     public getElements(): Set<Element[]> {
-        console.log('getting elements')
         return this.renderingElementsSet;
     }
 
@@ -41,6 +40,10 @@ export class ElementCollector {
         this.subColumnLines = [];
         this.text = [];
         this.horizontalLines = [];
+    }
+
+    public getCandles(): Candle[] {
+        return this.candles;
     }
 
     public setElements(): void {

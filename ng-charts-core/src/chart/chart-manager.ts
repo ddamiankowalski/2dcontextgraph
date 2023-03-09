@@ -38,13 +38,13 @@ export class ChartManager {
         this.setView();
         this.setRenderer();
         this.setCandles(candles);
-        this.addCanvasListeners();
         this.canvas.style.backgroundColor = "#191f2c";
         this.elementCollector = new ElementCollector(this.dimensions, this.view, this.candles);
+        this.addCanvasListeners();
 
         this.requestNextFrame(0);
 
-        this.apiController = new ChartAPIController(this.view);
+        this.apiController = new ChartAPIController(this.view, this.eventManager);
     }
 
     public createApiController(): ChartAPIController {
@@ -84,7 +84,7 @@ export class ChartManager {
         this.eventManager.listen(new Mouseout());
         this.eventManager.listen(new Mousedown());
         this.eventManager.listen(new Mouseup());
-        this.eventManager.listen(new Mousemove(this.view, this.elementCollector));
+        this.eventManager.listen(new Mousemove(this.view, this.elementCollector, this.eventManager));
     }
 
     private requestNextFrame(time: number | undefined): void {

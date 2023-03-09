@@ -1,6 +1,6 @@
-import { Dimensions } from '../dimensions';
-import { View } from '../view';
 import { ChartEvent } from '../../interfaces/event';
+import { Observable, Subject } from 'rxjs';
+import { Candle } from '../elements/candle';
 
 export class EventManager {
     private canvas: HTMLCanvasElement;
@@ -10,10 +10,16 @@ export class EventManager {
     }
 
     public static mouseDown = false;
-
+    public candleHover$ = new Subject<Candle>();
+    
     public listen(event: ChartEvent): void {
         this.canvas.addEventListener(event.eventName, (canvasEvent: Event) => {
             event.callback(canvasEvent);
         });
+
+    }
+
+    public getCandleHover$(): Observable<Candle> {
+        return this.candleHover$.asObservable();
     }
 }

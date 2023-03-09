@@ -7,15 +7,28 @@ export class Mousemove implements ChartEvent {
     eventName = 'mousemove';
 
     private view: View;
+    private elementCollector: ElementCollector;
+    private eventManager: EventManager;
 
-    constructor(view: View, elementCollector: ElementCollector) {
+    constructor(view: View, elementCollector: ElementCollector, eventManager: EventManager) {
         this.view = view;
+        this.elementCollector = elementCollector;
+        this.eventManager = eventManager;
     }
 
     public callback(event: MouseEvent): void {
-        console.log(event);
+        this.checkCandleHover(event);
+
         if(this.view.getViewOffset() + event.movementX > 0 && EventManager.mouseDown) {
             this.view.setViewOffset(this.view.getViewOffset() + event.movementX);
         }
+    }
+
+    private checkCandleHover(event: MouseEvent): void {
+        this.elementCollector.getCandles().forEach(candle => {
+            if(event.offsetX > candle.getXStart() && event.offsetX < candle.getXStart() + candle.width) {
+                this.eventManager.candleHover$.next(candle);
+            }
+        })
     }
 }
