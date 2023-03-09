@@ -5,7 +5,7 @@ import { EventManager } from './event-manager';
 
 export class Mouseout implements ChartEvent {
     eventName: string = 'mouseout';
-    
+
     private canvas: HTMLCanvasElement;
     private dimensions: Dimensions;
     private view: View;
@@ -16,7 +16,7 @@ export class Mouseout implements ChartEvent {
         this.view = view;
     }
 
-    public callback(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, event: Event): void {
+    public callback(event: Event): void {
         EventManager.mouseDown = false;
     }
 }

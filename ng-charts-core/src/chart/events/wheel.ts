@@ -16,8 +16,8 @@ export class Wheel implements ChartEvent {
         this.view = view;
     }
 
-    public callback(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, wheelEvent: any): void {
-        const deltaYValue = (wheelEvent.deltaY > 0 && wheelEvent.deltaY !== 0 ? 1 : -1) / 2 * view.getDivider();
+    public callback(wheelEvent: any): void {
+        const deltaYValue = (wheelEvent.deltaY > 0 && wheelEvent.deltaY !== 0 ? 1 : -1) / 2 * this.view.getDivider();
 
         const event = {
             offsetX: wheelEvent.offsetX,
@@ -31,13 +31,13 @@ export class Wheel implements ChartEvent {
             [event.deltaY],
             (easedValues) => {
                 if(
-                    (-event.deltaY && view.maxZoomIn(-event.deltaY)) || (-event.deltaY && view.maxZoomOut(-event.deltaY))
+                    (-event.deltaY && this.view.maxZoomIn(-event.deltaY)) || (-event.deltaY && this.view.maxZoomOut(-event.deltaY))
                 ) {
                     return;
                 }
 
                 const [ wheelValue ] = easedValues; 
-                Wheel.calculate(canvas, dimensions, view, event as WheelEvent, -wheelValue)
+                Wheel.calculate(this.canvas, this.dimensions, this.view, event as WheelEvent, -wheelValue)
             },
             false
         );

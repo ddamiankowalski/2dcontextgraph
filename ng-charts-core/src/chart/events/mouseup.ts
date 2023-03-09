@@ -16,7 +16,7 @@ export class Mouseup implements ChartEvent {
         this.view = view;
     }
 
-    public callback(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, event: Event): void {
+    public callback(event: Event): void {
         EventManager.mouseDown = false;
     }
 }
