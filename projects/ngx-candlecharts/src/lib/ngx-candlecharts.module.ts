@@ -1,13 +1,11 @@
 import { NgModule } from '@angular/core';
-import { NgxCandlechartsComponent } from './ngx-candlecharts.component';
+import { NgxCandlechartsComponent } from '../lib/components/ngx-candlecharts.component';
 
 
 
 @NgModule({
-  declarations: [
-    NgxCandlechartsComponent
-  ],
   imports: [
+    NgxCandlechartsComponent
   ],
   exports: [
     NgxCandlechartsComponent
