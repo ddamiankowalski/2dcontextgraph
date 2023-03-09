@@ -28,6 +28,7 @@ export class ChartManager {
     private candles!: CandlePayload[];
     private lastRender!: number;
     private animations!: AnimationsManager;
+    private elementCollector!: ElementCollector
 
     constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, candles: CandlePayload[]) {
         this.context = context;
@@ -39,6 +40,7 @@ export class ChartManager {
         this.setCandles(candles);
         this.addCanvasListeners();
         this.canvas.style.backgroundColor = "#191f2c";
+        this.elementCollector = new ElementCollector(this.dimensions, this.view, this.candles);
 
         this.requestNextFrame(0);
 
@@ -77,12 +79,12 @@ export class ChartManager {
     }
 
     private addCanvasListeners(): void {
-        this.eventManager = new EventManager(this.canvas, this.dimensions, this.view);
+        this.eventManager = new EventManager(this.canvas);
         this.eventManager.listen(new Wheel(this.canvas, this.dimensions, this.view));
-        this.eventManager.listen(new Mouseout(this.canvas, this.dimensions, this.view));
-        this.eventManager.listen(new Mousedown(this.canvas, this.dimensions, this.view));
-        this.eventManager.listen(new Mouseup(this.canvas, this.dimensions, this.view));
-        this.eventManager.listen(new Mousemove(this.canvas, this.dimensions, this.view));
+        this.eventManager.listen(new Mouseout());
+        this.eventManager.listen(new Mousedown());
+        this.eventManager.listen(new Mouseup());
+        this.eventManager.listen(new Mousemove(this.view, this.elementCollector));
     }
 
     private requestNextFrame(time: number | undefined): void {
@@ -93,6 +95,8 @@ export class ChartManager {
         if(!this.lastRender || time && time - this.lastRender >= 16) {
             this.lastRender = time ?? 0;
             Candle.resetHighLow();
+            this.elementCollector.resetElements();
+            this.elementCollector.setElements();
             const elements = this.getRenderingElements();
             this.renderElements(elements);
         }
@@ -101,7 +105,7 @@ export class ChartManager {
     }
 
     private getRenderingElements(): Set<Element[]> {
-        return new ElementCollector(this.dimensions, this.view, this.candles).getElements();
+        return this.elementCollector.getElements();
     }
 
     private renderElements(elements: Set<Element[]>): void {

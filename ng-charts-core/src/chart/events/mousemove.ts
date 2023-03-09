@@ -1,18 +1,14 @@
 import { ChartEvent } from '../../interfaces/event';
-import { Dimensions } from '../dimensions';
+import { ElementCollector } from '../elements/element-collector';
 import { View } from '../view';
 import { EventManager } from './event-manager';
 
 export class Mousemove implements ChartEvent {
     eventName = 'mousemove';
 
-    private canvas: HTMLCanvasElement;
-    private dimensions: Dimensions;
     private view: View;
 
-    constructor(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View) {
-        this.canvas = canvas;
-        this.dimensions = dimensions;
+    constructor(view: View, elementCollector: ElementCollector) {
         this.view = view;
     }
 

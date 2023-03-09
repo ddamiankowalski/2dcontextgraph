@@ -16,7 +16,6 @@ export class ElementCollector {
         this.dimensions = dimensions;
         this.view = view;
         this.candleData = candleData;
-        this.setElements();
     }
 
     private renderingElementsSet: Set<Element[]> = new Set();
@@ -31,10 +30,20 @@ export class ElementCollector {
     private horizontalLines: Line[] = [];
 
     public getElements(): Set<Element[]> {
+        console.log('getting elements')
         return this.renderingElementsSet;
     }
 
-    private setElements(): void {
+    public resetElements(): void {
+        this.renderingElementsSet =  new Set();
+        this.candles = [];
+        this.mainColumnLines = [];
+        this.subColumnLines = [];
+        this.text = [];
+        this.horizontalLines = [];
+    }
+
+    public setElements(): void {
         const canvasWidth = this.dimensions.getWidth();
         let currentColumn = 0;
 

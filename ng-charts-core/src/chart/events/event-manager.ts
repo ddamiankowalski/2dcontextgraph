@@ -4,13 +4,9 @@ import { ChartEvent } from '../../interfaces/event';
 
 export class EventManager {
     private canvas: HTMLCanvasElement;
-    private dimensions: Dimensions;
-    private view: View;
 
-    constructor(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View) {
+    constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
-        this.dimensions = dimensions;
-        this.view = view;
     }
 
     public static mouseDown = false;
