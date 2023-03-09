@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { Chart } from 'ngx-candlecharts-core/core';
+import { Chart } from 'node_modules/ngx-candlecharts-core/core';
 
 @Component({
   standalone: true,
