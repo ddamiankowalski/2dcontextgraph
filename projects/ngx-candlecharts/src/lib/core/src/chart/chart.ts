@@ -1,8 +1,10 @@
 import { ChartManager } from './chart-manager';
 import { CandlePayload } from '../interfaces/candlestick';
 import { ChartAPIController } from './api/api-controller';
+import { Subject } from 'rxjs';
 
 export class Chart {
+    chartInitialized$ = new Subject<ChartAPIController>();
 
     constructor(canvas: HTMLCanvasElement) {
         this.fetchCandles('http://localhost:3000/candles')
@@ -25,6 +27,7 @@ export class Chart {
 
         if(this.context) {
             this.chartManager = new ChartManager(this.context, this.canvas, candles.reverse());
+            this.chartInitialized$.next(this.chartManager.createApiController());
         }
     }
 

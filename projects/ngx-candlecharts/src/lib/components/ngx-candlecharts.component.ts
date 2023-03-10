@@ -14,7 +14,8 @@ export class NgxCandlechartsComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
       this.ngxChart = new Chart(this.canvas.nativeElement);
-      this.ngxChartApiController = this.ngxChart.getApiController();
-      console.log(this.ngxChartApiController)
+      this.ngxChart.chartInitialized$.subscribe(apiController => {
+        this.ngxChartApiController = apiController
+      })
   }
 }
