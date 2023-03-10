@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { Chart } from '../core';
+import { Chart, ChartAPIController } from '../core';
 
 @Component({
   standalone: true,
@@ -10,9 +10,11 @@ export class NgxCandlechartsComponent implements AfterViewInit {
   @ViewChild('ngxCanvas') canvas!: ElementRef<HTMLCanvasElement>;
 
   private ngxChart?: Chart;
+  private ngxChartApiController?: ChartAPIController;
 
   ngAfterViewInit(): void {
       this.ngxChart = new Chart(this.canvas.nativeElement);
-      console.log(this.ngxChart)
+      this.ngxChartApiController = this.ngxChart.getApiController();
+      console.log(this.ngxChartApiController)
   }
 }
