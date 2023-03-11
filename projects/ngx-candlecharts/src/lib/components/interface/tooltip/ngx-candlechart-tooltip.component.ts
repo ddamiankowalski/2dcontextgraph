@@ -47,7 +47,6 @@ export class NgxCandlechartTooltipComponent implements AfterViewInit {
   }
 
   private forceTooltipHide(): void {
-    console.log('ahaha')
     const animations = this.toolboxElement?.getAnimations();
     animations?.forEach(animation => animation.cancel());
   }

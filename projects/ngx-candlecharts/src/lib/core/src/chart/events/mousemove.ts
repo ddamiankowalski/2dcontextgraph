@@ -16,7 +16,6 @@ export class Mousemove implements ChartEvent {
     public callback(event: MouseEvent): void {
         if(this.view.getViewOffset() + event.movementX > 0 && EventManager.mouseDown) {
             this.eventManager.forceTooltipHide$.next(true);
-            console.log('dupa')
             this.view.setViewOffset(this.view.getViewOffset() + event.movementX);
         }
     }

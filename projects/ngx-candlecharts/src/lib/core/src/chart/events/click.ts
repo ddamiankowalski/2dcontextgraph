@@ -26,7 +26,6 @@ export class Click implements ChartEvent {
             event.offsetY > (candle.yDrawingStart ?? 0) &&
             event.offsetY < (candle.yDrawingEnd ?? 0)
           ) {
-            console.log(event.offsetY, candle.yDrawingEnd, candle.yDrawingStart)
               foundCandle = true;
               this.eventManager.candleHover$.next(candle);
           }
