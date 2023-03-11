@@ -1,13 +1,20 @@
+import { EventManager } from '../events/event-manager';
 import { Animation } from './animation';
 
-export class AnimationsManager { 
+export class AnimationsManager {
     constructor() {}
 
     public static currentRenderBlock = false;
+
+    private static forceUpdate: boolean;
     private static currentTimeStamp: number;
     private static animationStack: Animation[] = [];
 
-    public static setCurrentTimeStamp(time: number): void { 
+    public static isRunning(): boolean {
+      return this.animationStack.length !== 0 || EventManager.mouseDown;
+    }
+
+    public static setCurrentTimeStamp(time: number): void {
         this.currentTimeStamp = time;
     }
 
@@ -21,7 +28,7 @@ export class AnimationsManager {
 
     public static startAnimation(type: string, msDuration: number, startValues: number[], endValues: number[], callback: (value: any) => void, easeType: boolean): void {
         this.checkDuplicates(type)
-        this.animationStack.push(new Animation(type, msDuration, startValues, endValues, callback, easeType));        
+        this.animationStack.push(new Animation(type, msDuration, startValues, endValues, callback, easeType));
     }
 
     private static checkDuplicates(type: string): void {

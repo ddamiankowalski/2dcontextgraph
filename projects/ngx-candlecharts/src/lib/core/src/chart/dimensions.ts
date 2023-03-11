@@ -1,4 +1,5 @@
 import { GraphDimensions } from '../interfaces/dimensions';
+import { EventManager } from './events/event-manager';
 
 export class Dimensions {
     constructor(canvas: HTMLCanvasElement, horizontalMargin: number, verticalMargin: number) {
@@ -12,6 +13,16 @@ export class Dimensions {
     private dimensions: GraphDimensions = {};
     private horizontalMargin: number;
     private verticalMargin: number;
+
+    public resize(entry: ResizeObserverEntry): void {
+      this.canvas.height = entry.contentRect.height;
+      this.canvas.width = entry.contentRect.width;
+      this.dimensions.height = entry.contentRect.height;
+      this.dimensions.width = entry.contentRect.width;
+
+      EventManager.mouseDown = true;
+      setTimeout(() => EventManager.mouseDown = false, 1);
+    }
 
     public getWidth(): number {
         return this.dimensions.width ?? 0;
@@ -41,8 +52,8 @@ export class Dimensions {
     }
 
     private setCanvasStyleWidthAndHeight(width: number = 1280, height: number = 400): void {
-        this.canvas.style.width = `${width}px`;
-        this.canvas.style.height = `${height}px`;
+        this.canvas.style.width = `${100}%`;
+        this.canvas.style.height = `${100}%`;
     }
 
     private setCanvasWidthAndHeight(): void {

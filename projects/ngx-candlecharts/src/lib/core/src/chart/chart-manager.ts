@@ -1,7 +1,7 @@
 import { ElementCollector } from './elements/element-collector';
 import { Dimensions } from './dimensions';
 import { View } from './view';
-import { Candle } from './elements/candle'; 
+import { Candle } from './elements/candle';
 import { CandlePayload } from '../interfaces/candlestick';
 import { Renderer } from './renderer/renderer';
 import { Element } from './elements/element';
@@ -44,7 +44,7 @@ export class ChartManager {
 
         this.requestNextFrame(0);
 
-        this.apiController = new ChartAPIController(this.view, this.eventManager);
+        this.apiController = new ChartAPIController(this.view, this.dimensions, this.eventManager);
     }
 
     public createApiController(): ChartAPIController {
@@ -92,7 +92,7 @@ export class ChartManager {
             AnimationsManager.setCurrentTimeStamp(time);
         }
 
-        if(!this.lastRender || time && time - this.lastRender >= 16) {
+        if(!this.lastRender || time && time - this.lastRender >= 16 && AnimationsManager.isRunning()) {
             this.lastRender = time ?? 0;
             Candle.resetHighLow();
             this.elementCollector.resetElements();
