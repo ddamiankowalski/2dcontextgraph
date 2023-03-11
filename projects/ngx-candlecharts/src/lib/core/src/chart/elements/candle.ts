@@ -3,12 +3,14 @@ import { Element } from './element';
 import { I2DCoords, IRenderProperties } from '../../interfaces/renderelement';
 import { CandleRenderer } from '../renderer/candle-renderer';
 import { Dimensions } from '../dimensions';
+import { MathUtils } from '../math-utils';
 
 export class Candle extends Element {
     constructor(
-        coords: I2DCoords, 
-        properties: IRenderProperties, 
-        candle: CandlePayload
+        coords: I2DCoords,
+        properties: IRenderProperties,
+        candle: CandlePayload,
+        dimensions: Dimensions
     ) {
         super(coords, properties);
         this.setCurrentHighLow(candle);
@@ -32,11 +34,13 @@ export class Candle extends Element {
     private static maxLow: number;
 
     private color!: string;
-    
+
     public width?: number;
     public yHigh: number;
     public yLow: number;
-    private time: string;
+    public yDrawingStart?: number;
+    public yDrawingEnd?: number;
+    public time: string;
 
     public override render(element: Candle, context: CanvasRenderingContext2D, dimensions: Dimensions): void {
         Candle.renderer.draw(element, dimensions, context);

@@ -1,4 +1,4 @@
-import { Observable } from "rxjs";
+import { distinctUntilChanged, Observable } from "rxjs";
 import { AnimationsManager } from "../animations/animations-manager";
 import { Dimensions } from "../dimensions";
 import { Candle } from "../elements/candle";
@@ -27,7 +27,7 @@ export class ChartAPIController {
     }
 
     public hoveredCandle$(): Observable<Candle> {
-        return this.eventManager.getCandleHover$();
+        return this.eventManager.getCandleHover$().pipe(distinctUntilChanged());
     }
 
     public resizeCanvas(entry: ResizeObserverEntry): void {

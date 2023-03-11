@@ -30,25 +30,34 @@ export class ChartManager {
     private animations!: AnimationsManager;
     private elementCollector!: ElementCollector
 
-    constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, candles: CandlePayload[]) {
+    constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
         this.context = context;
         this.canvas = canvas;
 
         this.setCanvasDimensions();
         this.setView();
         this.setRenderer();
-        this.setCandles(candles);
         this.canvas.style.backgroundColor = "#191f2c";
-        this.elementCollector = new ElementCollector(this.dimensions, this.view, this.candles);
-        this.addCanvasListeners();
-
-        this.requestNextFrame(0);
-
-        this.apiController = new ChartAPIController(this.view, this.dimensions, this.eventManager);
     }
 
-    public createApiController(): ChartAPIController {
-        return this.apiController;
+    public setCandles(candles: CandlePayload[]): void {
+      Candle.findMaxLowInData(candles);
+      this.candles = candles;
+      this.setElementCollector();
+      this.addCanvasListeners();
+      this.setApiController();
+    }
+
+    private setElementCollector(): void {
+      this.elementCollector = new ElementCollector(this.dimensions, this.view, this.candles);
+    }
+
+    private setApiController(): void {
+      this.apiController = new ChartAPIController(this.view, this.dimensions, this.eventManager);
+    }
+
+    public startRendering(): void {
+      this.requestNextFrame(0);
     }
 
     private setCanvasDimensions(): void {
@@ -73,11 +82,6 @@ export class ChartManager {
         this.renderer = new Renderer(this.context, this.dimensions);
     }
 
-    private setCandles(candles: CandlePayload[]): void {
-        Candle.findMaxLowInData(candles);
-        this.candles = candles;
-    }
-
     private addCanvasListeners(): void {
         this.eventManager = new EventManager(this.canvas);
         this.eventManager.listen(new Wheel(this.canvas, this.dimensions, this.view));
@@ -87,10 +91,8 @@ export class ChartManager {
         this.eventManager.listen(new Mousemove(this.view, this.elementCollector, this.eventManager));
     }
 
-    private requestNextFrame(time: number | undefined): void {
-        if(time) {
-            AnimationsManager.setCurrentTimeStamp(time);
-        }
+    private requestNextFrame(time: number): void {
+        AnimationsManager.setCurrentTimeStamp(time);
 
         if(!this.lastRender || time && time - this.lastRender >= 16 && AnimationsManager.isRunning()) {
             this.lastRender = time ?? 0;

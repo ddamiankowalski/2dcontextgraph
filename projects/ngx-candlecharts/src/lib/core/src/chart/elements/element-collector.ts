@@ -50,9 +50,9 @@ export class ElementCollector {
         const canvasWidth = this.dimensions.getWidth();
         let currentColumn = 0;
 
-        for(let xDrawingOffset = canvasWidth; xDrawingOffset + this.view.getViewOffset() > 0; xDrawingOffset = xDrawingOffset - this.view.getColInterval()) { 
+        for(let xDrawingOffset = canvasWidth; xDrawingOffset + this.view.getViewOffset() > 0; xDrawingOffset = xDrawingOffset - this.view.getColInterval()) {
             const xDrawingPosition = xDrawingOffset + this.view.getViewOffset() - this.dimensions.getHorizontalMargin();
-            currentColumn++;          
+            currentColumn++;
 
             if(xDrawingPosition > 0 && xDrawingPosition < canvasWidth + this.view.getColInterval() * 2) {
                 this.addCandlesInInterval(xDrawingPosition, this.candleData, currentColumn, canvasWidth);
@@ -83,22 +83,22 @@ export class ElementCollector {
     }
 
     private addCandleIfInView(
-        xMainColumnDrawingPosition: number, 
-        candleNumInInterval: number, 
-        distanceBetweenCandles: number, 
+        xMainColumnDrawingPosition: number,
+        candleNumInInterval: number,
+        distanceBetweenCandles: number,
         graphWidth: number,
         currentCandleToRender: CandlePayload
     ): void {
         if(
-            xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles > 0 && 
+            xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles > 0 &&
             xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles < graphWidth - this.dimensions.getHorizontalMargin() + 10
         ) {
             const candleXRenderPosition = xMainColumnDrawingPosition - candleNumInInterval * distanceBetweenCandles;
-            this.candles.push(new Candle({ xStart: candleXRenderPosition }, { width: this.view.getColInterval() / 100 }, currentCandleToRender));
+            this.candles.push(new Candle({ xStart: candleXRenderPosition }, { width: this.view.getColInterval() / 100 }, currentCandleToRender, this.dimensions));
 
             const mainColumnDivider = this.view.getDivider();
             const mainColumnLineInterval = this.view.getIntervalCandles() / mainColumnDivider;
-            
+
             if(candleNumInInterval % this.view.getSubColRatio() === 0) {
                 this.subColumnLines.push(new Line({ xStart: candleXRenderPosition, xEnd: candleXRenderPosition, yStart: 0, yEnd: this.dimensions.getHeight() - this.dimensions.getVerticalMargin() }, { width: .1 }));
             }
@@ -120,7 +120,7 @@ export class ElementCollector {
 
             for(let i = 0; i < this.view.getIntervalCandles(); i++) {
                 const drawingX = xStart - 10 - (distanceBetweenCandle + distanceBetweenCandle * i);
-                
+
                 if(!prevY || prevY - drawingX > 40 && xStart - drawingX < this.view.getColInterval() - 10) {
                     const date = new Date(Date.parse(candlesData[0].time));
                     date.setMinutes(date.getMinutes() - this.view.getIntervalCandles() * (columnOffset - 1) - i - 1);

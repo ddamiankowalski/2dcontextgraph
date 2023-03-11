@@ -1,7 +1,8 @@
+import { HttpClientModule } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, NgZone, ViewChild } from '@angular/core';
-import { distinctUntilChanged, take } from 'rxjs/operators';
-import { Chart, ChartAPIController } from '../../core';
-import { NgxCandleChartTooltipService } from '../../services/ngx-candlechart-tooltip.service';
+import { BrowserModule } from '@angular/platform-browser';
+import { ChartAPIController } from '../../core';
+import { NgxCandleChartAPIService } from '../../services/ngx-candlechart-api.service';
 import { NgxCandlechartTooltipComponent } from '../interface/tooltip/ngx-candlechart-tooltip.component';
 
 @Component({
@@ -10,33 +11,30 @@ import { NgxCandlechartTooltipComponent } from '../interface/tooltip/ngx-candlec
   templateUrl: './ngx-candlechart.component.html',
   styleUrls: ['ngx-candlechart.component.scss'],
   imports: [
-    NgxCandlechartTooltipComponent
+    NgxCandlechartTooltipComponent,
+    BrowserModule,
+    HttpClientModule
   ],
   providers: [
-    NgxCandleChartTooltipService
+    NgxCandleChartAPIService
   ]
 })
 export class NgxCandlechartsComponent implements AfterViewInit {
   @ViewChild('ngxCanvas') canvas!: ElementRef<HTMLCanvasElement>;
 
-  constructor(private ngZone: NgZone, private tooltipService: NgxCandleChartTooltipService) {
-    this.tooltipService
+  constructor(private chartAPI: NgxCandleChartAPIService) {
+    this.chartAPI
   }
 
-  private ngxChart?: Chart;
   private ngxChartApiController?: ChartAPIController;
   private chartResizeObserver?: ResizeObserver;
 
   ngAfterViewInit(): void {
-      this.ngZone.runOutsideAngular(() => {
-        this.ngxChart = new Chart(this.canvas.nativeElement);
-        this.ngxChart.chartInitialized$.pipe(take(1)).subscribe(apiController => this.initializeApiController(apiController));
-      });
+    this.chartAPI.initializeChart(this.canvas.nativeElement);
   }
 
   private initializeApiController(apiController: ChartAPIController): void {
     this.ngxChartApiController = apiController;
-    this.tooltipService.hoveredCandle$ = apiController.hoveredCandle$().pipe(distinctUntilChanged());
 
     this.chartResizeObserver = new ResizeObserver((resize) => this.resizeChart(resize));
     this.chartResizeObserver?.observe(this.canvas.nativeElement);

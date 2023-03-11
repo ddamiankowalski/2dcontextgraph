@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
-import { AfterViewInit, Component, ElementRef } from "@angular/core";
-import { NgxCandleChartTooltipService } from "../../../services/ngx-candlechart-tooltip.service";
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input } from "@angular/core";
+import { Candle } from "../../../core/src/chart/elements/candle";
+import { NgxCandleChartAPIService } from "../../../services/ngx-candlechart-api.service";
 
 @Component({
   standalone: true,
@@ -12,18 +13,29 @@ import { NgxCandleChartTooltipService } from "../../../services/ngx-candlechart-
   ]
 })
 export class NgxCandlechartTooltipComponent implements AfterViewInit {
+  @Input() canvas?: HTMLCanvasElement;
+  public candleData!: Candle;
+
+  private boundingClientRect?: DOMRect;
   private toolboxElement?: HTMLElement;
 
-  constructor(private tooltipService: NgxCandleChartTooltipService, element: ElementRef) {
+  constructor(private chartAPI: NgxCandleChartAPIService, element: ElementRef, private cdRef: ChangeDetectorRef) {
     this.toolboxElement = element.nativeElement;
   }
 
   ngAfterViewInit(): void {
-    this.tooltipService.hoveredCandle$?.subscribe(x => console.log(x));
-    if(this.toolboxElement && this.toolboxElement.style) {
-      this.toolboxElement.style.top = '0';
-      this.toolboxElement.style.left = '0';
-      this.toolboxElement.style.position = 'absolute';
+    this.boundingClientRect = this.canvas?.getBoundingClientRect();
+    console.log(this.toolboxElement)
+    this.chartAPI.candleHover$().subscribe(candle => this.updatePosition(candle))
+  }
+
+  private updatePosition(candle: Candle): void {
+    this.candleData = candle;
+    this.cdRef.detectChanges();
+
+    if(this.toolboxElement && this.boundingClientRect) {
+      this.toolboxElement.style.left = `${candle.getXStart()}px`;
+      this.toolboxElement.style.top = `${candle.yDrawingStart}px`;
     }
   }
 }

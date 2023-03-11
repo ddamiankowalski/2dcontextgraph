@@ -20,6 +20,8 @@ export class CandleRenderer {
 
             const yDrawingStart = MathUtils.interpolate(graphHeight, candle.getYStart(), maxLowCandle, maxHighCandle);
             const yDrawingEnd = MathUtils.interpolate(graphHeight, candle.getYEnd(), maxLowCandle, maxHighCandle);
+            candle.yDrawingStart = yDrawingStart;
+            candle.yDrawingEnd = yDrawingEnd;
 
             context.beginPath();
             (context as unknown as any).roundRect(candle.getXStart() - (1 * (candle.width ?? 0)) / 2, yDrawingEnd, 1 * (candle.width ?? 0), yDrawingStart - yDrawingEnd, 1)

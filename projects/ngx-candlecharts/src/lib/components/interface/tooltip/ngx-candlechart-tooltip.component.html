@@ -1,9 +1,11 @@
 <div class="ngx-candlechart__tooltip">
-  <ng-container
-    [ngTemplateOutlet]="tooltip"
-  ></ng-container>
+  <div class="ngx-candlechart__tooltip__time">
+    Time: {{ candleData?.time ?? '' }}
+  </div>
+  <div class="ngx-candlechart__tooltip__high">
+    High: {{ candleData?.yHigh ?? '' }}
+  </div>
+  <div class="ngx-candlechart__tooltip__low">
+    Low: {{ candleData?.yLow ?? '' }}
+  </div>
 </div>
-
-<ng-template #tooltip>
-  tutej ez
-</ng-template>
