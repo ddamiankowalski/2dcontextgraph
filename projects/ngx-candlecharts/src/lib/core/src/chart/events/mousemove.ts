@@ -26,7 +26,10 @@ export class Mousemove implements ChartEvent {
 
     private checkCandleHover(event: MouseEvent): void {
         this.elementCollector.getCandles().forEach(candle => {
-            if(event.offsetX > candle.getXStart() && event.offsetX < candle.getXStart() + (candle.width ?? 0)) {
+            if(
+              event.offsetX > candle.getXStart() &&
+              event.offsetX < candle.getXStart() + (candle.width ?? 0)
+            ) {
                 this.eventManager.candleHover$.next(candle);
             }
         })

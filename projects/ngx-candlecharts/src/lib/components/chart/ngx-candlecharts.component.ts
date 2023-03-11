@@ -1,18 +1,26 @@
 import { AfterViewInit, Component, ElementRef, NgZone, ViewChild } from '@angular/core';
-import { take } from 'rxjs';
-import { Chart, ChartAPIController } from '../core';
+import { distinctUntilChanged, take } from 'rxjs/operators';
+import { Chart, ChartAPIController } from '../../core';
+import { NgxCandleChartTooltipService } from '../../services/ngx-candlechart-tooltip.service';
+import { NgxCandlechartTooltipComponent } from '../interface/tooltip/ngx-candlechart-tooltip.component';
 
 @Component({
   standalone: true,
   selector: 'ngx-candlechart',
   templateUrl: './ngx-candlechart.component.html',
-  styleUrls: ['ngx-candlechart.component.scss']
+  styleUrls: ['ngx-candlechart.component.scss'],
+  imports: [
+    NgxCandlechartTooltipComponent
+  ],
+  providers: [
+    NgxCandleChartTooltipService
+  ]
 })
 export class NgxCandlechartsComponent implements AfterViewInit {
   @ViewChild('ngxCanvas') canvas!: ElementRef<HTMLCanvasElement>;
 
-  constructor(private ngZone: NgZone, private element: ElementRef) {
-
+  constructor(private ngZone: NgZone, private tooltipService: NgxCandleChartTooltipService) {
+    this.tooltipService
   }
 
   private ngxChart?: Chart;
@@ -28,7 +36,7 @@ export class NgxCandlechartsComponent implements AfterViewInit {
 
   private initializeApiController(apiController: ChartAPIController): void {
     this.ngxChartApiController = apiController;
-    apiController.hoveredCandle$().subscribe(candle => console.log());
+    this.tooltipService.hoveredCandle$ = apiController.hoveredCandle$().pipe(distinctUntilChanged());
 
     this.chartResizeObserver = new ResizeObserver((resize) => this.resizeChart(resize));
     this.chartResizeObserver?.observe(this.canvas.nativeElement);

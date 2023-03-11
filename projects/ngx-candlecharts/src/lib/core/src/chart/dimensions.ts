@@ -1,4 +1,6 @@
 import { GraphDimensions } from '../interfaces/dimensions';
+import { Animation } from './animations/animation';
+import { AnimationsManager } from './animations/animations-manager';
 import { EventManager } from './events/event-manager';
 
 export class Dimensions {
@@ -20,8 +22,7 @@ export class Dimensions {
       this.dimensions.height = entry.contentRect.height;
       this.dimensions.width = entry.contentRect.width;
 
-      EventManager.mouseDown = true;
-      setTimeout(() => EventManager.mouseDown = false, 1);
+      AnimationsManager.getAnimationStack().push(new Animation('resize', 1, [], [], () => console.log('resized'), true))
     }
 
     public getWidth(): number {
