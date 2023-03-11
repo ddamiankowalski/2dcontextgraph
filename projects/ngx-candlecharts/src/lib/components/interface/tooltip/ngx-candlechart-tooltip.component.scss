@@ -8,4 +8,9 @@
   padding: .35rem .5rem;
   border-radius: .25rem;
   border: 1px solid #41495a;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .3s ease, transform .3s ease;
+  left: 0;
+  top: 0;
 }

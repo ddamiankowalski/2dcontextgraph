@@ -2,6 +2,7 @@ import { ChartEvent } from '../../interfaces/event';
 import { AnimationsManager } from '../animations/animations-manager';
 import { Dimensions } from '../dimensions';
 import { View } from '../view';
+import { EventManager } from './event-manager';
 
 export class Wheel implements ChartEvent {
     eventName = 'wheel';
@@ -9,15 +10,18 @@ export class Wheel implements ChartEvent {
     private canvas: HTMLCanvasElement;
     private dimensions: Dimensions;
     private view: View;
+    private eventManager!: EventManager;
 
-    constructor(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View) {
+    constructor(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, eventManager: EventManager) {
         this.canvas = canvas;
         this.dimensions = dimensions;
         this.view = view;
+        this.eventManager = eventManager;
     }
 
     public callback(wheelEvent: any): void {
         const deltaYValue = (wheelEvent.deltaY > 0 && wheelEvent.deltaY !== 0 ? 1 : -1) / 2 * this.view.getDivider();
+        this.eventManager.candleHover$.next(null);
 
         const event = {
             offsetX: wheelEvent.offsetX,
@@ -36,18 +40,18 @@ export class Wheel implements ChartEvent {
                     return;
                 }
 
-                const [ wheelValue ] = easedValues; 
+                const [ wheelValue ] = easedValues;
                 Wheel.calculate(this.canvas, this.dimensions, this.view, event as WheelEvent, -wheelValue)
             },
             false
         );
     }
-    
+
     private static calculate(canvas: HTMLCanvasElement, dimensions: Dimensions, view: View, event: WheelEvent, wheelValue: number) {
         const graphWidth = dimensions.getWidth();
         const scrollSpeed = wheelValue;
         const zoomOffsetSyncValue = this.calculateOffsetSync(graphWidth, dimensions, event, scrollSpeed, view);
-        
+
         if(zoomOffsetSyncValue !== 0) {
             this.executeZoom(scrollSpeed, zoomOffsetSyncValue, view);
             this.updateOffsetOverflow(view);

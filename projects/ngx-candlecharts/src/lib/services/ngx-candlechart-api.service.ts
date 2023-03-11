@@ -34,8 +34,12 @@ export class NgxCandleChartAPIService {
     this.ngxChartManager.apiController.resetViewOffset();
   }
 
-  public candleHover$(): Observable<Candle> {
+  public candleHover$(): Observable<Candle | null> {
     return this.ngxChartInitialized$.pipe(filter(initialized => initialized), switchMap(() => this.ngxChartManager.apiController.hoveredCandle$()))
+  }
+
+  public forceTooltipHide$(): Observable<boolean> {
+    return this.ngxChartInitialized$.pipe(filter(initialized => initialized), switchMap(() => this.ngxChartManager.apiController.forceTooltipHide$()));
   }
 
   private getCandlesData(): Observable<CandlePayload[]> {

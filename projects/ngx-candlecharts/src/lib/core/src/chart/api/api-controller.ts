@@ -26,8 +26,12 @@ export class ChartAPIController {
         );
     }
 
-    public hoveredCandle$(): Observable<Candle> {
-        return this.eventManager.getCandleHover$().pipe(distinctUntilChanged());
+    public hoveredCandle$(): Observable<Candle | null> {
+      return this.eventManager.candleHover$.pipe(distinctUntilChanged());
+    }
+
+    public forceTooltipHide$(): Observable<boolean> {
+      return this.eventManager.forceTooltipHide$;
     }
 
     public resizeCanvas(entry: ResizeObserverEntry): void {

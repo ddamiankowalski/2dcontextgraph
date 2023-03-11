@@ -1,5 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input } from "@angular/core";
+import { debounceTime } from "rxjs";
 import { Candle } from "../../../core/src/chart/elements/candle";
 import { NgxCandleChartAPIService } from "../../../services/ngx-candlechart-api.service";
 
@@ -25,17 +26,29 @@ export class NgxCandlechartTooltipComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.boundingClientRect = this.canvas?.getBoundingClientRect();
-    console.log(this.toolboxElement)
-    this.chartAPI.candleHover$().subscribe(candle => this.updatePosition(candle))
+    this.chartAPI.candleHover$().pipe(debounceTime(100)).subscribe(candle => this.updatePosition(candle))
+    this.chartAPI.forceTooltipHide$().subscribe(() => this.forceTooltipHide())
   }
 
-  private updatePosition(candle: Candle): void {
-    this.candleData = candle;
-    this.cdRef.detectChanges();
+  private updatePosition(candle: Candle | null): void {
+    if(!candle && this.toolboxElement) {
+      this.toolboxElement.style.opacity = '0';
+      return;
+    } else if (candle && this.toolboxElement) {
+      this.candleData = candle;
 
-    if(this.toolboxElement && this.boundingClientRect) {
-      this.toolboxElement.style.left = `${candle.getXStart()}px`;
-      this.toolboxElement.style.top = `${candle.yDrawingStart}px`;
+      if(this.boundingClientRect) {
+        this.toolboxElement.style.opacity = '1';
+        this.toolboxElement.style.transform = `translate(${candle.getXStart() + 25}px, ${candle.yDrawingStart ?? 0 + 25}px)`;
+      }
+
+      this.cdRef.detectChanges();
     }
+  }
+
+  private forceTooltipHide(): void {
+    console.log('ahaha')
+    const animations = this.toolboxElement?.getAnimations();
+    animations?.forEach(animation => animation.cancel());
   }
 }

@@ -10,16 +10,12 @@ export class EventManager {
     }
 
     public static mouseDown = false;
-    public candleHover$ = new Subject<Candle>();
-    
+    public candleHover$ = new Subject<Candle | null>();
+    public forceTooltipHide$ = new Subject<boolean>();
+
     public listen(event: ChartEvent): void {
         this.canvas.addEventListener(event.eventName, (canvasEvent: Event) => {
             event.callback(canvasEvent);
         });
-
-    }
-
-    public getCandleHover$(): Observable<Candle> {
-        return this.candleHover$.asObservable();
     }
 }

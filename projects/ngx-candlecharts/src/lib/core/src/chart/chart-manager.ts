@@ -14,6 +14,7 @@ import { Mousemove } from './events/mousemove';
 import { AnimationsManager } from './animations/animations-manager';
 import { IViewConfig } from '../interfaces/view.interface';
 import { ChartAPIController } from './api/api-controller';
+import { Click } from './events/click';
 
 export class ChartManager {
     public apiController!: ChartAPIController;
@@ -84,11 +85,12 @@ export class ChartManager {
 
     private addCanvasListeners(): void {
         this.eventManager = new EventManager(this.canvas);
-        this.eventManager.listen(new Wheel(this.canvas, this.dimensions, this.view));
+        this.eventManager.listen(new Wheel(this.canvas, this.dimensions, this.view, this.eventManager));
         this.eventManager.listen(new Mouseout());
-        this.eventManager.listen(new Mousedown());
+        this.eventManager.listen(new Mousedown(this.eventManager));
         this.eventManager.listen(new Mouseup());
-        this.eventManager.listen(new Mousemove(this.view, this.elementCollector, this.eventManager));
+        this.eventManager.listen(new Mousemove(this.view, this.eventManager));
+        this.eventManager.listen(new Click(this.eventManager, this.elementCollector));
     }
 
     private requestNextFrame(time: number): void {
