@@ -86,10 +86,10 @@ export class ChartManager {
     private addCanvasListeners(): void {
         this.eventManager = new EventManager(this.canvas);
         this.eventManager.listen(new Wheel(this.canvas, this.dimensions, this.view, this.eventManager));
-        this.eventManager.listen(new Mouseout());
+        this.eventManager.listen(new Mouseout(this.eventManager));
         this.eventManager.listen(new Mousedown(this.eventManager));
         this.eventManager.listen(new Mouseup());
-        this.eventManager.listen(new Mousemove(this.view, this.eventManager));
+        this.eventManager.listen(new Mousemove(this.view, this.eventManager, this.elementCollector));
         this.eventManager.listen(new Click(this.eventManager, this.elementCollector));
     }
 
@@ -105,6 +105,7 @@ export class ChartManager {
             this.renderElements(elements);
         }
 
+        console.log(EventManager.mousePosition);
         window.requestAnimationFrame(this.requestNextFrame.bind(this));
     }
 

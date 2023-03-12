@@ -6,6 +6,7 @@ import { Line } from './line';
 import { Element } from './element';
 import { Text } from './text';
 import { MathUtils } from '../math-utils';
+import { EventManager } from '../events/event-manager';
 
 export class ElementCollector {
     constructor(
