@@ -4,7 +4,6 @@ import { View } from './view';
 import { Candle } from './elements/candle';
 import { CandlePayload } from '../interfaces/candlestick';
 import { Renderer } from './renderer/renderer';
-import { Element } from './elements/element';
 import { EventManager } from './events/event-manager';
 import { Wheel } from './events/wheel';
 import { Mouseout } from './events/mouseout';
@@ -15,6 +14,7 @@ import { AnimationsManager } from './animations/animations-manager';
 import { IViewConfig } from '../interfaces/view.interface';
 import { ChartAPIController } from './api/api-controller';
 import { Click } from './events/click';
+import { IElements } from '../interfaces/elements';
 
 export class ChartManager {
     public apiController!: ChartAPIController;
@@ -58,6 +58,7 @@ export class ChartManager {
     }
 
     public startRendering(): void {
+      //this.elementCollector.setDirty('all');
       this.requestNextFrame(0);
     }
 
@@ -96,24 +97,26 @@ export class ChartManager {
     private requestNextFrame(time: number): void {
         AnimationsManager.setCurrentTimeStamp(time);
 
-        if(!this.lastRender || time && time - this.lastRender >= 16 && AnimationsManager.isRunning()) {
-            this.lastRender = time ?? 0;
-            Candle.resetHighLow();
-            this.elementCollector.resetElements();
-            this.elementCollector.setElements();
-            const elements = this.getRenderingElements();
-            this.renderElements(elements);
+        if(!this.lastRender || time && time - this.lastRender >= 16) {
+            if(!this.lastRender || AnimationsManager.isRunning()) {
+              this.runAllElements(time);
+            }
         }
-
-        console.log(EventManager.mousePosition);
         window.requestAnimationFrame(this.requestNextFrame.bind(this));
     }
 
-    private getRenderingElements(): Set<Element[]> {
+    private runAllElements(time: number): void {
+      this.lastRender = time ?? 0;
+      this.elementCollector.setElements();
+      const elements = this.getRenderingElements();
+      this.renderElements(elements);
+    }
+
+    private getRenderingElements(): IElements {
         return this.elementCollector.getElements();
     }
 
-    private renderElements(elements: Set<Element[]>): void {
+    private renderElements(elements: IElements): void {
         AnimationsManager.update();
         this.renderer.draw(elements);
     }

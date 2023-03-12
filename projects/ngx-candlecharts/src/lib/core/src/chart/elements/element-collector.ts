@@ -3,9 +3,10 @@ import { View } from '../view';
 import { CandlePayload } from '../../interfaces/candlestick';
 import { Candle } from './candle';
 import { Line } from './line';
-import { Element } from './element';
 import { Text } from './text';
 import { MathUtils } from '../math-utils';
+import { IElements } from '../../interfaces/elements';
+import { AnimationsManager } from '../animations/animations-manager';
 import { EventManager } from '../events/event-manager';
 
 export class ElementCollector {
@@ -19,7 +20,11 @@ export class ElementCollector {
         this.candleData = candleData;
     }
 
-    private renderingElementsSet: Set<Element[]> = new Set();
+    private static elements: IElements = this.initializeElements();
+
+    private static initializeElements(): IElements {
+      return { elementsMap: new Map(), dirty: [ { all: true } ] };
+    }
 
     private dimensions: Dimensions;
     private view: View;
@@ -30,43 +35,55 @@ export class ElementCollector {
     private text: Text[] = [];
     private horizontalLines: Line[] = [];
 
-    public getElements(): Set<Element[]> {
-        return this.renderingElementsSet;
-    }
-
-    public resetElements(): void {
-        this.renderingElementsSet =  new Set();
-        this.candles = [];
-        this.mainColumnLines = [];
-        this.subColumnLines = [];
-        this.text = [];
-        this.horizontalLines = [];
+    public getElements(): IElements {
+        return ElementCollector.elements;
     }
 
     public getCandles(): Candle[] {
         return this.candles;
     }
 
+    public static setDirty(elementType: 'all' | 'vertical' | 'horizontal' | 'mousemove'): void {
+      ElementCollector.elements.dirty.push({ [elementType]: true });
+    }
+
     public setElements(): void {
-        const canvasWidth = this.dimensions.getWidth();
-        let currentColumn = 0;
 
-        for(let xDrawingOffset = canvasWidth; xDrawingOffset + this.view.getViewOffset() > 0; xDrawingOffset = xDrawingOffset - this.view.getColInterval()) {
-            const xDrawingPosition = xDrawingOffset + this.view.getViewOffset() - this.dimensions.getHorizontalMargin();
-            currentColumn++;
+      this.text = [];
+      this.subColumnLines = [];
+      this.mainColumnLines = [];
+      this.horizontalLines = [];
+      this.candles = [];
 
-            if(xDrawingPosition > 0 && xDrawingPosition < canvasWidth + this.view.getColInterval() * 2) {
-                this.addCandlesInInterval(xDrawingPosition, this.candleData, currentColumn, canvasWidth);
-                this.addTimeStamps(xDrawingPosition, currentColumn, this.candleData);
-            }
-        }
-        this.addHorizontalLines();
+      this.addVerticalElements();
+      this.addHorizontalLines();
 
-        this.renderingElementsSet.add(this.text);
-        this.renderingElementsSet.add(this.subColumnLines);
-        this.renderingElementsSet.add(this.mainColumnLines);
-        this.renderingElementsSet.add(this.horizontalLines);
-        this.renderingElementsSet.add(this.candles);
+      console.log(EventManager.mousePosition)
+
+      ElementCollector.elements.elementsMap.set('text', this.text);
+      ElementCollector.elements.elementsMap.set('subColumnLines', this.subColumnLines);
+      ElementCollector.elements.elementsMap.set('mainColumnLines', this.mainColumnLines);
+      ElementCollector.elements.elementsMap.set('horizontalLines', this.horizontalLines);
+      ElementCollector.elements.elementsMap.set('candles', this.candles);
+    }
+
+    private addMouseLine(): void {
+    }
+
+    private addVerticalElements(): void {
+      Candle.resetHighLow();
+      const canvasWidth = this.dimensions.getWidth();
+      let currentColumn = 0;
+
+      for(let xDrawingOffset = canvasWidth; xDrawingOffset + this.view.getViewOffset() > 0; xDrawingOffset = xDrawingOffset - this.view.getColInterval()) {
+          const xDrawingPosition = xDrawingOffset + this.view.getViewOffset() - this.dimensions.getHorizontalMargin();
+          currentColumn++;
+
+          if(xDrawingPosition > 0 && xDrawingPosition < canvasWidth + this.view.getColInterval() * 2) {
+              this.addCandlesInInterval(xDrawingPosition, this.candleData, currentColumn, canvasWidth);
+              this.addTimeStamps(xDrawingPosition, currentColumn, this.candleData);
+          }
+      }
     }
 
     private addCandlesInInterval(xMainColumnDrawingPosition: number, candlesData: CandlePayload[], currentColumn: number, graphWidth: number): void {

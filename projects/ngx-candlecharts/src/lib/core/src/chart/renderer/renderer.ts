@@ -1,3 +1,4 @@
+import { IElements } from '../../interfaces/elements';
 import { Dimensions } from '../dimensions';
 import { Element } from '../elements/element'
 export class Renderer {
@@ -12,10 +13,12 @@ export class Renderer {
     private context: CanvasRenderingContext2D;
     private dimensions: Dimensions;
 
-    public draw(elementSet: Set<Element[]>): void {
+    public draw(elements: IElements): void {
         this.clearView();
 
-        elementSet.forEach(renderElement => {
+        const elementArray = elements.elementsMap;
+
+        elementArray.forEach(renderElement => {
             renderElement.forEach(el => {
                 this.render(el);
             })

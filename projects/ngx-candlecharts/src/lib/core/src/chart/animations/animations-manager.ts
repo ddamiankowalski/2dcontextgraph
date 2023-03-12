@@ -6,7 +6,6 @@ export class AnimationsManager {
 
     public static currentRenderBlock = false;
 
-    private static forceUpdate: boolean;
     private static currentTimeStamp: number;
     private static animationStack: Animation[] = [];
 

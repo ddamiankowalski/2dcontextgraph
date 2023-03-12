@@ -5,7 +5,7 @@ export interface I2DCoords {
     yEnd?: number;
 }
 
-export interface IRenderProperties { 
+export interface IRenderProperties {
     color?: string;
     width?: number;
 }

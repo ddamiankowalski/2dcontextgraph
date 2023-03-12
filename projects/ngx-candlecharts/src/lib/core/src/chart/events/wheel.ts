@@ -1,6 +1,7 @@
 import { ChartEvent } from '../../interfaces/event';
 import { AnimationsManager } from '../animations/animations-manager';
 import { Dimensions } from '../dimensions';
+import { ElementCollector } from '../elements/element-collector';
 import { View } from '../view';
 import { EventManager } from './event-manager';
 
