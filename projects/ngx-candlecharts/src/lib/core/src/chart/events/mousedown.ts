@@ -12,6 +12,7 @@ export class Mousedown implements ChartEvent {
 
     public callback(event: Event): void {
         EventManager.mouseDown = true;
+        EventManager.currentCandle = null;
         this.eventManager.candleHover$.next(null);
     }
 }

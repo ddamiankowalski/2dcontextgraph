@@ -58,16 +58,11 @@ export class ElementCollector {
       this.addVerticalElements();
       this.addHorizontalLines();
 
-      console.log(EventManager.mousePosition)
-
       ElementCollector.elements.elementsMap.set('text', this.text);
       ElementCollector.elements.elementsMap.set('subColumnLines', this.subColumnLines);
       ElementCollector.elements.elementsMap.set('mainColumnLines', this.mainColumnLines);
       ElementCollector.elements.elementsMap.set('horizontalLines', this.horizontalLines);
       ElementCollector.elements.elementsMap.set('candles', this.candles);
-    }
-
-    private addMouseLine(): void {
     }
 
     private addVerticalElements(): void {

@@ -20,7 +20,9 @@ export class ChartManager {
     public apiController!: ChartAPIController;
 
     private context: CanvasRenderingContext2D;
+    private lineContext: CanvasRenderingContext2D;
     private canvas: HTMLCanvasElement;
+    private lineCanvas: HTMLCanvasElement;
 
     private dimensions!: Dimensions;
     private view!: View;
@@ -31,9 +33,11 @@ export class ChartManager {
     private animations!: AnimationsManager;
     private elementCollector!: ElementCollector
 
-    constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+    constructor(context: CanvasRenderingContext2D, lineContext: CanvasRenderingContext2D, canvas: HTMLCanvasElement, lineCanvas: HTMLCanvasElement) {
         this.context = context;
         this.canvas = canvas;
+        this.lineCanvas = lineCanvas;
+        this.lineContext = lineContext;
 
         this.setCanvasDimensions();
         this.setView();
@@ -58,13 +62,12 @@ export class ChartManager {
     }
 
     public startRendering(): void {
-      //this.elementCollector.setDirty('all');
       this.requestNextFrame(0);
     }
 
     private setCanvasDimensions(): void {
         const [ horizontalMargin, verticalMargin ] = [ 75, 40 ];
-        this.dimensions = new Dimensions(this.canvas, horizontalMargin, verticalMargin);
+        this.dimensions = new Dimensions(this.canvas, this.lineCanvas, horizontalMargin, verticalMargin);
     }
 
     private setView(): void {
@@ -101,6 +104,17 @@ export class ChartManager {
             if(!this.lastRender || AnimationsManager.isRunning()) {
               this.runAllElements(time);
             }
+            this.lineContext.clearRect(0, 0, this.dimensions.getWidth(), this.dimensions.getHeight());
+        }
+
+        if(EventManager.currentCandle) {
+          this.lineContext.beginPath();
+          this.lineContext.moveTo(EventManager.currentCandle.getXStart(), 0);
+          this.lineContext.setLineDash([15, 15]);
+          this.lineContext.lineTo(EventManager.currentCandle.getXStart(), this.dimensions.getHeight() - this.dimensions.getVerticalMargin());
+          this.lineContext.strokeStyle = '#3fc5ea';
+          this.lineContext.lineWidth = .4;
+          this.lineContext.stroke();
         }
         window.requestAnimationFrame(this.requestNextFrame.bind(this));
     }

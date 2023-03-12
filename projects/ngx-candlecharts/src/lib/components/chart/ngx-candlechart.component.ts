@@ -1,6 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { AfterViewInit, Component, ElementRef, NgZone, ViewChild } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { ChartAPIController } from '../../core';
 import { NgxCandleChartAPIService } from '../../services/ngx-candlechart-api.service';
 import { NgxCandlechartMenuContainerComponent } from '../interface/menu/menu-container/ngx-candlechart-menu-container.component';
@@ -14,7 +13,6 @@ import { NgxCandlechartTooltipComponent } from '../interface/tooltip/ngx-candlec
   imports: [
     NgxCandlechartTooltipComponent,
     NgxCandlechartMenuContainerComponent,
-    BrowserModule,
     HttpClientModule,
   ],
   providers: [
@@ -23,6 +21,7 @@ import { NgxCandlechartTooltipComponent } from '../interface/tooltip/ngx-candlec
 })
 export class NgxCandlechartsComponent implements AfterViewInit {
   @ViewChild('ngxCanvas') canvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('ngxLineCanvas') lineCanvas!: ElementRef<HTMLCanvasElement>;
 
   constructor(private chartAPI: NgxCandleChartAPIService) {
     this.chartAPI
@@ -32,7 +31,7 @@ export class NgxCandlechartsComponent implements AfterViewInit {
   private chartResizeObserver?: ResizeObserver;
 
   ngAfterViewInit(): void {
-    this.chartAPI.initializeChart(this.canvas.nativeElement);
+    this.chartAPI.initializeChart(this.canvas.nativeElement, this.lineCanvas.nativeElement);
   }
 
   private initializeApiController(apiController: ChartAPIController): void {

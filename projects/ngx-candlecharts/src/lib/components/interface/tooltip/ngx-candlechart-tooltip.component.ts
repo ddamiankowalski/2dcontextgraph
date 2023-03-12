@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input } from "@angular/core";
-import { debounceTime } from "rxjs";
+import { debounceTime } from "rxjs/operators";
 import { Candle } from "../../../core/src/chart/elements/candle";
 import { NgxCandleChartAPIService } from "../../../services/ngx-candlechart-api.service";
 

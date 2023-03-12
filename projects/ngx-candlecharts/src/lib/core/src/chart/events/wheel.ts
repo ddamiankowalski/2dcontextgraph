@@ -23,6 +23,7 @@ export class Wheel implements ChartEvent {
     public callback(wheelEvent: any): void {
         const deltaYValue = (wheelEvent.deltaY > 0 && wheelEvent.deltaY !== 0 ? 1 : -1) / 2 * this.view.getDivider();
         this.eventManager.candleHover$.next(null);
+        EventManager.currentCandle = null;
 
         const event = {
             offsetX: wheelEvent.offsetX,

@@ -1,6 +1,7 @@
 import { Injectable, NgZone } from "@angular/core";
-import { BehaviorSubject, filter, map, Observable, switchMap, take, tap } from "rxjs";
-import { Chart, ChartAPIController } from "../core";
+import { BehaviorSubject, Observable } from "rxjs";
+import { filter, switchMap } from 'rxjs/operators';
+import { Chart } from "../core";
 import { HttpClient } from '@angular/common/http';
 import { CandlePayload } from "../core/src/interfaces/candlestick";
 import { ChartManager } from "../core/src/chart/chart-manager";
@@ -13,9 +14,9 @@ export class NgxCandleChartAPIService {
   private ngxChartManager!: ChartManager;
   private ngxChartInitialized$ = new BehaviorSubject<boolean>(false);
 
-  public initializeChart(canvas: HTMLCanvasElement): void {
+  public initializeChart(canvas: HTMLCanvasElement, lineCanvas: HTMLCanvasElement): void {
     this.ngZone.runOutsideAngular(() => {
-      this.ngxChart = new Chart(canvas);
+      this.ngxChart = new Chart(canvas, lineCanvas);
       this.ngxChartManager = this.ngxChart.getManager();
 
       this.getCandlesData().subscribe(candlesPayload => {
@@ -31,6 +32,7 @@ export class NgxCandleChartAPIService {
   }
 
   public resetOffset(): void {
+    console.log('reset')
     this.ngxChartManager.apiController.resetViewOffset();
   }
 

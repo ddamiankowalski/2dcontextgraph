@@ -1,4 +1,5 @@
 import { ChartEvent } from '../../interfaces/event';
+import { AnimationsManager } from '../animations/animations-manager';
 import { ElementCollector } from '../elements/element-collector';
 import { View } from '../view';
 import { EventManager } from './event-manager';
@@ -35,7 +36,13 @@ export class Mousemove implements ChartEvent {
             event.offsetX < candle.getXStart() + (candle.width ?? 0)
           ) {
               foundCandle = true;
-              this.eventManager.candleHover$.next(candle);
+
+              if(!AnimationsManager.isRunning()) {
+                EventManager.currentCandle = candle;
+              }
+
+              console.log('teraz')
+              this.eventManager.candleHover$.next(EventManager.mouseDown ? null : candle);
           }
       });
 

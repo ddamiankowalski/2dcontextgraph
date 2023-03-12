@@ -11,6 +11,7 @@ export class EventManager {
 
     public static mouseDown = false;
     public static mousePosition?: MouseEvent;
+    public static currentCandle: Candle | null;
 
     public candleHover$ = new Subject<Candle | null>();
     public forceTooltipHide$ = new Subject<boolean>();

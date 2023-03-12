@@ -4,14 +4,16 @@ import { AnimationsManager } from './animations/animations-manager';
 import { EventManager } from './events/event-manager';
 
 export class Dimensions {
-    constructor(canvas: HTMLCanvasElement, horizontalMargin: number, verticalMargin: number) {
+    constructor(canvas: HTMLCanvasElement, lineCanvas: HTMLCanvasElement, horizontalMargin: number, verticalMargin: number) {
         this.canvas = canvas;
+        this.lineCanvas = lineCanvas;
         this.horizontalMargin = horizontalMargin;
         this.verticalMargin = verticalMargin;
         this.setDimensions();
     }
 
     private canvas: HTMLCanvasElement;
+    private lineCanvas: HTMLCanvasElement;
     private dimensions: GraphDimensions = {};
     private horizontalMargin: number;
     private verticalMargin: number;
@@ -55,10 +57,16 @@ export class Dimensions {
     private setCanvasStyleWidthAndHeight(width: number = 1280, height: number = 400): void {
         this.canvas.style.width = `${100}%`;
         this.canvas.style.height = `${100}%`;
+
+        this.lineCanvas.style.width = `${100}%`;
+        this.lineCanvas.style.height = `${100}%`;
     }
 
     private setCanvasWidthAndHeight(): void {
         this.canvas.height = this.canvas.offsetHeight;
         this.canvas.width = this.canvas.offsetWidth;
+
+        this.lineCanvas.height = this.canvas.offsetHeight;
+        this.lineCanvas.width = this.canvas.offsetWidth;
     }
 }

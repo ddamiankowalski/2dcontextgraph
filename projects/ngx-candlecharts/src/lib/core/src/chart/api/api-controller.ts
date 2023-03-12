@@ -1,4 +1,5 @@
-import { distinctUntilChanged, Observable } from "rxjs";
+import { Observable } from "rxjs";
+import { distinctUntilChanged } from 'rxjs/operators';
 import { AnimationsManager } from "../animations/animations-manager";
 import { Dimensions } from "../dimensions";
 import { Candle } from "../elements/candle";
@@ -12,7 +13,7 @@ export class ChartAPIController {
         private eventManager: EventManager
     ) {}
 
-    public resetViewOffset(msTime = 400): void {
+    public resetViewOffset(msTime = 600): void {
         AnimationsManager.startAnimation(
             'resetViewOffset',
             msTime,
