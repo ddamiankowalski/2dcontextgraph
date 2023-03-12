@@ -3,6 +3,7 @@ import { AfterViewInit, Component, ElementRef, NgZone, ViewChild } from '@angula
 import { BrowserModule } from '@angular/platform-browser';
 import { ChartAPIController } from '../../core';
 import { NgxCandleChartAPIService } from '../../services/ngx-candlechart-api.service';
+import { NgxCandlechartMenuContainerComponent } from '../interface/menu/menu-container/ngx-candlechart-menu-container.component';
 import { NgxCandlechartTooltipComponent } from '../interface/tooltip/ngx-candlechart-tooltip.component';
 
 @Component({
@@ -12,8 +13,9 @@ import { NgxCandlechartTooltipComponent } from '../interface/tooltip/ngx-candlec
   styleUrls: ['ngx-candlechart.component.scss'],
   imports: [
     NgxCandlechartTooltipComponent,
+    NgxCandlechartMenuContainerComponent,
     BrowserModule,
-    HttpClientModule
+    HttpClientModule,
   ],
   providers: [
     NgxCandleChartAPIService
