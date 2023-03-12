@@ -107,16 +107,20 @@ export class ChartManager {
             this.lineContext.clearRect(0, 0, this.dimensions.getWidth(), this.dimensions.getHeight());
         }
 
-        if(EventManager.currentCandle) {
-          this.lineContext.beginPath();
-          this.lineContext.moveTo(EventManager.currentCandle.getXStart(), 0);
-          this.lineContext.setLineDash([15, 15]);
-          this.lineContext.lineTo(EventManager.currentCandle.getXStart(), this.dimensions.getHeight() - this.dimensions.getVerticalMargin());
-          this.lineContext.strokeStyle = '#3fc5ea';
-          this.lineContext.lineWidth = .4;
-          this.lineContext.stroke();
-        }
+        this.runHoverLine();
         window.requestAnimationFrame(this.requestNextFrame.bind(this));
+    }
+
+    private runHoverLine(): void {
+      if(EventManager.currentCandle) {
+        this.lineContext.beginPath();
+        this.lineContext.moveTo(EventManager.currentCandle.getXStart(), 0);
+        this.lineContext.setLineDash([15, 15]);
+        this.lineContext.lineTo(EventManager.currentCandle.getXStart(), this.dimensions.getHeight() - this.dimensions.getVerticalMargin());
+        this.lineContext.strokeStyle = '#3fc5ea';
+        this.lineContext.lineWidth = .2;
+        this.lineContext.stroke();
+      }
     }
 
     private runAllElements(time: number): void {
